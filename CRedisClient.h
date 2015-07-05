@@ -21,7 +21,6 @@ using namespace Poco;
 
 /**
  *@brief CRedisClient redis client
- *
  */
 class CRedisClient
 {
@@ -51,6 +50,10 @@ public:
      */
     UInt16 getAddrPort( void );
 
+    /**
+     * @brief getAddr
+     * @return return the addr for redis-server
+     */
     string getAddr();
 
 
@@ -75,12 +78,23 @@ public:
      */
     void connect();
 
+    /**
+     * @brief reconnect redis-server
+     */
     void reconnect();
 
     //-----------------------------------key---------------------------------------------
+    /**
+     * @brief keys get all keys matching pattern. 
+     * @param pattern [in] The conditions of the matching. 
+     * @param keys [out] vector of keys maching pattern 
+     * @return The number of keys returned.
+     */
     uint64_t keys( const string& pattern, VecString& keys );
 
+    uint64_t del( VecString& keys );
 
+    
     //-----------------------------string method--------------------------------------
     /**
      * @brief set set a string type key = value
@@ -127,6 +141,7 @@ protected:
     uint64_t _getBulkNum( void );
 
     uint64_t _getMutilBulkNum( void );
+
 
     /**
      * @brief _replyOk

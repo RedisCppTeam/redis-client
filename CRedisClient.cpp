@@ -189,7 +189,7 @@ uint64_t CRedisClient::_getMutilBulkNum()
 
 std::string CRedisClient::_replyBulk()
 {
-    uint64_t len = _getNum( PREFIX_BULK_REPLY );
+    uint64_t len = _getBulkNum();
     DEBUGOUT( "getBulkNum", len );
     string value ;
     _socket.readLine( value );
@@ -210,7 +210,6 @@ uint64_t CRedisClient::_replyMultiBulk(VecString &keys )
     keys.clear();
     // get the number of rows of data received .
    uint64_t num = _getMutilBulkNum();
-   std::cout << "ReplyNum:" << num  << std::endl;
    string key = "";
    uint64_t count = 0;
 

@@ -24,11 +24,11 @@ void TestKey( void )
     {
         CRedisClient::VecString value;
         CRedisClient redis;
-        redis.connect( "127.0.0.1", 8081 );
+        redis.connect( "127.0.0.1", 6379 );
         for ( int i = 0; i < 10 ; i++ )
         {
             //--------------------------keys------------------------------
-            redis.keys("*", value );
+            redis.keys("test*", value );
             std::vector<string>::const_iterator it = value.begin();
 
             std::cout << "------------------------start value---------------------------" << std::endl;
@@ -37,6 +37,14 @@ void TestKey( void )
                DEBUGOUT( "value", *it );
             }
             std::cout << "----------------------end value----------------------------" << std::endl;
+
+            CRedisClient::VecString keys;
+            keys.push_back( "testHash" );
+            keys.push_back( "testString" );
+            uint64_t num = redis.del( keys );
+
+            std::cout << "del data:" << num << std::endl;
+
             sleep( 1 );
         }
     }catch( RdException& e )
@@ -137,8 +145,8 @@ void TestHash( void )
 int main()
 {
     //TestList();
-    TestHash();
-    //TestKey();
+    //TestHash();
+    TestKey();
     //TestString();
 
 }

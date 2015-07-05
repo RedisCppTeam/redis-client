@@ -23,3 +23,19 @@ uint64_t CRedisClient::keys(const std::string &pattern, CRedisClient::VecString 
     return _replyMultiBulk( keys );
 }
 
+uint64_t CRedisClient::del( CRedisClient::VecString &keys )
+{
+    _socket.clearBuffer();
+
+    Command cmd( "DEL" );
+    VecString::const_iterator it = keys.begin();
+
+    for ( ; it != keys.end(); it++ )
+    {
+        cmd << *it ;
+    }
+
+    _sendCommand( cmd );
+    return _replyInt( );
+}
+
