@@ -98,11 +98,11 @@ void TestString( void )
         for ( int i = 0; i < 10 ; i++ )
         {
 
-//            std::cout << "====testString====" << std::endl;
-//            //------------------test set---------------------------
-//            redis.set( "name", "yanxingjun" );
-//
-//            //------------------test get---------------------------
+           std::cout << "====testString====" << std::endl;
+           //------------------test set---------------------------
+           redis.set( "name", "yanxingjun" );
+
+           //------------------test get---------------------------
             redis.get( "testString",value );
             std::cout << "value:" << value << std::endl;
 
@@ -146,7 +146,7 @@ int main()
 {
     //TestList();
     //TestHash();
-    TestKey();
-    //TestString();
+    //TestKey();
+    TestString();
 
 }

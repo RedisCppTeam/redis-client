@@ -142,6 +142,7 @@ protected:
 
     uint64_t _getMutilBulkNum( void );
 
+    string _replyStatus( void );
 
     /**
      * @brief _replyOk

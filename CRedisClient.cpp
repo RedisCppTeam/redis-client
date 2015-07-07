@@ -94,9 +94,7 @@ void CRedisClient::_sendCommand( const string &cmd )
     return ;
 }
 
-
-
-void CRedisClient::_replyOk()
+string CRedisClient::_replyStatus(void)
 {
     string ret;
     _socket.readLine( ret );
@@ -104,14 +102,8 @@ void CRedisClient::_replyOk()
 
     if ( ret[0] == PREFIX_STATUS_VALUE )
     {
-        if ( ret.substr(1) == "OK" )
-        {
-            return;
-        }else
-        {
-            throw ProtocolErr("excepted \"OK\" response");
-        }
-    }else if( ret[0] == PREFIX_STATUS_ERR )
+        return ret.substr(1);
+    } else if( ret[0] == PREFIX_STATUS_ERR )
     {    // error
         throw ReplyErr( ret.substr(1) );
     }else
@@ -119,6 +111,20 @@ void CRedisClient::_replyOk()
         throw ProtocolErr("unexpected prefix for status reply");
     }
 }
+
+
+void CRedisClient::_replyOk()
+{
+    string ret = _replyStatus();
+    if ( ret != "OK" )
+    {
+      throw ProtocolErr("excepted \"OK\" response");
+    }else
+    {
+        return;
+    }
+ }
+
 
 template <typename T>
 T _valueFromString( const string& data )
@@ -186,6 +192,9 @@ uint64_t CRedisClient::_getMutilBulkNum()
 {
     return _getNum( PREFIX_MULTI_BULK_REPLY );
 }
+
+
+
 
 std::string CRedisClient::_replyBulk()
 {
