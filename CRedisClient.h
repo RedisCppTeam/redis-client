@@ -83,6 +83,8 @@ public:
      */
     void reconnect();
 
+    void closeConnect();
+
     bool ping( void );
 
 

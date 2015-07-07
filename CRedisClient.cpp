@@ -76,6 +76,11 @@ void CRedisClient::reconnect()
     connect();
 }
 
+void CRedisClient::closeConnect()
+{
+	_socket.shutdown();
+}
+
 bool CRedisClient::ping()
 {
     try

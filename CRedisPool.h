@@ -14,17 +14,14 @@
 #ifndef CREDISCLIENT_CREDISPOOL_H_
 #define CREDISCLIENT_CREDISPOOL_H_
 
+
 #include "CRedisClient.h"
-
-
-
-#define MAX_REDIS_CONN_POOLSIZE     32      // 每个DB最大连接数
-
+#include <Poco/Condition.h>
 
 
 typedef struct
 {
-	CRedisClient* pConn;
+	CRedisClient pConn;
 	bool idle;
 } SRedisConn;
 
@@ -34,46 +31,46 @@ typedef std::list<SRedisConn*> RedisConnList;
 typedef std::list<SRedisConn*>::iterator RedisConnIter;
 
 
-typedef enum
-{
-    REDISPOOL_UNCONN = 0,
-    REDISPOOL_WORKING,
-    REDISPOOL_DEAD
-}REDIS_POOL_STATE;
 
 
-
-
-class CRedisPool
+class CRedisPool : public Poco::Runnable
 {
 public:
 	CRedisPool();
 	~CRedisPool();
 
-	static CRedisPool* GetInstance();
+	static CRedisPool* GetInstance(void);
 
+	bool init(const std::string& host, uint16_t port, const std::string& passWord,
+			uint32_t timeout=0, uint16_t minSize=5, uint16_t  maxSize=10, uint32_t scanTime=60000);
 
-	bool init(const std::string& host, uint16_t port, const std::string& pass,
-			uint32_t timeout=0, uint16_t minSize=5, uint16_t  maxSize=10);
+	CRedisClient* getConn(void);
 
+	void pushBackConn(const CRedisClient* pConn);
 
-	CRedisClient* popConn(void);
+	void keepAlive(void);
 
-	bool pushConn(const CRedisClient* pConn);
+	void closeConnPool(void);
 
+	virtual void run();
 
 private:
-	std::string _mHost;
-	uint16_t _mPort;
-	std::string _mPassword;
-	uint32_t _mTimeout;
-	uint16_t _mMinSize;
-	uint16_t _mMaxSize;
+	std::string _host;
+	uint16_t _port;
+	std::string _passWord;
+	uint32_t _timeOut;
+	uint16_t _minSize;
+	uint16_t _maxSize;
 
-	RedisConnList _mConnlist;
-	REDIS_POOL_STATE _mStatus;
+	RedisConnList _connList;
 
+	bool _bExitRun;
+	uint32_t _scanTime;	///< 单位:毫秒
 	Poco::Mutex _mutex;
+	Poco::Condition _cond;
+
+	DISALLOW_COPY_AND_ASSIGN(CRedisPool);
+	int __getIdleCount(void);
 
 };
 
