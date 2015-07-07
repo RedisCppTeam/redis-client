@@ -83,6 +83,9 @@ public:
      */
     void reconnect();
 
+    bool ping( void );
+
+
     //-----------------------------------key---------------------------------------------
     /**
      * @brief keys get all keys matching pattern. 
@@ -166,6 +169,8 @@ protected:
     void _flushSocketRecvBuff( void );
 
 private:
+    DISALLOW_COPY_AND_ASSIGN( CRedisClient );
+
     CRedisSocket _socket;			///< redis net work class.
     Net::SocketAddress _addr;		///< redis server ip address.
     Timespan _timeout;					///< time out.

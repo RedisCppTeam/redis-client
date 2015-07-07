@@ -76,6 +76,30 @@ void CRedisClient::reconnect()
     connect();
 }
 
+bool CRedisClient::ping()
+{
+    try
+    {
+        _socket.clearBuffer();
+
+        Command cmd( "PING" );
+        _sendCommand( cmd );
+        DEBUGOUT( "send", string( cmd ) );
+
+        string value = _replyStatus();
+        if ( value != "PONG" )
+        {
+            return false;
+        }else
+        {
+            return true;
+        }
+    }catch ( ... )
+    {
+        return false;
+    }
+}
+
 
 
 

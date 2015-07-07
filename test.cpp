@@ -94,6 +94,7 @@ void TestString( void )
     {
         CRedisClient redis;
         redis.connect( "192.168.10.105", 6379 );
+
         string value;
         for ( int i = 0; i < 10 ; i++ )
         {
@@ -144,9 +145,16 @@ void TestHash( void )
 //  写到 TestHash().
 int main()
 {
+    CRedisClient redis;
+    redis.connect( "127.0.0.1", 8080 );
+    if ( !redis.ping() )
+    {
+        std::cout << "失败!" << std::endl;
+    }
+
     //TestList();
     //TestHash();
     //TestKey();
-    TestString();
+    //TestString();
 
 }
