@@ -55,7 +55,6 @@ bool CRedisPool::init(const std::string& host, uint16_t port, const std::string&
 	else
 	{
 		DEBUGOUT("CRedisPool::init:------Error:---minSize > maxSize---", "error");
-		CL_LOG.error("CRedisPool::init:------Error:---minSize > maxSize---error");
 		return false;
 	}
 
@@ -81,7 +80,6 @@ CRedisClient* CRedisPool::getConn(void)
 			redisConn->pConn.connect(_host, _port);
 		} catch (Poco::Exception& e) {
 			DEBUGOUT("CRedisPool::getConn:------Error:---", e.message());
-			CL_LOG.error("CRedisPool::getConn:------Error:---", e.message());
 			if(redisConn) {
 				delete redisConn;
 				redisConn = NULL;
@@ -112,7 +110,7 @@ CRedisClient* CRedisPool::getConn(void)
 }
 
 
-void CRedisPool::pushBackConn(const CRedisClient* pConn)
+void CRedisPool::pushBackConn(CRedisClient* & pConn)
 {
 	Poco::Mutex::ScopedLock lock(_mutex);
 	RedisConnIter iter = _connList.begin();
@@ -123,6 +121,7 @@ void CRedisPool::pushBackConn(const CRedisClient* pConn)
 		if (redisConn && (&redisConn->pConn == pConn))
 		{
 			redisConn->idle = true;
+			pConn = NULL;
 			break;
 		}
 	}

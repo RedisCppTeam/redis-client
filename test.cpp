@@ -303,20 +303,23 @@ int main()
 	    //	printf("Used Time:%f\n", timeuse);
 
 
-	WorkRunnable work(&redisPool);
+	//WorkRunnable work(&redisPool);
 
 	Poco::Thread* ttt[10];
-
+	WorkRunnable* kkk[10];
 	for(int i=0; i<10; i++)
 	{
 		ttt[i]= new Poco::Thread();
-		ttt[i]->start(work);
+
+		kkk[i] = new WorkRunnable(&redisPool);
+		ttt[i]->start(*kkk[i]);
 	}
 
 	for(int j=0; j<10; j++)
 	{
 		ttt[j]->join();
 		delete ttt[j];
+		delete kkk[j];
 	}
 
 
