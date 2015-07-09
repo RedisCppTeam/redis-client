@@ -19,16 +19,6 @@
 #include <Poco/Condition.h>
 
 
-typedef struct
-{
-	CRedisClient pConn;
-	bool idle;
-} SRedisConn;
-
-
-///< 连接链表
-typedef std::list<SRedisConn*> RedisConnList;
-typedef std::list<SRedisConn*>::iterator RedisConnIter;
 //typedef std::map<std::string, RedisConnList*> RedisConnListMap;
 
 
@@ -37,6 +27,18 @@ typedef std::list<SRedisConn*>::iterator RedisConnIter;
 class CRedisPool : public Poco::Runnable
 {
 public:
+
+	typedef struct
+	{
+		CRedisClient pConn;
+		bool idle;
+	} SRedisConn;
+
+
+	///< 连接链表
+	typedef std::list<SRedisConn*> RedisConnList;
+	typedef std::list<SRedisConn*>::iterator RedisConnIter;
+
 	CRedisPool();
 	~CRedisPool();
 
@@ -46,7 +48,7 @@ public:
 
 	CRedisClient* getConn(void);
 
-	void pushBackConn(const CRedisClient* pConn);
+	void pushBackConn(CRedisClient* & pConn);
 
 	void keepAlive(void);
 
