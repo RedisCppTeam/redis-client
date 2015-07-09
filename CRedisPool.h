@@ -29,6 +29,7 @@ typedef struct
 ///< 连接链表
 typedef std::list<SRedisConn*> RedisConnList;
 typedef std::list<SRedisConn*>::iterator RedisConnIter;
+//typedef std::map<std::string, RedisConnList*> RedisConnListMap;
 
 
 
@@ -39,10 +40,9 @@ public:
 	CRedisPool();
 	~CRedisPool();
 
-	static CRedisPool* GetInstance(void);
 
 	bool init(const std::string& host, uint16_t port, const std::string& passWord,
-			uint32_t timeout=0, uint16_t minSize=5, uint16_t  maxSize=10, uint32_t scanTime=60000);
+			uint32_t timeout=0, uint16_t minSize=5, uint16_t  maxSize=10);
 
 	CRedisClient* getConn(void);
 
@@ -60,9 +60,10 @@ private:
 	std::string _passWord;
 	uint32_t _timeOut;
 	uint16_t _minSize;
-	uint16_t _maxSize;
+	uint16_t _maxSize;//192.168.10.179//---
 
 	RedisConnList _connList;
+	//RedisConnListMap _connListMap;
 
 	bool _bExitRun;
 	uint32_t _scanTime;	///< 单位:毫秒
