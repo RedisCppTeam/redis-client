@@ -169,7 +169,7 @@ void CRedisPool::keepAlive(void)
 		SRedisConn* redisConn = *iter;
 		if (redisConn)
 		{
-			if((leftSize > 0) && redisConn->idle && (time(0) - redisConn->oldTime) > 60)
+			if((leftSize > 0) && redisConn->idle && (time(0) - redisConn->oldTime) > _idleTime)
 			{
 				delete redisConn;
 				_connList.erase(iter);
