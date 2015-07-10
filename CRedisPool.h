@@ -19,9 +19,6 @@
 #include <Poco/Condition.h>
 
 
-//typedef std::map<std::string, RedisConnList*> RedisConnListMap;
-
-
 
 
 class CRedisPool : public Poco::Runnable
@@ -31,6 +28,7 @@ public:
 	typedef struct
 	{
 		CRedisClient pConn;
+		time_t oldTime;
 		bool idle;
 	} SRedisConn;
 
@@ -43,8 +41,8 @@ public:
 	~CRedisPool();
 
 
-	bool init(const std::string& host, uint16_t port, const std::string& passWord,
-			uint32_t timeout=0, uint16_t minSize=5, uint16_t  maxSize=10);
+	bool init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout=0,
+			uint16_t minSize=5, uint16_t  maxSize=10, uint32_t scanTime = 60, uint32_t idleTime = 60);
 
 	CRedisClient* getConn(void);
 
@@ -59,16 +57,16 @@ public:
 private:
 	std::string _host;
 	uint16_t _port;
-	std::string _passWord;
-	uint32_t _timeOut;
+	std::string _password;
+	uint32_t _timeout;
 	uint16_t _minSize;
-	uint16_t _maxSize;//192.168.10.179//---
+	uint16_t _maxSize;
 
 	RedisConnList _connList;
-	//RedisConnListMap _connListMap;
 
 	bool _bExitRun;
-	uint32_t _scanTime;	///< 单位:毫秒
+	uint32_t _scanTime;	///< 线程扫描周期 单位:秒
+	uint32_t _idleTime;	///< 连接空闲时间 单位:秒
 	Poco::Mutex _mutex;
 	Poco::Condition _cond;
 
