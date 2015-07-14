@@ -153,7 +153,10 @@ void CRedisPool::pushBackConn(CRedisClient* & pConn)
 			pConn = NULL;
 
 			if(status == REDIS_POOL_DEAD)
+			{
 				delete pRedisConn;//If you closed the connection pool, delete pConn
+				*iter = NULL;
+			}
 			else {
 				if(idleCount == 0)
 					_cond.signal();//wake up waiting
