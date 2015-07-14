@@ -201,9 +201,9 @@ void CRedisPool::keepAlive(void)
 				_connList.erase(iter);
 				leftSize --;
 			}
-			else // if disconnected will be reconnect
+			else // if not idle and disconnected will be reconnect
 			{
-				if(!pRedisConn->conn.ping())
+				if(!pRedisConn->idle && !pRedisConn->conn.ping())
 					pRedisConn->conn.reconnect();
 				iter++;
 			}
