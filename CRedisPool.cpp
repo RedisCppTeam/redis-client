@@ -176,7 +176,10 @@ void CRedisPool::closeConnPool(void)
 	{
 		SRedisConn* pRedisConn = *iter;
 		if (pRedisConn && pRedisConn->idle)
+		{
 			delete pRedisConn;	//Free the idle connection
+			*iter = NULL;
+		}
 	}
 	_mutex.unlock();
 	_scanThread.join();	//Waiting for the thread to end
@@ -203,7 +206,7 @@ void CRedisPool::keepAlive(void)
 			}
 			else // if not idle and disconnected will be reconnect
 			{
-				if(!pRedisConn->idle && !pRedisConn->conn.ping())
+				if(!pRedisConn->conn.ping())
 					pRedisConn->conn.reconnect();
 				iter++;
 			}
