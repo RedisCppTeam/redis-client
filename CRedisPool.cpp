@@ -14,7 +14,7 @@
 
 
 
-void OnRunCallBack(void* pVoid)
+void CRedisPool::OnRunCallBack(void* pVoid)
 {
 	CRedisPool* pRedisPool = (CRedisPool*)pVoid;
 	if(pRedisPool)

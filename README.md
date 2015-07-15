@@ -1,4 +1,4 @@
 # CRedisClient
 a redis client .
 
-This is a client for redis-server writen with cpp.Its socket module depends on poco c++. 
+This is a client for redis-server written with cpp.Its socket module depends on poco c++.

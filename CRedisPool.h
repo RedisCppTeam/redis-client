@@ -27,7 +27,7 @@ public:
 	{
 		CRedisClient conn;	///< connection
 		time_t oldTime;		///< idle time stamp
-		bool idle;		///< idle state
+        bool idle;					///< idle state
 	} SRedisConn;
 
 
@@ -98,7 +98,8 @@ public:
 
 
 private:
-	std::string _host;		///< host ip
+    DISALLOW_COPY_AND_ASSIGN(CRedisPool);
+    std::string _host;		///< host ip
 	uint16_t _port;			///< host port
 	std::string _password;		///< host password
 	uint32_t _timeout;		///< timeout period, default 0
@@ -110,15 +111,13 @@ private:
 
 	Poco::Mutex _mutex;
 	Poco::Condition _cond;
-	DISALLOW_COPY_AND_ASSIGN(CRedisPool);
 
 	/**
 	* @brief get the count of idle connections in the pool
 	* @return return the count of idle connections
 	*/
 	int __getIdleCount(void);
-
-
+    static void OnRunCallBack( void* );
 };
 
 
