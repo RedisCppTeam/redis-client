@@ -31,17 +31,17 @@ void CRedisPool::OnRunCallBack(void* pVoid)
 
 CRedisPool::CRedisPool()
 {
-	status = REDIS_POOL_UNCONN;
-	scanTime = 60;
+    _host.clear();
+    _port = 0;
+    _password.clear();
+    _timeout = 0;
+    _minSize = 5;
+    _maxSize = 10;
 
-	_host.clear();
-	_port = 0;
-	_password.clear();
-	_timeout = 0;
-	_minSize = 5;
-	_maxSize = 10;
-	_connList.clear();
-	_idleTime = 60;
+    status = REDIS_POOL_UNCONN;
+	scanTime = 60;
+    _idleTime = 60;
+    _connList.clear();
 }
 
 CRedisPool::~CRedisPool()
@@ -50,30 +50,26 @@ CRedisPool::~CRedisPool()
 }
 
 
-
-
 bool CRedisPool::init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout,
 		uint16_t minSize, uint16_t  maxSize, uint32_t nScanTime, uint32_t idleTime)
 {
-	scanTime = nScanTime;
+    _host = host;
+    _port = port;
+    _password = password;
+    _timeout = timeout;
+    //the minSize value is less than the maxSize value
+    if (minSize <= maxSize)
+    {
+        _maxSize = maxSize;
+        _minSize = minSize;
+    }
+    else
+    {
+        return false;
+    }
 
-	_host = host;
-	_port = port;
-	_password = password;
-	_timeout = timeout;
-	_idleTime = idleTime;
-
-	//the minSize value is less than the maxSize value
-	if (minSize <= maxSize)
-	{
-		_maxSize = maxSize;
-		_minSize = minSize;
-	}
-	else
-	{
-		DEBUGOUT("CRedisPool::init:------Error:---minSize > maxSize---", "error");
-		return false;
-	}
+    scanTime = nScanTime;
+    _idleTime = idleTime;
 
 	scanThread.start(OnRunCallBack, this);	//Starting scan thread
 
@@ -213,13 +209,16 @@ void CRedisPool::keepAlive(void)
 			}
 			else // if not idle and disconnected will be reconnect
 			{
-				if(!pRedisConn->conn.ping())
-					pRedisConn->conn.reconnect();
+                if ( !pRedisConn->conn.ping() )
+                    pRedisConn->conn.reconnect();
+
 				iter++;
 			}
 		}
 		else
-			iter++;
+        {
+            iter++;
+        }
 	}
 
 }

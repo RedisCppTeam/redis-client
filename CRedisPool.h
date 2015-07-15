@@ -82,9 +82,16 @@ public:
     } SRedisConn;
     typedef std::list<SRedisConn*> RedisConnList;
     typedef std::list<SRedisConn*>::iterator RedisConnIter;
+    ///< redis pool state
+    typedef enum
+    {
+        REDIS_POOL_UNCONN = 0,	///< no connection
+        REDIS_POOL_WORKING,		///< connecting
+        REDIS_POOL_DEAD				///< disconnect
+    }REDIS_POOL_STATE;
 
 
-
+////////////////////////////////////////////member///////////////////////////////////////////////////
     std::string _host;				///< host ip
     uint16_t _port;					///< host port
 	std::string _password;		///< host password
@@ -92,23 +99,12 @@ public:
     uint16_t _minSize;			///< minimum value of connections, default 5
     uint16_t _maxSize;			///< maximum value of connections, default 10
 
-	RedisConnList _connList;	///< the list of redis connection pool
-    uint32_t _idleTime;				///< connection idle time, unit: Second
-
+    REDIS_POOL_STATE status;		///< redis pool state
+    uint32_t scanTime;						///< thread scan time, unit: Second
+    uint32_t _idleTime;						///< connection idle time, unit: Second
+    RedisConnList _connList;			///< the list of redis connection pool
 	Poco::Mutex _mutex;
 	Poco::Condition _cond;
-
-
-    ///< redis pool state
-    typedef enum
-    {
-        REDIS_POOL_UNCONN = 0,	///< no connection
-        REDIS_POOL_WORKING,		///< connecting
-        REDIS_POOL_DEAD		///< disconnect
-    }REDIS_POOL_STATE;
-
-    uint32_t scanTime;						///< thread scan time, unit: Second
-    REDIS_POOL_STATE status;		///< redis pool state
     Poco::Thread scanThread;			///< scan thread, if disconnected will be reconnect
 
 
