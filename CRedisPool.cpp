@@ -121,6 +121,7 @@ CRedisClient* CRedisPool::getConn(void)
 		}
 	}
 
+
 	//traverse connection pool, return idle connection
 	RedisConnIter iter = _connList.begin();
 	for( ; iter != _connList.end(); iter++)
@@ -132,6 +133,7 @@ CRedisClient* CRedisPool::getConn(void)
 			return &redisConn->conn;
 		}
 	}
+
 
 	return NULL;
 }
@@ -155,7 +157,7 @@ void CRedisPool::pushBackConn(CRedisClient* & pConn)
 			if(status == REDIS_POOL_DEAD)
 			{
 				delete pRedisConn;//If you closed the connection pool, delete pConn
-				*iter = NULL;
+				iter = _connList.erase(iter);
 			}
 			else {
 				if(idleCount == 0)
@@ -173,18 +175,20 @@ void CRedisPool::closeConnPool(void)
 	_mutex.lock();
 	status = REDIS_POOL_DEAD;
 	_cond.broadcast();	//Wake up all the wait
-
 	RedisConnIter iter = _connList.begin();
-	for( ; iter != _connList.end(); iter++)
+	for( ; iter != _connList.end(); )
 	{
 		SRedisConn* pRedisConn = *iter;
 		if (pRedisConn && pRedisConn->idle)
 		{
 			delete pRedisConn;	//Free the idle connection
-			*iter = NULL;
+			iter = _connList.erase(iter);
 		}
+		else
+			iter++;
 	}
 	_mutex.unlock();
+
 	_scanThread.join();	//Waiting for the thread to end
 }
 
@@ -204,7 +208,7 @@ void CRedisPool::keepAlive(void)
 			if((leftSize > 0) && pRedisConn->idle && (time(0) - pRedisConn->oldTime) > _idleTime)
 			{
 				delete pRedisConn;
-				_connList.erase(iter);
+				iter = _connList.erase(iter);
 				leftSize --;
 			}
 			else // if not idle and disconnected will be reconnect
