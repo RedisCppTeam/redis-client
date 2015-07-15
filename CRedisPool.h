@@ -94,7 +94,9 @@ public:
 
 	uint32_t scanTime;		///< thread scan time, unit: Second
 	REDIS_POOL_STATE status;	///< redis pool state
-	Poco::Thread _scanThread;	///< scan thread, if disconnected will be reconnect
+	Poco::Thread scanThread;	///< scan thread, if disconnected will be reconnect
+
+
 private:
 	std::string _host;		///< host ip
 	uint16_t _port;			///< host port
@@ -104,7 +106,6 @@ private:
 	uint16_t _maxSize;		///< maximum value of connections, default 10
 
 	RedisConnList _connList;	///< the list of redis connection pool
-	//Poco::Thread _scanThread;	///< scan thread, if disconnected will be reconnect
 	uint32_t _idleTime;		///< connection idle time, unit: Second
 
 	Poco::Mutex _mutex;

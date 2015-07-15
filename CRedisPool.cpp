@@ -75,7 +75,7 @@ bool CRedisPool::init(const std::string& host, uint16_t port, const std::string&
 		return false;
 	}
 
-	_scanThread.start(OnRunCallBack, this);	//Starting scan thread
+	scanThread.start(OnRunCallBack, this);	//Starting scan thread
 
 	return true;
 }
@@ -189,7 +189,7 @@ void CRedisPool::closeConnPool(void)
 	}
 	_mutex.unlock();
 
-	_scanThread.join();	//Waiting for the thread to end
+	scanThread.join();	//Waiting for the thread to end
 }
 
 
