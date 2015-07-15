@@ -22,28 +22,6 @@
 class CRedisPool
 {
 public:
-	///< single connection
-	typedef struct
-	{
-		CRedisClient conn;	///< connection
-		time_t oldTime;		///< idle time stamp
-        bool idle;					///< idle state
-	} SRedisConn;
-
-
-	///< redis pool state
-	typedef enum
-	{
-	    REDIS_POOL_UNCONN = 0,	///< no connection
-	    REDIS_POOL_WORKING,		///< connecting
-	    REDIS_POOL_DEAD		///< disconnect
-	}REDIS_POOL_STATE;
-
-
-	///< linked list
-	typedef std::list<SRedisConn*> RedisConnList;
-	typedef std::list<SRedisConn*>::iterator RedisConnIter;
-
 
 	CRedisPool();
 	~CRedisPool();
@@ -92,27 +70,49 @@ public:
 	void closeConnPool(void);
 
 
-	uint32_t scanTime;		///< thread scan time, unit: Second
-	REDIS_POOL_STATE status;	///< redis pool state
-	Poco::Thread scanThread;	///< scan thread, if disconnected will be reconnect
-
-
-private:
+    private:
     DISALLOW_COPY_AND_ASSIGN(CRedisPool);
-    std::string _host;		///< host ip
-	uint16_t _port;			///< host port
+
+    ///< linked list  ///< single connection
+    typedef struct
+    {
+        CRedisClient conn;	///< connection
+        time_t oldTime;		///< idle time stamp
+        bool idle;					///< idle state
+    } SRedisConn;
+    typedef std::list<SRedisConn*> RedisConnList;
+    typedef std::list<SRedisConn*>::iterator RedisConnIter;
+
+
+
+    std::string _host;				///< host ip
+    uint16_t _port;					///< host port
 	std::string _password;		///< host password
-	uint32_t _timeout;		///< timeout period, default 0
-	uint16_t _minSize;		///< minimum value of connections, default 5
-	uint16_t _maxSize;		///< maximum value of connections, default 10
+    uint32_t _timeout;			///< timeout period, default 0
+    uint16_t _minSize;			///< minimum value of connections, default 5
+    uint16_t _maxSize;			///< maximum value of connections, default 10
 
 	RedisConnList _connList;	///< the list of redis connection pool
-	uint32_t _idleTime;		///< connection idle time, unit: Second
+    uint32_t _idleTime;				///< connection idle time, unit: Second
 
 	Poco::Mutex _mutex;
 	Poco::Condition _cond;
 
-	/**
+
+    ///< redis pool state
+    typedef enum
+    {
+        REDIS_POOL_UNCONN = 0,	///< no connection
+        REDIS_POOL_WORKING,		///< connecting
+        REDIS_POOL_DEAD		///< disconnect
+    }REDIS_POOL_STATE;
+
+    uint32_t scanTime;						///< thread scan time, unit: Second
+    REDIS_POOL_STATE status;		///< redis pool state
+    Poco::Thread scanThread;			///< scan thread, if disconnected will be reconnect
+
+
+    /**
 	* @brief get the count of idle connections in the pool
 	* @return return the count of idle connections
 	*/
