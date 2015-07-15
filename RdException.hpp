@@ -13,8 +13,7 @@
 
 #include "common.h"
 
-
-class RdException
+class RdException :public std::exception
 {
 public:
     RdException( const string& rhs ):
@@ -22,9 +21,9 @@ public:
     {
     }
 
-    virtual string what( void ) const
+    virtual const char* what( void ) const throw()
     {
-        return _err;
+        return _err.c_str();
     }
     ~RdException() throw()
     {

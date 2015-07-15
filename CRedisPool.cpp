@@ -14,7 +14,7 @@
 
 
 
-void CRedisPool::OnRunCallBack(void* pVoid)
+void CRedisPool::__onRunCallBack(void* pVoid)
 {
 	CRedisPool* pRedisPool = (CRedisPool*)pVoid;
 	if(pRedisPool)
@@ -71,7 +71,7 @@ bool CRedisPool::init(const std::string& host, uint16_t port, const std::string&
     scanTime = nScanTime;
     _idleTime = idleTime;
 
-	scanThread.start(OnRunCallBack, this);	//Starting scan thread
+    scanThread.start(__onRunCallBack, this);	//Starting scan thread
 
 	return true;
 }
@@ -96,7 +96,7 @@ CRedisClient* CRedisPool::getConn(void)
 			SRedisConn* pRedisConn = new SRedisConn;
 
 			try {
-				pRedisConn->conn.connect(_host, _port);
+                pRedisConn->_conn.connect(_host, _port);
 			} catch (Poco::Exception& e) {	//The connection timeout, throw exception
 				DEBUGOUT("CRedisPool::getConn:------Error:---", e.message());
 				if(pRedisConn) {
@@ -107,10 +107,10 @@ CRedisClient* CRedisPool::getConn(void)
 			}
 
 			if(pRedisConn) {
-				pRedisConn->idle = false;
+                pRedisConn->_idle = false;
 				_connList.push_back(pRedisConn); //Create success, push into the connection pool
 				status = REDIS_POOL_WORKING;
-				return &pRedisConn->conn;
+                return &pRedisConn->_conn;
 			} else {
 				return NULL;
 			}
@@ -123,10 +123,10 @@ CRedisClient* CRedisPool::getConn(void)
 	for( ; iter != _connList.end(); iter++)
 	{
 		SRedisConn* redisConn = *iter;
-		if(redisConn && redisConn->idle)
+        if(redisConn && redisConn->_idle)
 		{
-			redisConn->idle = false;
-			return &redisConn->conn;
+            redisConn->_idle = false;
+            return &redisConn->_conn;
 		}
 	}
 
@@ -144,10 +144,10 @@ void CRedisPool::pushBackConn(CRedisClient* & pConn)
 	for( ; iter != _connList.end(); iter++)
 	{
 		SRedisConn* pRedisConn = *iter;
-		if (pRedisConn && (&pRedisConn->conn == pConn)) //find pConn
+        if (pRedisConn && (&pRedisConn->_conn == pConn)) //find pConn
 		{
-			pRedisConn->idle = true;
-			pRedisConn->oldTime = time(0); //Record the time stamp
+            pRedisConn->_idle = true;
+            pRedisConn->_oldTime = time(0); //Record the time stamp
 			pConn = NULL;
 
 			if(status == REDIS_POOL_DEAD)
@@ -175,7 +175,7 @@ void CRedisPool::closeConnPool(void)
 	for( ; iter != _connList.end(); )
 	{
 		SRedisConn* pRedisConn = *iter;
-		if (pRedisConn && pRedisConn->idle)
+        if (pRedisConn && pRedisConn->_idle)
 		{
 			delete pRedisConn;	//Free the idle connection
 			iter = _connList.erase(iter);
@@ -194,32 +194,43 @@ void CRedisPool::keepAlive(void)
 	Poco::Mutex::ScopedLock lock(_mutex);
 	RedisConnIter iter = _connList.begin();
 
-	int leftSize = _connList.size() - _minSize; //Keep the minimum count of connections in the pool
-	for( ; iter != _connList.end(); )
-	{
-		SRedisConn* pRedisConn = *iter;
-		if (pRedisConn)
-		{
-			//The idle time for idle connections over the maximum of the idle time
-			if((leftSize > 0) && pRedisConn->idle && (time(0) - pRedisConn->oldTime) > _idleTime)
-			{
-				delete pRedisConn;
-				iter = _connList.erase(iter);
-				leftSize --;
-			}
-			else // if not idle and disconnected will be reconnect
-			{
-                if ( !pRedisConn->conn.ping() )
-                    pRedisConn->conn.reconnect();
-
-				iter++;
-			}
-		}
-		else
+    for( ; iter != _connList.end(); )
+    {
+        SRedisConn* pRedisConn = *iter;
+        // if the pointer's value is NULL delete it.
+        if ( !pRedisConn )
         {
+            iter = _connList.erase( iter );
+            continue;
+        }
+
+        //if it is idle
+        if ( pRedisConn->_idle )
+        {
+            if ( pRedisConn->getIdleTime()>_idleTime && _connList.size() > _minSize )
+            {
+                DEBUGOUT( "time out", "delete it");
+                delete pRedisConn;
+                iter = _connList.erase( iter );
+            }
+            else
+            {
+                if ( !pRedisConn->_conn.ping() )
+                {
+                    pRedisConn->_conn.reconnect();
+                    DEBUGOUT( "Ping", "reconnect()");
+                }else
+                {
+                    DEBUGOUT("Ping ok","" );
+                }
+                iter++;
+            }
+        }else
+        {
+            //if other thhread is using it.
             iter++;
         }
-	}
+    }
 
 }
 
@@ -232,7 +243,7 @@ int CRedisPool::__getIdleCount(void)
 	for( ; iter != _connList.end(); iter++)
 	{
 		SRedisConn* pRedisConn = *iter;
-		if(pRedisConn && pRedisConn->idle)
+        if(pRedisConn && pRedisConn->_idle)
 		{
 			idleCount ++;
 		}

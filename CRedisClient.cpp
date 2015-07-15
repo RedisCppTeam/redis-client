@@ -99,8 +99,9 @@ bool CRedisClient::ping()
         {
             return true;
         }
-    }catch ( ... )
+    }catch ( std::exception& e )
     {
+        std::cout << "===================" << e.what() << std::endl;
         return false;
     }
 }

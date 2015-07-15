@@ -265,7 +265,7 @@ private:
 int main()
 {
 	CRedisPool redisPool;
-	redisPool.init("192.168.10.179", 6379, "0");
+    redisPool.init("127.0.0.1", 6379, "0");
 	//Poco::Thread thread;
 	//thread.start(redisPool);
 
@@ -323,6 +323,9 @@ int main()
 	}
 
 
+    CRedisClient* r = redisPool.getConn();
+    sleep ( 10 );
+    redisPool.pushBackConn( r );
     sleep( 100 );
 
     return 0;

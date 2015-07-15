@@ -41,7 +41,7 @@ public:
 	* @warning If the maximum value is less than the minimum value will initialize the failure.
 	*/
 	bool init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout=0,
-			uint16_t minSize=5, uint16_t  maxSize=10, uint32_t nScanTime = 60, uint32_t idleTime = 60);
+            uint16_t minSize=5, uint16_t  maxSize=50, uint32_t nScanTime = 2, uint32_t idleTime = 3 );
 
 	/**
 	* @brief get a single connection in the pool
@@ -70,15 +70,19 @@ public:
 	void closeConnPool(void);
 
 
-    private:
+private:
     DISALLOW_COPY_AND_ASSIGN(CRedisPool);
 
     ///< linked list  ///< single connection
     typedef struct
     {
-        CRedisClient conn;	///< connection
-        time_t oldTime;		///< idle time stamp
-        bool idle;					///< idle state
+        CRedisClient _conn;	///< connection
+        time_t _oldTime;		///< idle time stamp
+        bool _idle;					///< idle state
+        inline uint32_t getIdleTime( void )
+        {
+            return time( NULL ) - _oldTime;
+        }
     } SRedisConn;
     typedef std::list<SRedisConn*> RedisConnList;
     typedef std::list<SRedisConn*>::iterator RedisConnIter;
@@ -89,7 +93,6 @@ public:
         REDIS_POOL_WORKING,		///< connecting
         REDIS_POOL_DEAD				///< disconnect
     }REDIS_POOL_STATE;
-
 
 ////////////////////////////////////////////member///////////////////////////////////////////////////
     std::string _host;				///< host ip
@@ -113,7 +116,7 @@ public:
 	* @return return the count of idle connections
 	*/
 	int __getIdleCount(void);
-    static void OnRunCallBack( void* );
+    static void __onRunCallBack( void* );
 };
 
 
