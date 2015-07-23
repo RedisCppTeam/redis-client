@@ -101,8 +101,8 @@ bool CRedisClient::ping()
         }
     }catch ( std::exception& e )
     {
-        std::cout << "===================" << e.what() << std::endl;
-        return false;
+        DEBUGOUT( "Ping catch exception:", e.what() );
+       return false;
     }
 }
 
@@ -170,16 +170,16 @@ T _valueFromString( const string& data )
     return value;
 }
 
-uint64_t CRedisClient::_replyInt()
+int64_t CRedisClient::_replyInt()
 {
-    uint64_t num = 0 ;
+    int64_t num = 0 ;
     string ret;
     _socket.readLine( ret );
     DEBUGOUT( "ret ", ret );
     //successful
     if ( ret[0] == PREFIX_REPLY_INT )
     {
-        num = _valueFromString<uint64_t>( ret.substr(1) );
+        num = _valueFromString<int64_t>( ret.substr(1) );
     }else if ( ret[0] == PREFIX_STATUS_ERR )
     {
         // error
@@ -191,7 +191,7 @@ uint64_t CRedisClient::_replyInt()
     return num;
 }
 
-uint64_t CRedisClient::_getNum( const char prefix )
+int64_t CRedisClient::_getNum( const char prefix )
 {
     string num;
     if ( !_socket.readLine( num ) )
@@ -213,12 +213,12 @@ uint64_t CRedisClient::_getNum( const char prefix )
     }
 }
 
-uint64_t CRedisClient::_getBulkNum()
+int64_t CRedisClient::_getBulkNum()
 {
     return _getNum(PREFIX_BULK_REPLY );
 }
 
-uint64_t CRedisClient::_getMutilBulkNum()
+int64_t CRedisClient::_getMutilBulkNum()
 {
     return _getNum( PREFIX_MULTI_BULK_REPLY );
 }
@@ -226,33 +226,41 @@ uint64_t CRedisClient::_getMutilBulkNum()
 
 
 
-std::string CRedisClient::_replyBulk()
+bool CRedisClient::_replyBulk( string& value )
 {
-    uint64_t len = _getBulkNum();
+    value.clear();
+    int64_t len = _getBulkNum();
     DEBUGOUT( "getBulkNum", len );
-    string value ;
-    _socket.readLine( value );
-    if (value.length() == len )
+    if ( len == -1 )
     {
-        return value;
-    }else
+        return false;
+    }
+
+    _socket.readLine( value );
+
+    if ( value.length() != ( uint64_t)len )
     {
         throw ProtocolErr( "invalid bulk reply data; data of unexpected length" );
+    }else
+    {
+        return true;
     }
 }
 
 
 
 
-uint64_t CRedisClient::_replyMultiBulk(VecString &keys )
+bool CRedisClient::_replyMultiBulk(VecString &keys )
 {
     keys.clear();
     // get the number of rows of data received .
-   uint64_t num = _getMutilBulkNum();
+   int64_t num = _getMutilBulkNum();
+   
+   if ( num == -1 )
    string key = "";
-   uint64_t count = 0;
+   int64_t count = 0;
 
-   for ( uint64_t i = 0; i < num; i++ )
+   for ( int64_t i = 0; i < num; i++ )
    {
        // get the length of  data to the next line.
        count = _getBulkNum();
@@ -263,7 +271,7 @@ uint64_t CRedisClient::_replyMultiBulk(VecString &keys )
        }
        keys.push_back( key );
    }
-   return num;
+   return true;
 }
 
 void CRedisClient::_flushSocketRecvBuff(void)

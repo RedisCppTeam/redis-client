@@ -84,6 +84,7 @@ public:
     void reconnect();
 
     void closeConnect();
+    //---------------------------------common----------------------------------------
 
     bool ping( void );
 
@@ -109,7 +110,7 @@ public:
      */
     void	set( const string& key, const string& value );
 
-    void get( const string& key, string& value );
+    bool get( const string& key, string& value );
     //------------------------------list method--------------------------------------
     uint64_t lpush( const string& key ,const string&value );
 
@@ -126,6 +127,8 @@ public:
     uint8_t hset( const string& key, const string& field,const string& value );
 
 
+    bool hget(const string& key, const string& field, std::string &value );
+
 protected:
      /**
      * @brief sendCommand. send a Command to redis-server
@@ -133,19 +136,11 @@ protected:
      */
     void _sendCommand(  const string& cmd );
 
-    /**
-     * @brief _replyLine. Recv a single line  data from redis-server and should be recv "+xx\r\n"
-     * "-xx\r\n" ":100\r\n"
-     * @return return the line was read, not including "\r\n".
-     * @example +xxxx , -xx , :100
-     */
-    string _replyLine( void );
+    int64_t _getNum( const char prefix );
 
-    uint64_t _getNum( const char prefix );
+    int64_t _getBulkNum( void );
 
-    uint64_t _getBulkNum( void );
-
-    uint64_t _getMutilBulkNum( void );
+    int64_t _getMutilBulkNum( void );
 
     string _replyStatus( void );
 
@@ -155,13 +150,13 @@ protected:
      */
     void _replyOk( void );
 
-    uint64_t _replyInt( void );
+    int64_t _replyInt( void );
 
     /**
      * @brief _replyBulk
      * @return
      */
-    string _replyBulk( void );
+    bool _replyBulk( string& value );
 
     uint64_t _replyMultiBulk( VecString& keys );
 

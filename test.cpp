@@ -141,23 +141,22 @@ void TestHash( void )
     }
 }
 
-/*
+
 //  写到 TestHash().
 int main()
 {
+    string value;
     CRedisClient redis;
-    redis.connect( "127.0.0.1", 8080 );
-    if ( !redis.ping() )
-    {
-        std::cout << "失败!" << std::endl;
-    }
+    redis.connect( "127.0.0.1", 6379 );
+
+     redis.hget( "testHash", "dsdas", value ) ;
 
     //TestList();
     //TestHash();
     //TestKey();
     //TestString();
 
-}*/
+}
 
 
 
@@ -261,50 +260,10 @@ private:
 
 
 
+/*
 
 int main()
 {
-	CRedisPool redisPool;
-    redisPool.init("127.0.0.1", 6379, "0");
-	//Poco::Thread thread;
-	//thread.start(redisPool);
-
-
-/*	struct timeval tpstart,tpend;
-	float timeuse;
-	gettimeofday(&tpstart,NULL);*/
-/*
-	for(int i=0; i<10; i++)
-	{
-		CRedisClient* redis = redisPool.getConn();
-		TestHashEx(redis);
-	}*/
-
-/*	gettimeofday(&tpend,NULL);
-	timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+
-	tpend.tv_usec-tpstart.tv_usec;
-	timeuse/=1000000;
-	printf("Used Time:%f\n", timeuse);*/
-
-
-   // thread.join();
-
-	//struct timeval tpstart,tpend;
-	//float timeuse;
-	//gettimeofday(&tpstart,NULL);
-
-	//TestHashsingle();
-
-
-	   // gettimeofday(&tpend,NULL);
-	    //	timeuse=1000000*(tpend.tv_sec-tpstart.tv_sec)+
-	    //	tpend.tv_usec-tpstart.tv_usec;
-	    //	timeuse/=1000000;
-	    //	printf("Used Time:%f\n", timeuse);
-
-
-	//WorkRunnable work(&redisPool);
-
 	Poco::Thread* ttt[10];
 	WorkRunnable* kkk[10];
 	for(int i=0; i<10; i++)
@@ -329,23 +288,5 @@ int main()
     sleep( 100 );
 
     return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}*/
 

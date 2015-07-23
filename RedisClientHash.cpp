@@ -26,3 +26,14 @@ uint8_t CRedisClient::hset(const std::string &key, const std::string &field, con
     _sendCommand( cmd );
     return _replyInt();
 }
+
+bool CRedisClient::hget(const std::string &key, const std::string &field,  std::string &value)
+{
+    _socket.clearBuffer();
+
+    Command cmd( "HGET" );
+    cmd << key << field ;
+
+    _sendCommand( cmd );
+    return _replyBulk( value );
+}
