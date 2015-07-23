@@ -164,11 +164,6 @@ protected:
 
     bool _replyMultiBulk(VecResult &keys );
 
-    /**
-     * @brief _flushRecvBuff  Clear receiving buffer of raw socket.
-     */
-    void _flushSocketRecvBuff( void );
-
 private:
     DISALLOW_COPY_AND_ASSIGN( CRedisClient );
 
