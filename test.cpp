@@ -125,14 +125,15 @@ void TestHash( void )
     {
         CRedisClient redis;
         redis.connect( "127.0.0.1", 6379 );
-        for ( int i = 0; i < 100000 ; i++ )
-        {
-         //   std::cout << "====testHash====" << std::endl;
-           // uint8_t num = 0;
-            redis.hset( "testHash", "name2", "yang" );
-            //printf( "num=%u\n", num );
-            //sleep( 1 );
-        }
+
+        CResult result;
+
+        int32_t hashRet = redis.hset( "testHash", "name2", "yang" );
+        std::cout << "hashRet: " << hashRet << std::endl;
+
+        redis.hget( "testHash", "name3" ,result );
+
+        std::cout << result << std::endl;
     }catch( RdException& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
@@ -159,7 +160,7 @@ int main()
     }
 
     //TestList();
-    //TestHash();
+    TestHash();
     //TestKey();
     //TestString();
 }

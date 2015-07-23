@@ -312,7 +312,10 @@ bool CRedisClient::_replyMultiBulk( VecResult& keys )
 //    {           nRet= select(FD_SETSIZE, &fds, NULL, NULL, &timeout);
 //               if(nRet== 0)
 //                   break;
-//               recv(fd, tmp, 1024,0);
+//               int ret = recv(fd, tmp, 1024,0);
+//				if ( ret <=0 )
+//					break;
+//
 //    }
 //}
 
