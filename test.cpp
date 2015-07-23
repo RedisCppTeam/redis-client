@@ -14,6 +14,7 @@
 #include <stdio.h>
 
 #include "RdException.hpp"
+#include "CResult.h"
 
 using namespace std;
 
@@ -143,150 +144,30 @@ void TestHash( void )
 
 
 //  写到 TestHash().
-int main()
-{
-    string value;
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
+//int main()
+//{
+//    string value;
+//    CRedisClient redis;
+//    redis.connect( "127.0.0.1", 6379 );
+//
+//     redis.hget( "testHash", "dsdas", value ) ;
+//
+//     std::cout << "value: " << value << std::endl;
+//    //TestList();
+//    //TestHash();
+//    //TestKey();
+//    //TestString();
+//}
+//
 
-     redis.hget( "testHash", "dsdas", value ) ;
-
-    //TestList();
-    //TestHash();
-    //TestKey();
-    //TestString();
-
-}
-
-
-
-
-#include "CRedisPool.h"
-#include <sys/time.h>
-
-
-
-
-void TestHashEx(CRedisPool* pPool)
-{
-    try
-    {
-
-        for ( int i = 0; i < 10 ; i++ )
-        {
-        	CRedisClient* pclient = pPool->getConn();
-         //   std::cout << "====testHash====" << std::endl;
-           // uint8_t num = 0;
-        	pclient->hset( "testHash", "name2", "yang" );
-        	pPool->pushBackConn(pclient);
-            //printf( "num=%u\n", num );
-            //sleep( 1 );
-        }
-    }catch( RdException& e )
-    {
-        std::cout << "Redis exception:" << e.what() << std::endl;
-    }catch( Poco::Exception& e )
-    {
-        std::cout << "Poco_exception:" << e.what() << std::endl;
-    }
-}
-
-
-
-
-void TestHashsingle( void )
-{
-    try
-    {
-        CRedisClient redis;
-        redis.connect( "192.168.10.179", 6379 );
-        for ( int i = 0; i < 100000 ; i++ )
-        {
-         //   std::cout << "====testHash====" << std::endl;
-           // uint8_t num = 0;
-            redis.hset( "testHash", "name2", "yang" );
-            //printf( "num=%u\n", num );
-            //sleep( 1 );
-        }
-    }catch( RdException& e )
-    {
-        std::cout << "Redis exception:" << e.what() << std::endl;
-    }catch( Poco::Exception& e )
-    {
-        std::cout << "Poco_exception:" << e.what() << std::endl;
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#include <Poco/Thread.h>
-#include <Poco/Runnable.h>
-class WorkRunnable : public Poco::Runnable
-{
-public:
-	WorkRunnable(CRedisPool* redisPool){_redisPool = redisPool;}
-	~WorkRunnable(){}
-	virtual void run()
-	{
-		TestHashEx(_redisPool);
-	}
-
-
-private:
-	CRedisPool* _redisPool;
-
-};
-
-
-
-
-
-
-/*
 
 int main()
 {
-	Poco::Thread* ttt[10];
-	WorkRunnable* kkk[10];
-	for(int i=0; i<10; i++)
-	{
-		ttt[i]= new Poco::Thread();
+    CResult result("123");
+    result += "345";
+    result.setType( REDIS_REPLY_STRING );
+   // result.clear();
 
-		kkk[i] = new WorkRunnable(&redisPool);
-		ttt[i]->start(*kkk[i]);
-	}
-
-	for(int j=0; j<10; j++)
-	{
-		ttt[j]->join();
-		delete ttt[j];
-		delete kkk[j];
-	}
-
-
-    CRedisClient* r = redisPool.getConn();
-    sleep ( 10 );
-    redisPool.pushBackConn( r );
-    sleep( 100 );
-
-    return 0;
-}*/
+    std::cout << result<< std::endl;
+}
 

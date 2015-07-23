@@ -257,8 +257,11 @@ bool CRedisClient::_replyMultiBulk(VecString &keys )
    int64_t num = _getMutilBulkNum();
    
    if ( num == -1 )
-   string key = "";
-   int64_t count = 0;
+   {
+       return false;
+   }
+   string key;
+   uint64_t count = 0;
 
    for ( int64_t i = 0; i < num; i++ )
    {

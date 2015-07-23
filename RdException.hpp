@@ -63,7 +63,8 @@ NEW_EXCEPTION( ConnectErr )
 NEW_EXCEPTION( MaximumErr )
 ///< Convert from string to other type value failed.
 NEW_EXCEPTION( ConvertErr )
-
+///<
+NEW_EXCEPTION( TypeErr )
 
 #endif // RDEXCEPTION_H
 

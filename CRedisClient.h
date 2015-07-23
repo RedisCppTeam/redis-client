@@ -158,7 +158,7 @@ protected:
      */
     bool _replyBulk( string& value );
 
-    uint64_t _replyMultiBulk( VecString& keys );
+    bool _replyMultiBulk( VecString& keys );
 
     /**
      * @brief _flushRecvBuff  Clear receiving buffer of raw socket.
