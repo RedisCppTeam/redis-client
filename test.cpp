@@ -23,14 +23,14 @@ void TestKey( void )
 {
     try
     {
-        CRedisClient::VecString value;
+        CRedisClient::VecResult value;
         CRedisClient redis;
         redis.connect( "127.0.0.1", 6379 );
         for ( int i = 0; i < 10 ; i++ )
         {
             //--------------------------keys------------------------------
             redis.keys("test*", value );
-            std::vector<string>::const_iterator it = value.begin();
+            CRedisClient::VecResult::iterator it = value.begin();
 
             std::cout << "------------------------start value---------------------------" << std::endl;
             for ( ; it != value.end(); it++ )
@@ -144,35 +144,41 @@ void TestHash( void )
 
 
 //  写到 TestHash().
-//int main()
-//{
-//    string value;
-//    CRedisClient redis;
-//    redis.connect( "127.0.0.1", 6379 );
-//
-//     redis.hget( "testHash", "dsdas", value ) ;
-//
-//     std::cout << "value: " << value << std::endl;
-//    //TestList();
-//    //TestHash();
-//    //TestKey();
-//    //TestString();
-//}
-//
-
-
 int main()
 {
-    CResult result("123");
-    result.setType( REDIS_REPLY_STRING );
+    CRedisClient redis;
+    redis.connect( "127.0.0.1", 6379 );
 
-    result += "345";
-    CResult result2  ;
-    result2 = result;
+    CRedisClient::VecResult result;
+    redis.keys( "*", result );
+    CRedisClient::VecResult::iterator it = result.begin();
 
-   // result.clear();
+    for ( ; it != result.end(); it++ )
+    {
+        std::cout << *it << std::endl;
+    }
 
-    std::cout << result<< std::endl;
-    std::cout << result2<< std::endl;
+    //TestList();
+    //TestHash();
+    //TestKey();
+    //TestString();
 }
+
+
+
+///////////////////////////////////////// test CResult////////////////////////////////////////
+//int main()
+//{
+//    CResult result("123");
+//    result.setType( REDIS_REPLY_STRING );
+//
+//    result += "345";
+//    CResult result2  ;
+//    result2 = result;
+//
+//   // result.clear();
+//
+//    std::cout << result<< std::endl;
+//    std::cout << result2<< std::endl;
+//}
 

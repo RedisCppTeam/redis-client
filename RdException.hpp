@@ -53,7 +53,7 @@ private:
 
 ///< All exception base class is RdException
 
-///<  Do not conform to the requirements of the redis agreement.
+///<  Do not conform to the requirements of the redis  protocol.
 NEW_EXCEPTION( ProtocolErr )
 ///< Get unexcepted reply
 NEW_EXCEPTION( ReplyErr )

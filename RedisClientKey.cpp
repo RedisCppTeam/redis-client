@@ -11,7 +11,7 @@
 #include "CRedisClient.h"
 
 
-uint64_t CRedisClient::keys(const std::string &pattern, CRedisClient::VecString &keys )
+uint64_t CRedisClient::keys(const std::string &pattern, VecResult &keys )
 {
     _socket.clearBuffer();
 

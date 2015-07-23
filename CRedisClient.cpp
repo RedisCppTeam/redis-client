@@ -13,13 +13,13 @@
 #include "Poco/Types.h"
 
 
-const char CRedisClient:: PREFIX_STATUS_VALUE = '+';
-const char CRedisClient:: PREFIX_STATUS_ERR = '-';
+const char CRedisClient:: PREFIX_REPLY_STATUS = '+';
+const char CRedisClient:: PREFIX_REPLY_ERR = '-';
 const char CRedisClient:: PREFIX_REPLY_INT = ':';
 const char CRedisClient:: PREFIX_BULK_REPLY = '$';
 const char CRedisClient:: PREFIX_MULTI_BULK_REPLY = '*';
 
-
+//==============================based method====================================
 CRedisClient::CRedisClient()
 {
     Timespan timeout( 5 ,0 );
@@ -108,6 +108,7 @@ bool CRedisClient::ping()
 
 
 
+//==============================Core method=======================================
 
 void CRedisClient::_sendCommand( const string &cmd )
 {
@@ -130,10 +131,10 @@ string CRedisClient::_replyStatus(void)
     _socket.readLine( ret );
     DEBUGOUT( "ret", ret );
 
-    if ( ret[0] == PREFIX_STATUS_VALUE )
+    if ( ret[0] == PREFIX_REPLY_STATUS )
     {
         return ret.substr(1);
-    } else if( ret[0] == PREFIX_STATUS_ERR )
+    } else if( ret[0] == PREFIX_REPLY_ERR )
     {    // error
         throw ReplyErr( ret.substr(1) );
     }else
@@ -180,7 +181,7 @@ int64_t CRedisClient::_replyInt()
     if ( ret[0] == PREFIX_REPLY_INT )
     {
         num = _valueFromString<int64_t>( ret.substr(1) );
-    }else if ( ret[0] == PREFIX_STATUS_ERR )
+    }else if ( ret[0] == PREFIX_REPLY_ERR )
     {
         // error
         throw ReplyErr( ret.substr(1) );
@@ -204,7 +205,7 @@ int64_t CRedisClient::_getNum( const char prefix )
     if ( num[0] == prefix )
     {
         return _valueFromString<uint64_t>( num.substr(1) );
-    }else if ( num[0] == PREFIX_STATUS_ERR )
+    }else if ( num[0] == PREFIX_REPLY_ERR )
     {
         throw ReplyErr( num.substr(1) );
     }else
@@ -250,25 +251,33 @@ bool CRedisClient::_replyBulk( string& value )
 
 
 
-bool CRedisClient::_replyMultiBulk(VecString &keys )
+bool CRedisClient::_replyMultiBulk( VecResult& keys )
 {
     keys.clear();
     // get the number of rows of data received .
    int64_t num = _getMutilBulkNum();
    
-   if ( num == -1 )
+   if ( num < 0 )
    {
-       return false;
+       throw ProtocolErr( "keys command, reply -1 is unknow error" );
    }
-   string key;
-   uint64_t count = 0;
+   CResult key;
+   int64_t count = 0;
 
    for ( int64_t i = 0; i < num; i++ )
    {
        // get the length of  data to the next line.
        count = _getBulkNum();
+       if ( count == -1 )
+       {
+           key.setType( REDIS_REPLY_NIL );
+           continue;
+       }else
+       {
+            key.setType( REDIS_REPLY_STRING );
+       }
        _socket.readLine( key );
-       if ( count != key.length() )
+       if ( (uint32_t)count != key.length() )
        {
            throw ProtocolErr( "the length of recveived data is error!" );
        }

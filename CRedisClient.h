@@ -17,6 +17,8 @@
 #include "RdException.hpp"
 #include "CRedisSocket.h"
 
+#include "CResult.h"
+
 using namespace Poco;
 
 /**
@@ -26,7 +28,9 @@ class CRedisClient
 {
 public:
 
-    typedef     vector<std::string> VecString;
+    typedef  	vector<std::string> VecString;
+
+    typedef 	vector<CResult> VecResult;
 
     CRedisClient();
     ~CRedisClient();
@@ -96,7 +100,7 @@ public:
      * @param keys [out] vector of keys maching pattern 
      * @return The number of keys returned.
      */
-    uint64_t keys( const string& pattern, VecString& keys );
+    uint64_t keys( const string& pattern, VecResult& keys );
 
     uint64_t del( VecString& keys );
 
@@ -158,7 +162,7 @@ protected:
      */
     bool _replyBulk( string& value );
 
-    bool _replyMultiBulk( VecString& keys );
+    bool _replyMultiBulk(VecResult &keys );
 
     /**
      * @brief _flushRecvBuff  Clear receiving buffer of raw socket.
@@ -177,8 +181,8 @@ private:
         MAX_LINE_SIZE = 2048,
         MAX_RECV_SIZE = 1024*1024		///< The max number of recved data.( 1M  )
     };
-    static const char PREFIX_STATUS_VALUE;
-    static const char PREFIX_STATUS_ERR;
+    static const char PREFIX_REPLY_STATUS;
+    static const char PREFIX_REPLY_ERR;
     static const char PREFIX_REPLY_INT;
     static const char PREFIX_BULK_REPLY;
     static const char PREFIX_MULTI_BULK_REPLY;

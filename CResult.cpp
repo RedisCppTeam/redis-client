@@ -91,7 +91,7 @@ string CResult::getTypeString( ReplyType e )
 std::ostream &operator<<(std::ostream& out,  CResult &value)
 {
     string type =CResult::getTypeString( value._type );
-    out << "( type: " << type << " , value:" << std::string( value ) << " )";
+    out << "( type: " << type << " , value: " << std::string( value ) << " )";
     return out;
 }
 
