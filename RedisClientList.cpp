@@ -38,6 +38,15 @@ uint64_t CRedisClient::lpush(const std::string &key, const VecString& value)
     return _replyInt();
 }
 
+int8_t CRedisClient::lpop( const std::string& key, CResult& value )
+{
+    _socket.clearBuffer();
 
+    Command cmd( "LPOP" );
+    cmd << key;
+    _sendCommand( cmd );
+
+    return _replyBulk( value );
+}
 
 

@@ -27,7 +27,7 @@ uint8_t CRedisClient::hset(const std::string &key, const std::string &field, con
     return _replyInt();
 }
 
-void CRedisClient::hget(const std::string &key, const std::string &field,  CResult &value)
+int8_t CRedisClient::hget(const std::string &key, const std::string &field,  CResult &value)
 {
     _socket.clearBuffer();
 
@@ -36,5 +36,5 @@ void CRedisClient::hget(const std::string &key, const std::string &field,  CResu
 
     _sendCommand( cmd );
 
-    _replyBulk( value );
+    return _replyBulk( value );
 }

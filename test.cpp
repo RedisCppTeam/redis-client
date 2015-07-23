@@ -63,21 +63,22 @@ void TestList( void )
     try
     {
         CRedisClient::VecString value;
-        string v0 = "yu";
-        string v1 = "hai";
-        string v2 = "yang";
-
-        value.push_back( v0 );
-        value.push_back( v1 );
-        value.push_back( v2 );
+        CResult ret;
+        value.push_back( "yu" );
+        value.push_back( "hai" );
+        value.push_back( "yang" );
 
         CRedisClient redis;
         redis.connect( "127.0.0.1", 6379 );
         for ( int i = 0; i < 10 ; i++ )
         {
-            std::cout << "====testList====" << std::endl;
-            uint64_t num = redis.lpush( "name", value );
-            std::cout << "num" << num << std::endl;
+            std::cout << "======================testList=========================" << std::endl;
+           // uint64_t num = redis.lpush( "name", value );
+            //std::cout << "num" << num << std::endl;
+
+            redis.lpop( "name", ret );
+            std::cout << "listRet: " << ret << std::endl;
+
             sleep( 1 );
         }
     }catch( RdException& e )
@@ -159,8 +160,8 @@ int main()
         std::cout << *it << std::endl;
     }
 
-    //TestList();
-    TestHash();
+    TestList();
+    //TestHash();
     //TestKey();
     //TestString();
 }

@@ -114,12 +114,13 @@ public:
      */
     void	set( const string& key, const string& value );
 
-    void get(const string& key, CResult &value );
+    int8_t get(const string& key, CResult &value );
     //------------------------------list method--------------------------------------
     uint64_t lpush( const string& key ,const string&value );
 
     uint64_t lpush( const string& key, const VecString& value );
 
+    int8_t lpop(const std::string &key, CResult &value);
     //------------------------------hash method-----------------------------------
     /**
      * @brief hset  insert into a value to hash name is key field is field .
@@ -131,7 +132,7 @@ public:
     uint8_t hset( const string& key, const string& field,const string& value );
 
 
-    void hget(const string& key, const string& field, CResult &value );
+    int8_t hget(const string& key, const string& field, CResult &value );
 
 protected:
      /**
@@ -160,7 +161,7 @@ protected:
      * @brief _replyBulk
      * @return
      */
-    void _replyBulk(CResult &value );
+    uint8_t _replyBulk(CResult &value );
 
     bool _replyMultiBulk(VecResult &keys );
 

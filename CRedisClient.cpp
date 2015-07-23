@@ -231,14 +231,14 @@ int64_t CRedisClient::_getMutilBulkNum()
 
 
 
-void CRedisClient::_replyBulk( CResult& value )
+uint8_t CRedisClient::_replyBulk( CResult& value )
 {
     value.clear();
     int64_t len = _getBulkNum();
     DEBUGOUT( "getBulkNum", len );
     if ( len == -1 )
     {
-        return;
+        return 0;
     }
 
     _socket.readLine( value );
@@ -246,6 +246,7 @@ void CRedisClient::_replyBulk( CResult& value )
     if ( value.length() == ( uint32_t)len )
     {
         value.setType( REDIS_REPLY_STRING );
+        return 1;
     }else
     {
         value.clear();
