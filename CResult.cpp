@@ -6,6 +6,12 @@ CResult::CResult():
 
 }
 
+CResult::CResult( const CResult& other ):
+    std::string( other ),
+    _type( other._type )
+{
+}
+
 CResult::CResult(const std::string &value):
     std::string( value ),
     _type( REDIS_REPLY_NIL )
@@ -26,6 +32,24 @@ void CResult::setType(const ReplyType e)
 ReplyType CResult::getType() const
 {
     return _type;
+}
+
+void CResult::assign(CResult &other)
+{
+    if ( this == &other )
+    {
+        return;
+    }
+
+    _type = other._type;
+    string::assign( other );
+    return;
+}
+
+CResult &CResult::operator=(CResult &other)
+{
+    assign( other );
+    return *this;
 }
 
 void CResult::clear()

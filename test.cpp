@@ -164,10 +164,15 @@ void TestHash( void )
 int main()
 {
     CResult result("123");
-    result += "345";
     result.setType( REDIS_REPLY_STRING );
+
+    result += "345";
+    CResult result2  ;
+    result2 = result;
+
    // result.clear();
 
     std::cout << result<< std::endl;
+    std::cout << result2<< std::endl;
 }
 

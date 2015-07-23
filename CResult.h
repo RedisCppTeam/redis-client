@@ -17,13 +17,23 @@ typedef enum ReplyType
 class CResult : public std::string
 {
 public:
+
     CResult();
+
+    CResult( const CResult& other );
+
     CResult( const string& value );
+
     ~CResult();
 
     void setType( const ReplyType e );
 
     ReplyType getType( void ) const ;
+
+
+    void assign( CResult& other );
+
+    CResult& operator= ( CResult& other );
 
     void clear();
     /**
@@ -32,6 +42,7 @@ public:
      * @return get a string to discribe a type of CResult.
      */
     static string getTypeString(ReplyType e);
+
 
     friend std::ostream &operator<<(std::ostream& out,  CResult &value);
 private:
