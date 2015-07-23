@@ -114,7 +114,7 @@ public:
      */
     void	set( const string& key, const string& value );
 
-    bool get( const string& key, string& value );
+    void get(const string& key, CResult &value );
     //------------------------------list method--------------------------------------
     uint64_t lpush( const string& key ,const string&value );
 
@@ -131,7 +131,7 @@ public:
     uint8_t hset( const string& key, const string& field,const string& value );
 
 
-    bool hget(const string& key, const string& field, std::string &value );
+    void hget(const string& key, const string& field, CResult &value );
 
 protected:
      /**
@@ -160,7 +160,7 @@ protected:
      * @brief _replyBulk
      * @return
      */
-    bool _replyBulk( string& value );
+    void _replyBulk(CResult &value );
 
     bool _replyMultiBulk(VecResult &keys );
 

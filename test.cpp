@@ -96,7 +96,7 @@ void TestString( void )
         CRedisClient redis;
         redis.connect( "192.168.10.105", 6379 );
 
-        string value;
+        CResult value;
         for ( int i = 0; i < 10 ; i++ )
         {
 

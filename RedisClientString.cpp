@@ -23,7 +23,7 @@ void CRedisClient::set(const std::string &key, const std::string &value)
     _replyOk();
 }
 
-bool CRedisClient::get(const std::string &key, std::string &value)
+void CRedisClient::get(const std::string &key,CResult &value)
 {
     _socket.clearBuffer();
 

@@ -227,24 +227,25 @@ int64_t CRedisClient::_getMutilBulkNum()
 
 
 
-bool CRedisClient::_replyBulk( string& value )
+void CRedisClient::_replyBulk( CResult& value )
 {
     value.clear();
     int64_t len = _getBulkNum();
     DEBUGOUT( "getBulkNum", len );
     if ( len == -1 )
     {
-        return false;
+        return;
     }
 
     _socket.readLine( value );
 
-    if ( value.length() != ( uint64_t)len )
+    if ( value.length() == ( uint32_t)len )
     {
-        throw ProtocolErr( "invalid bulk reply data; data of unexpected length" );
+        value.setType( REDIS_REPLY_STRING );
     }else
     {
-        return true;
+        value.clear();
+        throw ProtocolErr( "invalid bulk reply data; data of unexpected length" );
     }
 }
 
