@@ -108,11 +108,10 @@ void CRedisSocket::_flushSocketRecvBuff()
         nRet= ::select(FD_SETSIZE, &fds, NULL, NULL, &timeout);
         if(nRet <= 0)
             break;
+
         int count = recv(fd, tmp, 1024,0);
         if ( count <= 0 )
-        {
             break;
-        }
     }
 }
 

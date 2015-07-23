@@ -119,6 +119,10 @@ void CRedisClient::_sendCommand( const string &cmd )
     int sd = 0;
     do{
         sd = _socket.sendBytes( sdData, sdLen-sded );
+        if ( sd < 0 )
+        {
+            throw ConnectErr("sendByte failed!");
+        }
         sded += sd;
         sdData += sd;
     }while( sded < sdLen );
@@ -287,30 +291,30 @@ bool CRedisClient::_replyMultiBulk( VecResult& keys )
    return true;
 }
 
-void CRedisClient::_flushSocketRecvBuff(void)
-{
-    struct timeval timeout;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
-
-    int fd = _socket.impl()->sockfd();
-
-    fd_set         fds;
-    FD_ZERO(&fds);
-    FD_SET( fd, &fds );
-
-    int nRet;
-    char tmp[1024];
-
-    memset(tmp, 0, sizeof(tmp));
-
-    while(1)
-    {           nRet= select(FD_SETSIZE, &fds, NULL, NULL, &timeout);
-               if(nRet== 0)
-                   break;
-               recv(fd, tmp, 1024,0);
-    }
-}
+//void CRedisClient::_flushSocketRecvBuff(void)
+//{
+//    struct timeval timeout;
+//    timeout.tv_sec = 0;
+//    timeout.tv_usec = 0;
+//
+//    int fd = _socket.impl()->sockfd();
+//
+//    fd_set         fds;
+//    FD_ZERO(&fds);
+//    FD_SET( fd, &fds );
+//
+//    int nRet;
+//    char tmp[1024];
+//
+//    memset(tmp, 0, sizeof(tmp));
+//
+//    while(1)
+//    {           nRet= select(FD_SETSIZE, &fds, NULL, NULL, &timeout);
+//               if(nRet== 0)
+//                   break;
+//               recv(fd, tmp, 1024,0);
+//    }
+//}
 
 
 
