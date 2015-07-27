@@ -222,6 +222,12 @@ int main()
     redis.exec( result );
 
     std::cout << result << std::endl;
+
+    CRedisClient::VecString ret;
+    redis.keys( "*", ret );
+    CRedisClient::VecString::const_iterator it = ret.begin();
+    for ( ; it != ret.end(); it++ )
+        std::cout << *it << std::endl;
 }
 
 

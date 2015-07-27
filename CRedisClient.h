@@ -30,8 +30,6 @@ public:
 
     typedef  	vector<std::string> VecString;
 
-    typedef 	vector<CResult> VecResult;
-
     CRedisClient();
     ~CRedisClient();
 
@@ -148,6 +146,7 @@ public:
 
     void exec(CResult &result );
 
+    uint64_t keys(const std::string &pattern, VecString &result);
 protected:
      /**
      * @brief sendCommand. send a Command to redis-server

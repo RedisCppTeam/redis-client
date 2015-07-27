@@ -1,6 +1,6 @@
 #include "CResult.h"
 #include <sstream>
-
+#include "RdException.hpp"
 
 CResult::CResult():
    _type( REDIS_REPLY_NIL )
@@ -48,19 +48,70 @@ bool CResult::addElement(const CResult &ele)
     return true;
 }
 
-CResult::CResultList &CResult::getArry()
+const CResult::CResultList &CResult::getArry( void ) const
 {
+    if ( _type != REDIS_REPLY_ARRAY )
+    {
+        throw TypeErr( "Data is not arry type" );
+    }
     return _arry;
 }
 
-std::string CResult::display(CResult &ele, int indent )
+int64_t CResult::getInt(void) const
+{
+    if ( _type != REDIS_REPLY_INTEGERER )
+    {
+         throw TypeErr( "Data is not int type" );
+    }
+
+    int64_t value;
+    std::istringstream istr( std::string(*this) );
+    istr >> value;
+
+    if ( istr.fail() )
+    {
+         throw TypeErr( "Data is not int type" );
+    }
+
+    return value;
+}
+
+string CResult::getString( void ) const
+{
+    if ( _type != REDIS_REPLY_STRING )
+    {
+         throw TypeErr( "Data is not string type" );
+    }
+    return *this;
+}
+
+string CResult::getErrorString( void ) const
+{
+    if ( _type != REDIS_REPLY_ERROR )
+    {
+         throw TypeErr( "Data is not error type" );
+    }
+    return *this;
+}
+
+string CResult::getStatus( void ) const
+{
+    if ( _type != REDIS_REPLY_STATUS )
+    {
+         throw TypeErr( "Data is not error type" );
+    }
+    return *this;
+}
+
+
+std::string CResult::display( const CResult &ele, int indent )
 {
     ReplyType e = ele.getType( );
     string type =CResult::getTypeString( e );
     std::stringstream out;
     if ( REDIS_REPLY_ARRAY == e )
     {
-       CResult::CResultList::iterator it = ele.getArry().begin() ;
+       CResult::CResultList::const_iterator it = ele.getArry().begin() ;
         indent += 3;
 
         out <<"{\n";
@@ -162,7 +213,7 @@ string CResult::getTypeString( ReplyType e )
 
 
 
-std::ostream &operator<<(std::ostream& out,  CResult &value)
+std::ostream &operator<<(std::ostream& out,  const CResult &value)
 {
     string str = CResult::display( value, 0 );
     out << str;

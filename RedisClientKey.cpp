@@ -24,6 +24,18 @@ uint64_t CRedisClient::keys(const std::string &pattern, CResult &result )
    return result.getArry().size();
 }
 
+uint64_t CRedisClient::keys(const std::string &pattern, VecString &result )
+{
+    CResult ret;
+    keys( pattern, ret );
+    CResult::CResultList::const_iterator it = ret.getArry().begin();
+    for ( ; it != ret.getArry().end(); it++ )
+    {
+        result.push_back( *it );
+    }
+    return result.size();
+}
+
 //uint64_t CRedisClient::del( CRedisClient::VecString &keys )
 //{
 //    _socket.clearBuffer();

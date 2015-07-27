@@ -34,10 +34,17 @@ public:
 
     bool addElement(const CResult &ele);
 
-    CResultList& getArry( void );
+    const CResultList &getArry( void ) const;
 
+    int64_t getInt( void ) const;
 
-    static string display(  CResult& ele, int indent );
+    string getString( void )const;
+
+    string getErrorString( void ) const;
+
+    string getStatus( void ) const;
+
+    static string display(const CResult &ele, int indent );
 
 
     void assign(const CResult &other );
@@ -56,7 +63,8 @@ public:
     static string getTypeString(ReplyType e);
 
 
-    friend std::ostream &operator<<(std::ostream& out,  CResult &value);
+    friend std::ostream &operator<<(std::ostream& out,  const CResult &value);
+
 private:
     ReplyType _type;
     CResultList _arry;
