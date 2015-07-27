@@ -157,9 +157,9 @@ protected:
 
     bool _getReply(CResult& result );
 
-    uint8_t _replyBulk(CResult &value );
+    uint8_t _replyBulk(CResult &value, const string& line );
 
-    bool _replyMultiBulk(CResult &result );
+    uint64_t _replyMultiBulk(CResult &result , const std::string &line);
 
     template <typename T>
     T _valueFromString( const string& data )

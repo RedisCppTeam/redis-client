@@ -108,7 +108,7 @@ void CRedisClient::closeConnect()
 //
 
 
-//==============================Core method=======================================
+//==============================method offen used====================================
 
 void CRedisClient::_sendCommand( const string &cmd )
 {
@@ -132,29 +132,30 @@ void CRedisClient::_sendCommand( const string &cmd )
 bool CRedisClient::_getReply( CResult &result )
 {
     result.clear();
-    _socket.readLine( result );
-    DEBUGOUT( "row data",result )
-    switch ( result[0] )
+    std::string line;
+    _socket.readLine( line );
+    DEBUGOUT( "row data",line )
+    switch ( line[0] )
     {
     case PREFIX_REPLY_INT:
         result.setType( REDIS_REPLY_INTEGERER );
-        result = result.substr( 1 );
+        result = line.substr( 1 );
         break;
     case PREFIX_REPLY_STATUS:
         result.setType( REDIS_REPLY_STATUS );
-        result = result.substr( 1 );
+        result = line.substr( 1 );
         break;
     case PREFIX_REPLY_ERR:
         result.setType( REDIS_REPLY_ERROR );
-        result = result.substr( 1 );
+        result = line.substr( 1 );
         break;
     case PREFIX_BULK_REPLY:
         result.setType( REDIS_REPLY_STRING );
-        _replyBulk( result );
+        _replyBulk( result,line );
         break;
     case PREFIX_MULTI_BULK_REPLY:
         result.setType( REDIS_REPLY_ARRAY );
-        _replyMultiBulk( result );
+        _replyMultiBulk( result,line );
         break;
     default:
         throw ProtocolErr( "unknow type" );
@@ -163,10 +164,10 @@ bool CRedisClient::_getReply( CResult &result )
     return true;
 }
 
-uint8_t CRedisClient::_replyBulk( CResult& value )
+uint8_t CRedisClient::_replyBulk(CResult& value , const std::string &line)
 {
     // get the number of CResult received .
-    int64_t len = _valueFromString<int64_t>( value.substr(1) );
+    int64_t len = _valueFromString<int64_t>( line.substr(1) );
 
     if ( len == -1 )
     {
@@ -189,10 +190,10 @@ uint8_t CRedisClient::_replyBulk( CResult& value )
 }
 
 
-bool CRedisClient::_replyMultiBulk(CResult& result)
+uint64_t CRedisClient::_replyMultiBulk(CResult& result, const std::string &line )
 {
     // get the number of CResult received .
-   int64_t replyNum = _valueFromString<int64_t>( result.substr(1) );
+   int64_t replyNum = _valueFromString<int64_t>( line.substr(1) );
    CResult ele;
    for ( int i = 0; i< replyNum; i++ )
    {
@@ -200,10 +201,6 @@ bool CRedisClient::_replyMultiBulk(CResult& result)
        result.addElement( ele );
    }
    
-   return true;
+   return result.getArry().size();
 }
-
-
-
-
 
