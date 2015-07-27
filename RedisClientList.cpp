@@ -13,40 +13,41 @@
 #include "CRedisClient.h"
 
 
-uint64_t CRedisClient::lpush(const std::string &key, const std::string &value)
-{
-    _socket.clearBuffer();
-
-    Command cmd( "LPUSH" );
-    cmd << key << value;
-    _sendCommand( cmd );
-    return _replyInt();
-}
-
-uint64_t CRedisClient::lpush(const std::string &key, const VecString& value)
-{
-    _socket.clearBuffer();
-
-    Command cmd("LPUSH");
-    VecString::const_iterator it = value.begin();
-    cmd << key;
-    for ( ; it !=value.end(); it++ )
-    {
-        cmd << *it;
-    }
-    _sendCommand( cmd );
-    return _replyInt();
-}
-
-int8_t CRedisClient::lpop( const std::string& key, CResult& value )
-{
-    _socket.clearBuffer();
-
-    Command cmd( "LPOP" );
-    cmd << key;
-    _sendCommand( cmd );
-
-    return _replyBulk( value );
-}
-
-
+//uint64_t CRedisClient::lpush(const std::string &key, const std::string &value)
+//{
+//    _socket.clearBuffer();
+//
+//    Command cmd( "LPUSH" );
+//    cmd << key << value;
+//    _sendCommand( cmd );
+//    return _replyInt();
+//}
+//
+//uint64_t CRedisClient::lpush(const std::string &key, const VecString& value)
+//{
+//    _socket.clearBuffer();
+//
+//    Command cmd("LPUSH");
+//    VecString::const_iterator it = value.begin();
+//    cmd << key;
+//    for ( ; it !=value.end(); it++ )
+//    {
+//        cmd << *it;
+//    }
+//    _sendCommand( cmd );
+//    return _replyInt();
+//}
+//
+//int8_t CRedisClient::lpop( const std::string& key, CResult& value )
+//{
+//    _socket.clearBuffer();
+//
+//    Command cmd( "LPOP" );
+//    cmd << key;
+//    _sendCommand( cmd );
+//
+//    return _replyBulk( value );
+//}
+//
+//
+//

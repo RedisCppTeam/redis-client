@@ -11,7 +11,7 @@
 #include "CRedisClient.h"
 
 
-uint64_t CRedisClient::keys(const std::string &pattern, VecResult &keys )
+uint64_t CRedisClient::keys(const std::string &pattern, CResult &result )
 {
     _socket.clearBuffer();
 
@@ -20,22 +20,24 @@ uint64_t CRedisClient::keys(const std::string &pattern, VecResult &keys )
 
     _sendCommand( cmd );
 
-    return _replyMultiBulk( keys );
+   _getReply( result );
+   return result.getArry().size();
 }
 
-uint64_t CRedisClient::del( CRedisClient::VecString &keys )
-{
-    _socket.clearBuffer();
-
-    Command cmd( "DEL" );
-    VecString::const_iterator it = keys.begin();
-
-    for ( ; it != keys.end(); it++ )
-    {
-        cmd << *it ;
-    }
-
-    _sendCommand( cmd );
-    return _replyInt( );
-}
-
+//uint64_t CRedisClient::del( CRedisClient::VecString &keys )
+//{
+//    _socket.clearBuffer();
+//
+//    Command cmd( "DEL" );
+//    VecString::const_iterator it = keys.begin();
+//
+//    for ( ; it != keys.end(); it++ )
+//    {
+//        cmd << *it ;
+//    }
+//
+//    _sendCommand( cmd );
+//    return _replyInt( );
+//}
+//
+//

@@ -81,31 +81,31 @@ void CRedisClient::closeConnect()
 	_socket.shutdown();
 }
 
-bool CRedisClient::ping()
-{
-    try
-    {
-        _socket.clearBuffer();
-
-        Command cmd( "PING" );
-        _sendCommand( cmd );
-        DEBUGOUT( "send", string( cmd ) );
-
-        string value = _replyStatus();
-        if ( value != "PONG" )
-        {
-            return false;
-        }else
-        {
-            return true;
-        }
-    }catch ( std::exception& e )
-    {
-        DEBUGOUT( "Ping catch exception:", e.what() );
-       return false;
-    }
-}
-
+//bool CRedisClient::ping()
+//{
+//    try
+//    {
+//        _socket.clearBuffer();
+//
+//        Command cmd( "PING" );
+//        _sendCommand( cmd );
+//        DEBUGOUT( "send", string( cmd ) );
+//
+//        string value = _replyStatus();
+//        if ( value != "PONG" )
+//        {
+//            return false;
+//        }else
+//        {
+//            return true;
+//        }
+//    }catch ( std::exception& e )
+//    {
+//        DEBUGOUT( "Ping catch exception:", e.what() );
+//       return false;
+//    }
+//}
+//
 
 
 //==============================Core method=======================================
@@ -129,115 +129,49 @@ void CRedisClient::_sendCommand( const string &cmd )
     return ;
 }
 
-string CRedisClient::_replyStatus(void)
+bool CRedisClient::_getReply( CResult &result )
 {
-    string ret;
-    _socket.readLine( ret );
-    DEBUGOUT( "ret", ret );
-
-    if ( ret[0] == PREFIX_REPLY_STATUS )
+    result.clear();
+    _socket.readLine( result );
+    DEBUGOUT( "row data",result )
+    switch ( result[0] )
     {
-        return ret.substr(1);
-    } else if( ret[0] == PREFIX_REPLY_ERR )
-    {    // error
-        throw ReplyErr( ret.substr(1) );
-    }else
-    {
-        throw ProtocolErr("unexpected prefix for status reply");
+    case PREFIX_REPLY_INT:
+        result.setType( REDIS_REPLY_INTEGERER );
+        result = result.substr( 1 );
+        break;
+    case PREFIX_REPLY_STATUS:
+        result.setType( REDIS_REPLY_STATUS );
+        result = result.substr( 1 );
+        break;
+    case PREFIX_REPLY_ERR:
+        result.setType( REDIS_REPLY_ERROR );
+        result = result.substr( 1 );
+        break;
+    case PREFIX_BULK_REPLY:
+        result.setType( REDIS_REPLY_STRING );
+        _replyBulk( result );
+        break;
+    case PREFIX_MULTI_BULK_REPLY:
+        result.setType( REDIS_REPLY_ARRAY );
+        _replyMultiBulk( result );
+        break;
+    default:
+        throw ProtocolErr( "unknow type" );
+        break;
     }
+    return true;
 }
-
-
-void CRedisClient::_replyOk()
-{
-    string ret = _replyStatus();
-    if ( ret != "OK" )
-    {
-      throw ProtocolErr("excepted \"OK\" response");
-    }else
-    {
-        return;
-    }
- }
-
-
-template <typename T>
-T _valueFromString( const string& data )
-{
-    T value ;
-    std::istringstream istr( data );
-    istr >> value;
-    if ( istr.fail() )
-    {
-        throw ConvertErr( "convert from string to other type value falied" );
-    }
-
-    return value;
-}
-
-int64_t CRedisClient::_replyInt()
-{
-    int64_t num = 0 ;
-    string ret;
-    _socket.readLine( ret );
-    DEBUGOUT( "ret ", ret );
-    //successful
-    if ( ret[0] == PREFIX_REPLY_INT )
-    {
-        num = _valueFromString<int64_t>( ret.substr(1) );
-    }else if ( ret[0] == PREFIX_REPLY_ERR )
-    {
-        // error
-        throw ReplyErr( ret.substr(1) );
-    }else
-    {
-        throw ProtocolErr("unexpected prefix for status reply");
-    }
-    return num;
-}
-
-int64_t CRedisClient::_getNum( const char prefix )
-{
-    string num;
-    if ( !_socket.readLine( num ) )
-    {
-        throw ProtocolErr( "readLine error" );
-    }
-
-    DEBUGOUT( "num", num );
-
-    if ( num[0] == prefix )
-    {
-        return _valueFromString<uint64_t>( num.substr(1) );
-    }else if ( num[0] == PREFIX_REPLY_ERR )
-    {
-        throw ReplyErr( num.substr(1) );
-    }else
-    {
-        throw ProtocolErr("unexpected prefix for status reply");
-    }
-}
-
-int64_t CRedisClient::_getBulkNum()
-{
-    return _getNum(PREFIX_BULK_REPLY );
-}
-
-int64_t CRedisClient::_getMutilBulkNum()
-{
-    return _getNum( PREFIX_MULTI_BULK_REPLY );
-}
-
-
-
 
 uint8_t CRedisClient::_replyBulk( CResult& value )
 {
-    value.clear();
-    int64_t len = _getBulkNum();
-    DEBUGOUT( "getBulkNum", len );
+    // get the number of CResult received .
+    int64_t len = _valueFromString<int64_t>( value.substr(1) );
+
     if ( len == -1 )
     {
+        value = "";
+        value.setType( REDIS_REPLY_NIL );
         return 0;
     }
 
@@ -250,75 +184,24 @@ uint8_t CRedisClient::_replyBulk( CResult& value )
     }else
     {
         value.clear();
-        throw ProtocolErr( "invalid bulk reply data; data of unexpected length" );
+        throw ProtocolErr( "invalid bulk reply data; length of data is unexpected" );
     }
 }
 
 
-
-
-bool CRedisClient::_replyMultiBulk( VecResult& keys )
+bool CRedisClient::_replyMultiBulk(CResult& result)
 {
-    keys.clear();
-    // get the number of rows of data received .
-   int64_t num = _getMutilBulkNum();
+    // get the number of CResult received .
+   int64_t replyNum = _valueFromString<int64_t>( result.substr(1) );
+   CResult ele;
+   for ( int i = 0; i< replyNum; i++ )
+   {
+       _getReply( ele );
+       result.addElement( ele );
+   }
    
-   if ( num < 0 )
-   {
-       throw ProtocolErr( "keys command, reply -1 is unknow error" );
-   }
-   CResult key;
-   int64_t count = 0;
-
-   for ( int64_t i = 0; i < num; i++ )
-   {
-       // get the length of  data to the next line.
-       count = _getBulkNum();
-       if ( count == -1 )
-       {
-           key.setType( REDIS_REPLY_NIL );
-           continue;
-       }else
-       {
-            key.setType( REDIS_REPLY_STRING );
-       }
-       _socket.readLine( key );
-       if ( (uint32_t)count != key.length() )
-       {
-           throw ProtocolErr( "the length of recveived data is error!" );
-       }
-       keys.push_back( key );
-   }
    return true;
 }
-
-//void CRedisClient::_flushSocketRecvBuff(void)
-//{
-//    struct timeval timeout;
-//    timeout.tv_sec = 0;
-//    timeout.tv_usec = 0;
-//
-//    int fd = _socket.impl()->sockfd();
-//
-//    fd_set         fds;
-//    FD_ZERO(&fds);
-//    FD_SET( fd, &fds );
-//
-//    int nRet;
-//    char tmp[1024];
-//
-//    memset(tmp, 0, sizeof(tmp));
-//
-//    while(1)
-//    {           nRet= select(FD_SETSIZE, &fds, NULL, NULL, &timeout);
-//               if(nRet== 0)
-//                   break;
-//               int ret = recv(fd, tmp, 1024,0);
-//				if ( ret <=0 )
-//					break;
-//
-//    }
-//}
 
 
 

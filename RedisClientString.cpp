@@ -12,27 +12,26 @@
 #include "CRedisClient.h"
 
 //-----------------------------string method--------------------------------------
-void CRedisClient::set(const std::string &key, const std::string &value)
-{
-    _socket.clearBuffer();
-
-    Command cmd( "SET" );
-    cmd << key << value;
-   _sendCommand( cmd );
-    DEBUGOUT( "send" ,string( cmd ) );
-    _replyOk();
-}
-
-int8_t CRedisClient::get(const std::string &key,CResult &value)
-{
-    _socket.clearBuffer();
-
-    Command cmd( "GET" );
-    cmd << key ;
-    _sendCommand( cmd );
-    DEBUGOUT( "send", string( cmd ) );
-
-    return _replyBulk( value );
-}
-
-
+//void CRedisClient::set(const std::string &key, const std::string &value)
+//{
+//    _socket.clearBuffer();
+//
+//    Command cmd( "SET" );
+//    cmd << key << value;
+//   _sendCommand( cmd );
+//
+//    _replyOk();
+//}
+//
+//int8_t CRedisClient::get(const std::string &key,CResult &value)
+//{
+//    _socket.clearBuffer();
+//
+//    Command cmd( "GET" );
+//    cmd << key ;
+//    _sendCommand( cmd );
+//
+//    return _replyBulk( value );
+//}
+//
+//

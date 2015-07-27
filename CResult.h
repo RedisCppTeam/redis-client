@@ -18,6 +18,8 @@ class CResult : public std::string
 {
 public:
 
+    typedef std::list<CResult> CResultList;
+
     CResult();
 
     CResult( const CResult& other );
@@ -30,10 +32,20 @@ public:
 
     ReplyType getType( void ) const ;
 
+    bool addElement(const CResult &ele);
 
-    void assign( CResult& other );
+    CResultList& getArry( void );
 
-    CResult& operator= ( CResult& other );
+
+    static string display(  CResult& ele, int indent );
+
+
+    void assign(const CResult &other );
+
+    CResult& operator= ( const string& value );
+    CResult& operator= ( const CResult& other );
+
+
 
     void clear();
     /**
@@ -47,6 +59,7 @@ public:
     friend std::ostream &operator<<(std::ostream& out,  CResult &value);
 private:
     ReplyType _type;
+    CResultList _arry;
 };
 
 #endif // CRESULT_H

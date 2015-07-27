@@ -100,7 +100,7 @@ public:
      * @param keys [out] vector of keys maching pattern 
      * @return The number of keys returned.
      */
-    uint64_t keys( const string& pattern, VecResult& keys );
+    uint64_t keys(const string& pattern, CResult &result );
 
     uint64_t del( VecString& keys );
 
@@ -134,6 +134,20 @@ public:
 
     int8_t hget(const string& key, const string& field, CResult &value );
 
+    //--------------------------transtraction method------------------------------
+
+    void watch( const VecString& keys );
+
+    void unwatch( void );
+
+    void multi( void );
+
+    void discard( void );
+
+    bool runCmd( const string& cmd, VecString& params );
+
+    void exec(CResult &result );
+
 protected:
      /**
      * @brief sendCommand. send a Command to redis-server
@@ -141,29 +155,25 @@ protected:
      */
     void _sendCommand(  const string& cmd );
 
-    int64_t _getNum( const char prefix );
+    bool _getReply(CResult& result );
 
-    int64_t _getBulkNum( void );
-
-    int64_t _getMutilBulkNum( void );
-
-    string _replyStatus( void );
-
-    /**
-     * @brief _replyOk
-     * @return if recv "+OK\r\n" return true,else return false.
-     */
-    void _replyOk( void );
-
-    int64_t _replyInt( void );
-
-    /**
-     * @brief _replyBulk
-     * @return
-     */
     uint8_t _replyBulk(CResult &value );
 
-    bool _replyMultiBulk(VecResult &keys );
+    bool _replyMultiBulk(CResult &result );
+
+    template <typename T>
+    T _valueFromString( const string& data )
+    {
+        T value ;
+        std::istringstream istr( data );
+        istr >> value;
+        if ( istr.fail() )
+        {
+            throw ConvertErr( "convert from string to other type value falied" );
+        }
+
+        return value;
+    }
 
 private:
     DISALLOW_COPY_AND_ASSIGN( CRedisClient );
@@ -183,5 +193,6 @@ private:
     static const char PREFIX_BULK_REPLY;
     static const char PREFIX_MULTI_BULK_REPLY;
 };
+
 
 #endif // REDIS_H

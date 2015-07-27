@@ -19,6 +19,7 @@
 using namespace std;
 
 
+/*
 void TestKey( void )
 {
     try
@@ -73,10 +74,11 @@ void TestList( void )
         for ( int i = 0; i < 10 ; i++ )
         {
             std::cout << "======================testList=========================" << std::endl;
-           // uint64_t num = redis.lpush( "name", value );
+            //uint64_t num = redis.lpush( "name", value );
             //std::cout << "num" << num << std::endl;
 
-            redis.lpop( "name", ret );
+            int32_t listNum = redis.lpop( "name", ret );
+            std::cout << "listNume: " << listNum << std::endl;
             std::cout << "listRet: " << ret << std::endl;
 
             sleep( 1 );
@@ -95,7 +97,7 @@ void TestString( void )
     try
     {
         CRedisClient redis;
-        redis.connect( "192.168.10.105", 6379 );
+        redis.connect( "127.0.0.1", 6379 );
 
         CResult value;
         for ( int i = 0; i < 10 ; i++ )
@@ -103,13 +105,14 @@ void TestString( void )
 
            std::cout << "====testString====" << std::endl;
            //------------------test set---------------------------
-           redis.set( "name", "yanxingjun" );
+           //redis.set( "name", "yanxingjun" );
 
            //------------------test get---------------------------
-            redis.get( "testString",value );
+            int32_t num = redis.get( "name",value );
+            std::cout << "num: " << num << std::endl;
             std::cout << "value:" << value << std::endl;
 
-            sleep( 1 );
+            //sleep( 1 );
         }
     }catch( RdException& e )
     {
@@ -132,8 +135,9 @@ void TestHash( void )
         int32_t hashRet = redis.hset( "testHash", "name2", "yang" );
         std::cout << "hashRet: " << hashRet << std::endl;
 
-        redis.hget( "testHash", "name3" ,result );
+        int32_t num = redis.hget( "testHash", "name3" ,result );
 
+        std::cout << "num: " << num << std::endl;
         std::cout << result << std::endl;
     }catch( RdException& e )
     {
@@ -146,25 +150,25 @@ void TestHash( void )
 
 
 //  写到 TestHash().
-int main()
-{
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
-
-    CRedisClient::VecResult result;
-    redis.keys( "*", result );
-    CRedisClient::VecResult::iterator it = result.begin();
-
-    for ( ; it != result.end(); it++ )
-    {
-        std::cout << *it << std::endl;
-    }
-
-    TestList();
-    //TestHash();
-    //TestKey();
-    //TestString();
-}
+//int main()
+//{
+//    CRedisClient redis;
+//    redis.connect( "127.0.0.1", 6379 );
+//
+//    CRedisClient::VecResult result;
+//    redis.keys( "*", result );
+//    CRedisClient::VecResult::iterator it = result.begin();
+//
+//    for ( ; it != result.end(); it++ )
+//    {
+//        std::cout << *it << std::endl;
+//    }
+//
+//    //TestList();
+//    //TestHash();
+//    //TestKey();
+//    TestString();
+//}
 
 
 
@@ -183,4 +187,45 @@ int main()
 //    std::cout << result<< std::endl;
 //    std::cout << result2<< std::endl;
 //}
+
+
+
+//////////////////////////////////////// test transaction////////////////////////////////////////
+int main()
+{
+    CRedisClient redis;
+    redis.connect( "127.0.0.1", 6379 );
+    CRedisClient::VecString keys;
+    keys.push_back( "user_name_4");
+
+    redis.watch(  keys );
+
+    return 0;
+}
+
+
+*/
+
+
+int main()
+{
+    CRedisClient redis;
+    redis.connect( "127.0.0.1", 6379 );
+    CResult result;
+    redis.multi();
+    CRedisClient::VecString params;
+    params.push_back( "*" );
+    redis.runCmd("keys", params );
+    params.clear();
+    params.push_back("asd");
+    redis.runCmd("get", params );
+    redis.exec( result );
+
+    std::cout << result << std::endl;
+}
+
+
+
+
+
 

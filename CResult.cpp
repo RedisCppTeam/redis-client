@@ -1,14 +1,17 @@
 #include "CResult.h"
+#include <sstream>
+
 
 CResult::CResult():
    _type( REDIS_REPLY_NIL )
 {
-
+    _arry.clear();
 }
 
 CResult::CResult( const CResult& other ):
     std::string( other ),
-    _type( other._type )
+    _type( other._type ),
+  _arry( other._arry )
 {
 }
 
@@ -16,7 +19,7 @@ CResult::CResult(const std::string &value):
     std::string( value ),
     _type( REDIS_REPLY_NIL )
 {
-
+    _arry.clear();
 }
 
 CResult::~CResult()
@@ -34,7 +37,62 @@ ReplyType CResult::getType() const
     return _type;
 }
 
-void CResult::assign(CResult &other)
+bool CResult::addElement(const CResult &ele)
+{
+    if ( _type != REDIS_REPLY_ARRAY )
+    {
+        return false;
+    }
+
+    _arry.push_back( ele );
+    return true;
+}
+
+CResult::CResultList &CResult::getArry()
+{
+    return _arry;
+}
+
+std::string CResult::display(CResult &ele, int indent )
+{
+    ReplyType e = ele.getType( );
+    string type =CResult::getTypeString( e );
+    std::stringstream out;
+    if ( REDIS_REPLY_ARRAY == e )
+    {
+       CResult::CResultList::iterator it = ele.getArry().begin() ;
+        indent += 3;
+
+        out <<"{\n";
+        for ( int i = 0; i < indent; i++ )
+            out << " ";
+
+        indent += 3;
+        out << "type:" << type <<", value:[" << std::endl;
+        for ( ; it!=ele.getArry().end(); it++ )
+        {
+            for ( int i = 0; i < indent; i++ )
+                out << " ";
+
+            out << display( *it, indent )  << std::endl;
+        }
+
+        for ( int i = 0; i < indent-3; i++ )
+            out << " ";
+        out << "]\n";
+
+        for ( int i = 0; i < indent-6; i++ )
+            out << " ";
+        out << "};";
+    }else
+    {
+        out << "{type: " << type << " ,value: " << std::string( ele ) << "};";
+    }
+    return out.str() ;
+}
+
+
+void CResult::assign( const CResult &other)
 {
     if ( this == &other )
     {
@@ -43,10 +101,22 @@ void CResult::assign(CResult &other)
 
     _type = other._type;
     string::assign( other );
+    _arry = other._arry;
     return;
 }
 
-CResult &CResult::operator=(CResult &other)
+CResult &CResult::operator=( const std::string &value )
+{
+    if ( this == &value )
+    {
+        return *this;
+    }
+
+    string::assign( value );
+    return *this;
+}
+
+CResult &CResult::operator=( const CResult &other)
 {
     assign( other );
     return *this;
@@ -56,6 +126,7 @@ void CResult::clear()
 {
     _type = REDIS_REPLY_NIL;
     std::string::clear();
+    _arry.clear();
 }
 
 
@@ -72,6 +143,7 @@ string CResult::getTypeString( ReplyType e )
         break;
     case REDIS_REPLY_INTEGERER:
         type = "REPLY_INTEGERER";
+        break;
     case REDIS_REPLY_NIL :
         type = "REPLY_NIL";
         break;
@@ -88,11 +160,13 @@ string CResult::getTypeString( ReplyType e )
     return type;
 }
 
+
+
 std::ostream &operator<<(std::ostream& out,  CResult &value)
 {
-    string type =CResult::getTypeString( value._type );
-    out << "( type: " << type << " , value: " << std::string( value ) << " )";
-    return out;
+    string str = CResult::display( value, 0 );
+    out << str;
+    return out ;
 }
 
 
