@@ -164,27 +164,27 @@ bool CRedisClient::_getReply( CResult &result )
     return true;
 }
 
-uint8_t CRedisClient::_replyBulk(CResult& value , const std::string &line)
+bool CRedisClient::_replyBulk(CResult& result , const std::string &line)
 {
     // get the number of CResult received .
     int64_t len = _valueFromString<int64_t>( line.substr(1) );
 
     if ( len == -1 )
     {
-        value = "";
-        value.setType( REDIS_REPLY_NIL );
-        return 0;
+        result = "";
+        result.setType( REDIS_REPLY_NIL );
+        return false;
     }
 
-    _socket.readLine( value );
+    _socket.readLine( result );
 
-    if ( value.length() == ( uint32_t)len )
+    if ( result.length() == static_cast<uint32_t>(len) )
     {
-        value.setType( REDIS_REPLY_STRING );
-        return 1;
+        result.setType( REDIS_REPLY_STRING );
+        return true;
     }else
     {
-        value.clear();
+        result.clear();
         throw ProtocolErr( "invalid bulk reply data; length of data is unexpected" );
     }
 }

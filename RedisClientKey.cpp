@@ -11,7 +11,7 @@
 #include "CRedisClient.h"
 
 
-uint64_t CRedisClient::keys(const std::string &pattern, CResult &result )
+void CRedisClient::keys(const std::string &pattern, CResult &result )
 {
     _socket.clearBuffer();
 
@@ -21,35 +21,67 @@ uint64_t CRedisClient::keys(const std::string &pattern, CResult &result )
     _sendCommand( cmd );
 
    _getReply( result );
-   return result.getArry().size();
 }
 
-uint64_t CRedisClient::keys(const std::string &pattern, VecString &result )
+int64_t CRedisClient::keys(const std::string &pattern, VecString &value )
 {
-    CResult ret;
-    keys( pattern, ret );
-    CResult::CResultList::const_iterator it = ret.getArry().begin();
-    for ( ; it != ret.getArry().end(); it++ )
+    CResult result;
+    keys( pattern, result );
+    CResult::CResultList::const_iterator it = result.getArry().begin();
+
+    if ( result.getType() == REDIS_REPLY_ERROR )
     {
-        result.push_back( *it );
+        throw ReplyErr( result.getErrorString() );
     }
-    return result.size();
+
+    if ( result.getType() != REDIS_REPLY_ARRAY )
+    {
+        throw ProtocolErr( "KEYS: data recved is not arry");
+    }
+
+    for ( ; it != result.getArry().end(); it++ )
+    {
+        value.push_back( static_cast<string>(*it) );
+    }
+    return value.size();
 }
 
-//uint64_t CRedisClient::del( CRedisClient::VecString &keys )
-//{
-//    _socket.clearBuffer();
-//
-//    Command cmd( "DEL" );
-//    VecString::const_iterator it = keys.begin();
-//
-//    for ( ; it != keys.end(); it++ )
-//    {
-//        cmd << *it ;
-//    }
-//
-//    _sendCommand( cmd );
-//    return _replyInt( );
-//}
-//
-//
+void CRedisClient::del( CRedisClient::VecString &keys, CResult& result )
+{
+    _socket.clearBuffer();
+
+    Command cmd( "DEL" );
+    VecString::const_iterator it = keys.begin();
+
+    for ( ; it != keys.end(); it++ )
+    {
+        cmd << *it ;
+    }
+
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+int64_t CRedisClient::del(CRedisClient::VecString &keys )
+{
+    CResult result;
+    del( keys, result );
+
+    if ( result.getType() == REDIS_REPLY_ERROR )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }
+
+    if ( result.getType() != REDIS_REPLY_INTEGERER )
+    {
+        throw ProtocolErr( "DEL: data recved is not integerer");
+    }
+
+    return result.getInt();
+}
+
+
+
+
+
+

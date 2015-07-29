@@ -21,6 +21,13 @@
 
 using namespace Poco;
 
+typedef enum
+{
+    DEFAULT,	///< -- A default option.
+    NX,				///< -- Only set the key if it does not already exist.
+    XX				///< -- Only set the key if it already exist.
+} SET_OPTION;
+
 /**
  *@brief CRedisClient redis client
  */
@@ -92,34 +99,68 @@ public:
 
 
     //-----------------------------------key---------------------------------------------
+
+    void keys(const std::string &pattern, CResult& result);
     /**
      * @brief keys get all keys matching pattern. 
      * @param pattern [in] The conditions of the matching. 
      * @param keys [out] vector of keys maching pattern 
      * @return The number of keys returned.
      */
-    uint64_t keys(const string& pattern, CResult &result );
+    int64_t keys(const string& pattern, VecString &value );
 
-    uint64_t del( VecString& keys );
 
-    
+    void del(VecString& keys , CResult &result);
+
+    int64_t del( VecString &keys );
     //-----------------------------string method--------------------------------------
+
+
     /**
      * @brief set set a string type key = value
      * @param key
      * @param value
      * @warning  could throw Poco::Exception and ProtocolErr exception
      */
-    void	set( const string& key, const string& value );
+    void set(const string& key, const string& value );
 
-    int8_t get(const string& key, CResult &value );
+
+
+    bool setEX( const string& key, const string& value, long time, SET_OPTION opt=DEFAULT );
+    bool setPX( const string& key, const string& value, long time, SET_OPTION opt=DEFAULT );
+
+    bool setNX( const string& key, const string& value );
+    bool setXX( const string& key, const string& value );
+
+    void get(const string& key, CResult &result );
+
+    /**
+     * @brief get
+     * @param key
+     * @param value
+     * @return true: get value successful, false: key is not exist.
+     */
+    bool get(const string& key, string &value );
     //------------------------------list method--------------------------------------
-    uint64_t lpush( const string& key ,const string&value );
 
-    uint64_t lpush( const string& key, const VecString& value );
+    void lpush(const string& key, const VecString& value , CResult &result);
 
-    int8_t lpop(const std::string &key, CResult &value);
+    int64_t lpush(const string& key, const VecString& value );
+
+    /**
+     * @brief lpop
+     * @param key
+     * @param value
+     * @return true: successful. false: key is not exit.
+     */
+    void lpop(const std::string &key, CResult &result);
+
+    bool lpop(const std::string &key, string &value);
+
     //------------------------------hash method-----------------------------------
+
+    void hset( const string& key, const string& field,const string& value, CResult& result );
+
     /**
      * @brief hset  insert into a value to hash name is key field is field .
      * @param key  hash name
@@ -127,10 +168,20 @@ public:
      * @param value to insert data
      * @return return 1, a new data insert into hash.return 0, a old data update.
      */
-    uint8_t hset( const string& key, const string& field,const string& value );
+    uint8_t hset( const string& key, const string& field, const string&value );
 
 
-    int8_t hget(const string& key, const string& field, CResult &value );
+
+    void hget(const string& key, const string& field, CResult &result );
+
+    /**
+     * @brief hget
+     * @param key
+     * @param field
+     * @param value
+     * @return true : get value successful,false get value failed.
+     */
+    bool hget(const string& key, const string& field, std::string &value );
 
     //--------------------------transtraction method------------------------------
 
@@ -142,11 +193,10 @@ public:
 
     void discard( void );
 
-    bool runCmd( const string& cmd, VecString& params );
+    bool transactionCmd( const string& cmd, VecString& params );
 
     void exec(CResult &result );
 
-    uint64_t keys(const std::string &pattern, VecString &result);
 protected:
      /**
      * @brief sendCommand. send a Command to redis-server
@@ -156,7 +206,13 @@ protected:
 
     bool _getReply(CResult& result );
 
-    uint8_t _replyBulk(CResult &value, const string& line );
+    /**
+     * @brief _replyBulk
+     * @param result
+     * @param line
+     * @return true: successful false :not exists
+     */
+    bool _replyBulk(CResult &result, const string& line );
 
     uint64_t _replyMultiBulk(CResult &result , const std::string &line);
 
@@ -173,7 +229,16 @@ protected:
 
         return value;
     }
-
+    /**
+     * @brief set
+     * @param key
+     * @param value
+     * @param result
+     * @param suffix		"EX","PX"
+     * @param time		expire time.
+     * @param suffix2	"NX","XX"
+     */
+    void	set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" ) ;
 private:
     DISALLOW_COPY_AND_ASSIGN( CRedisClient );
 
@@ -192,6 +257,8 @@ private:
     static const char PREFIX_BULK_REPLY;
     static const char PREFIX_MULTI_BULK_REPLY;
 };
+
+
 
 
 #endif // REDIS_H

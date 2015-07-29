@@ -12,42 +12,76 @@
 #include "Command.h"
 #include "CRedisClient.h"
 
+void CRedisClient::lpush(const std::string &key, const VecString& value, CResult& result )
+{
+    _socket.clearBuffer();
 
-//uint64_t CRedisClient::lpush(const std::string &key, const std::string &value)
-//{
-//    _socket.clearBuffer();
-//
-//    Command cmd( "LPUSH" );
-//    cmd << key << value;
-//    _sendCommand( cmd );
-//    return _replyInt();
-//}
-//
-//uint64_t CRedisClient::lpush(const std::string &key, const VecString& value)
-//{
-//    _socket.clearBuffer();
-//
-//    Command cmd("LPUSH");
-//    VecString::const_iterator it = value.begin();
-//    cmd << key;
-//    for ( ; it !=value.end(); it++ )
-//    {
-//        cmd << *it;
-//    }
-//    _sendCommand( cmd );
-//    return _replyInt();
-//}
-//
-//int8_t CRedisClient::lpop( const std::string& key, CResult& value )
-//{
-//    _socket.clearBuffer();
-//
-//    Command cmd( "LPOP" );
-//    cmd << key;
-//    _sendCommand( cmd );
-//
-//    return _replyBulk( value );
-//}
-//
-//
-//
+    Command cmd("LPUSH");
+    cmd << key;
+
+    VecString::const_iterator it = value.begin();
+    for ( ; it !=value.end(); it++ )
+    {
+        cmd << *it;
+    }
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+
+int64_t CRedisClient::lpush(const std::string &key, const VecString &value)
+{
+    CResult result;
+
+    lpush( key, value, result );
+
+    if ( result.getType() == REDIS_REPLY_ERROR )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }
+
+    if ( result.getType() != REDIS_REPLY_INTEGERER )
+    {
+        throw ProtocolErr( "LPUSH: data recved is not integerer");
+    }
+
+    return result.getInt();
+}
+
+
+
+void CRedisClient::lpop( const std::string& key, CResult& result )
+{
+    _socket.clearBuffer();
+
+    Command cmd( "LPOP" );
+    cmd << key;
+
+    _sendCommand( cmd );
+
+    _getReply( result );
+}
+
+bool CRedisClient::lpop(const std::string &key, std::string &value)
+{
+    CResult result;
+    lpop( key, result );
+
+    if ( result.getType() == REDIS_REPLY_ERROR )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( result.getType() == REDIS_REPLY_NIL )
+    {
+        return false;
+    }else if ( result.getType() == REDIS_REPLY_STRING )
+    {
+        value = result.getString();
+        return true;
+    }else
+    {
+        throw ProtocolErr( "LPOP: data recved is not string" );
+    }
+}
+
+
+

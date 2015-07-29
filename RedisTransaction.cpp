@@ -61,7 +61,7 @@ void CRedisClient::multi( void )
     }
 }
 
-bool CRedisClient::runCmd(const std::string &cmmand,VecString &params)
+bool CRedisClient::transactionCmd(const std::string &cmmand,VecString &params)
 {
     CResult result;
     _socket.clearBuffer();
