@@ -27,7 +27,7 @@ int64_t CRedisClient::keys(const std::string &pattern, VecString &value )
 {
     CResult result;
     keys( pattern, result );
-    CResult::CResultList::const_iterator it = result.getArry().begin();
+    CResult::ListCResult::const_iterator it = result.getArry().begin();
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
@@ -41,7 +41,7 @@ int64_t CRedisClient::keys(const std::string &pattern, VecString &value )
 
     for ( ; it != result.getArry().end(); it++ )
     {
-        value.push_back( static_cast<string>(*it) );
+        value.push_back( result.getString() );
     }
     return value.size();
 }

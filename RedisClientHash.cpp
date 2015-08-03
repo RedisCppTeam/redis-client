@@ -86,4 +86,98 @@ bool CRedisClient::hget( const std::string &key, const std::string &field, strin
     }
 }
 
+void CRedisClient::hdel(const string &key, const CRedisClient::VecString &fields, CResult &result )
+{
+    _socket.clearBuffer();;
+    Command cmd( "HDEL" );
+    cmd << key;
+
+    VecString::const_iterator it = fields.begin();
+    for ( ; it !=fields.end(); it++ )
+    {
+        cmd << *it;
+    }
+
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+uint64_t CRedisClient::hdel( const string &key, const CRedisClient::VecString &fields )
+{
+    CResult result;
+    hdel( key, fields, result );
+
+    ReplyType type = result.getType();
+
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_INTEGERER != type )
+    {
+        throw ProtocolErr( "HDEL: data recv is not intgerer" );
+    }
+    return result.getInt();
+}
+
+void CRedisClient::hexists(const string &key, const string &field, CResult &result)
+{
+    _socket.clearBuffer();;
+    Command cmd( "HEXISTS" );
+    cmd << key << field;
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+bool CRedisClient::hexists(const string &key, const string &field)
+{
+    CResult result;
+    hexists( key, field, result );
+
+    ReplyType type = result.getType();
+
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_INTEGERER != type )
+    {
+        throw ProtocolErr( "HEXISTS: data recv is not intgerer" );
+    }
+    return result.getInt();
+}
+
+void CRedisClient::hgetall(const string &key, CResult &result )
+{
+    _socket.clearBuffer();
+    Command cmd( "HGETALL" );
+    cmd << key;
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+uint64_t CRedisClient::hgetall(const string &key, CRedisClient::MapString &value)
+{
+    CResult result;
+    hgetall( key, result );
+    ReplyType type = result.getType();
+
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_ARRAY != type )
+    {
+        throw ProtocolErr( "HGETALL: data recv is not arry" );
+    }
+
+    CResult::ListCResult::const_iterator it = result.getArry().begin();
+    CResult::ListCResult::const_iterator it2 = it;
+    CResult::ListCResult::const_iterator end = result.getArry().end();
+
+    for ( ; it != end; it++ )
+    {
+        it2 = it++;		// the next element is value.
+        value.insert( MapString::value_type( *it2, *it ) );
+    }
+    return value.size();
+}
+
 

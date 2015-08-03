@@ -130,8 +130,8 @@ void TestHash( void )
         CRedisClient redis;
         redis.connect( "127.0.0.1", 6379 );
 
+        //-------------------------test hset hget---------------------------------
         string value;
-
         int32_t hashRet = redis.hset( "testHash", "name4", "yang" );
         std::cout << "hashRet: " << hashRet << std::endl;
 
@@ -139,6 +139,32 @@ void TestHash( void )
 
         std::cout << "ret: " << ret << std::endl;
         std::cout << value << std::endl;
+
+        //------------------------test hdel------------------------------------------
+        CRedisClient::VecString fields;
+        fields.push_back( "name" );
+        fields.push_back( "name2" );
+
+        uint64_t delNum = redis.hdel( "member", fields );
+        std::cout << "delNum: " << delNum << std::endl;
+        //------------------------test hexists---------------------------------------
+        string field  = "name4";
+        bool isExists = redis.hexists( "testHash", field );
+        if ( isExists )
+            std::cout << "testHash key exists field:" << field << std::endl;
+        else
+            std::cout << "testHash key not exists field:" << field << std::endl;
+        //-----------------------test hgetall---------------------------------------------
+        CRedisClient::MapString allValue;
+        uint64_t allNum = redis.hgetall( "testHash", allValue );
+        std::cout << "allNum: " << allNum <<std::endl;
+        CRedisClient::MapString::const_iterator it = allValue.begin();
+
+        for ( ; it != allValue.end(); it++ )
+        {
+            std::cout << it->first << ":" << it->second << std::endl;
+        }
+
     }catch( RdException& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
@@ -150,20 +176,20 @@ void TestHash( void )
 
 
 ///////////////////////////////////////// test CResult////////////////////////////////////////
-int main()
-{
-    CResult result("123");
-    result.setType( REDIS_REPLY_STRING );
-
-    result += "345";
-    CResult result2  ;
-    result2 = result;
-
-   // result.clear();
-
-    std::cout << result<< std::endl;
-    std::cout << result2<< std::endl;
-}
+//int main()
+//{
+//    CResult result("123");
+//    result.setType( REDIS_REPLY_STRING );
+//
+//    result += "345";
+//    CResult result2  ;
+//    result2 = result;
+//
+//   // result.clear();
+//
+//    std::cout << result<< std::endl;
+//    std::cout << result2<< std::endl;
+//}
 
 
 /*
@@ -201,17 +227,17 @@ int main()
 }
 */
 
-/*
+
 int main()
 {
-    //TestHash();
+    TestHash();
    // TestList();
     //TestKey();
-    TestString();
+   // TestString();
     return 0;
 }
 
-*/
+
 
 
 

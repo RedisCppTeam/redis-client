@@ -18,7 +18,7 @@ class CResult : public std::string
 {
 public:
 
-    typedef std::list<CResult> CResultList;
+    typedef std::list<CResult> ListCResult;
 
     CResult();
 
@@ -30,11 +30,12 @@ public:
 
     void setType( const ReplyType e );
 
+
     ReplyType getType( void ) const ;
 
     bool addElement(const CResult &ele);
 
-    const CResultList &getArry( void ) const;
+    const ListCResult &getArry( void ) const;
 
     int64_t getInt( void ) const;
 
@@ -67,7 +68,7 @@ public:
 
 private:
     ReplyType _type;
-    CResultList _arry;
+    ListCResult _arry;
 };
 
 #endif // CRESULT_H

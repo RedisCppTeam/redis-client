@@ -48,7 +48,7 @@ bool CResult::addElement(const CResult &ele)
     return true;
 }
 
-const CResult::CResultList &CResult::getArry( void ) const
+const CResult::ListCResult &CResult::getArry( void ) const
 {
     if ( _type != REDIS_REPLY_ARRAY )
     {
@@ -111,7 +111,7 @@ std::string CResult::display( const CResult &ele, int indent )
     std::stringstream out;
     if ( REDIS_REPLY_ARRAY == e )
     {
-       CResult::CResultList::const_iterator it = ele.getArry().begin() ;
+       CResult::ListCResult::const_iterator it = ele.getArry().begin() ;
         indent += 3;
 
         out <<"{\n";

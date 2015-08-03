@@ -11,6 +11,7 @@
 
 #include <stdint.h>
 #include <vector>
+#include <map>
 #include <Poco/Net/StreamSocket.h>
 #include "Command.h"
 #include "common.h"
@@ -23,7 +24,7 @@ using namespace Poco;
 
 typedef enum
 {
-    DEFAULT,	///< -- A default option.
+    DEFAULT,		///< -- A default option.
     NX,				///< -- Only set the key if it does not already exist.
     XX				///< -- Only set the key if it already exist.
 } SET_OPTION;
@@ -35,7 +36,8 @@ class CRedisClient
 {
 public:
 
-    typedef  	vector<std::string> VecString;
+    typedef  	std::vector<std::string> VecString;
+    typedef 	std::map<string,string> MapString;
 
     CRedisClient();
     ~CRedisClient();
@@ -182,6 +184,20 @@ public:
      * @return true : get value successful,false get value failed.
      */
     bool hget(const string& key, const string& field, std::string &value );
+
+
+    void hdel(const string& key, const VecString& fields, CResult& result );
+
+    uint64_t hdel (const string& key, const VecString& fields );
+
+    void hexists( const string& key, const string& field , CResult& result );
+
+    bool hexists( const string& key, const string& field );
+
+    void hgetall( const string& key , CResult& result );
+
+    uint64_t hgetall( const string& key, MapString& value );
+
 
     //--------------------------transtraction method------------------------------
 
