@@ -1,4 +1,7 @@
 #include "CRedisSocket.h"
+#include "RdException.hpp"
+
+
 
 CRedisSocket::CRedisSocket():
     _pBuffer(0),
@@ -46,17 +49,25 @@ bool CRedisSocket::readLine( string& line )
 {
     line.clear();
     int ch = get();
-    while (ch != EOF_CHAR && ch != '\r' && ch != '\n')
+    //----修复读取一行的内容中只包含'\r'或'\n'的情况----by FanYongTao ,needs review
+    while(1)
     {
-        line += (char) ch;
-        ch = get();
+        if( ch == EOF_CHAR )
+        {
+            return false;
+        }else if( ch == '\r' && peek() == '\n')
+        {
+            get();
+            return true;
+        }else
+        {
+            line += ch;
+            ch = get();
+        }
     }
-    if (ch == '\r' && peek() == '\n')
-        get();
-    else if (ch == EOF_CHAR)
-        return false;
-    return true;
 }
+
+
 
 void CRedisSocket::clearBuffer( void )
 {
@@ -78,6 +89,10 @@ void CRedisSocket::_refill()
     if (_pNext == _pEnd)
     {
         int n = receiveBytes(_pBuffer, RECEIVE_BUFFER_SIZE);
+        if ( n <=0 )
+        {
+            throw ConnectErr( "socket is disconnect!" );
+        }
         if (n > 0)
         {
             _pNext = _pBuffer;

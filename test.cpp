@@ -135,7 +135,7 @@ void TestHash( void )
         int32_t hashRet = redis.hset( "testHash", "name4", "yang" );
         std::cout << "hashRet: " << hashRet << std::endl;
 
-       bool ret = redis.hget( "testHash", "name5" ,value );
+        bool ret = redis.hget( "testHash", "name5" ,value );
 
         std::cout << "ret: " << ret << std::endl;
         std::cout << value << std::endl;
@@ -170,6 +170,16 @@ void TestHash( void )
         //------------------------test incrbyfloat-------------------------------------
         float floatNum = redis.hincrbyfloat( "testHast", "float", 10.1e2 );
         std::cout << "floatNum: " << floatNum << std::endl;
+        //------------------------test hkeys-------------------------------------------
+        CRedisClient::VecString hkeysValue;
+        uint64_t hkeysNum = redis.hkeys( "testHash", hkeysValue );
+        std::cout << "hkeysNum: " << hkeysNum << std::endl;
+
+        CRedisClient::VecString::const_iterator hkeysit = hkeysValue.begin();
+        for ( ; hkeysit != hkeysValue.end(); hkeysit++ )
+        {
+            std::cout << *hkeysit << std::endl;
+        }
 
     }catch( RdException& e )
     {
@@ -182,21 +192,21 @@ void TestHash( void )
 
 
 ///////////////////////////////////////// test CResult////////////////////////////////////////
-int main()
-{
-    CResult result("123");
-    result.setType( REDIS_REPLY_STRING );
-
-    result += "345";
-    CResult result2  ;
-    result2 = result;
-
-
-   // result.clear();
-
-    std::cout << result<< std::endl;
-    std::cout << result2<< std::endl;
-}
+//int main()
+//{
+//    CResult result("123");
+//    result.setType( REDIS_REPLY_STRING );
+//
+//    result += "345";
+//    CResult result2  ;
+//    result2 = result;
+//
+//
+//   // result.clear();
+//
+//    std::cout << result<< std::endl;
+//    std::cout << result2<< std::endl;
+//}
 
 
 /*
@@ -244,7 +254,18 @@ int main()
 //    return 0;
 //}
 
+int main()
+{
+    CRedisClient redis;
+    redis.connect( "127.0.0.1", 6379 );
 
+    redis.closeConnect();
+    redis.reconnect();
+
+    redis.set( "name", "yuhaiyang");
+
+    return 0;
+}
 
 
 

@@ -72,13 +72,13 @@ void CRedisClient::connect()
 
 void CRedisClient::reconnect()
 {
-    _socket.shutdown();
+    _socket.close();
     connect();
 }
 
 void CRedisClient::closeConnect()
 {
-	_socket.shutdown();
+    _socket.close();
 }
 
 //bool CRedisClient::ping()
@@ -119,9 +119,9 @@ void CRedisClient::_sendCommand( const string &cmd )
     int sd = 0;
     do{
         sd = _socket.sendBytes( sdData, sdLen-sded );
-        if ( sd < 0 )
+        if ( sd <= 0 )
         {
-            throw ConnectErr("sendByte failed!");
+            throw ConnectErr("sendByte exception!");
         }
         sded += sd;
         sdData += sd;

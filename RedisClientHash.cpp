@@ -254,7 +254,7 @@ uint64_t CRedisClient::hkeys(const string &key, CRedisClient::VecString &value)
    }
 
    CResult::ListCResult::const_iterator it = result.getArry().begin();
-   CResult::ListCResult::const_iterator end = result.getArry.end();
+   CResult::ListCResult::const_iterator end = result.getArry().end();
    for ( ; it != end; it++ )
    {
         value.push_back( static_cast<string>(*it) );
