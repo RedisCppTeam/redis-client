@@ -28,13 +28,14 @@ int64_t CRedisClient::keys(const std::string &pattern, VecString &value )
     CResult result;
     keys( pattern, result );
     CResult::ListCResult::const_iterator it = result.getArry().begin();
+    ReplyType type = result.getType();
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    if ( type == REDIS_REPLY_ERROR )
     {
         throw ReplyErr( result.getErrorString() );
     }
 
-    if ( result.getType() != REDIS_REPLY_ARRAY )
+    if ( type != REDIS_REPLY_ARRAY )
     {
         throw ProtocolErr( "KEYS: data recved is not arry");
     }
@@ -67,12 +68,14 @@ int64_t CRedisClient::del(CRedisClient::VecString &keys )
     CResult result;
     del( keys, result );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    ReplyType type = result.getType();
+
+    if ( type == REDIS_REPLY_ERROR )
     {
         throw ReplyErr( result.getErrorString() );
     }
 
-    if ( result.getType() != REDIS_REPLY_INTEGERER )
+    if ( type != REDIS_REPLY_INTEGERER )
     {
         throw ProtocolErr( "DEL: data recved is not integerer");
     }

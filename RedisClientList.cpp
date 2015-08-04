@@ -35,12 +35,13 @@ int64_t CRedisClient::lpush(const std::string &key, const VecString &value)
 
     lpush( key, value, result );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    ReplyType type = result.getType();
+    if ( type == REDIS_REPLY_ERROR )
     {
         throw ReplyErr( result.getErrorString() );
     }
 
-    if ( result.getType() != REDIS_REPLY_INTEGERER )
+    if ( type != REDIS_REPLY_INTEGERER )
     {
         throw ProtocolErr( "LPUSH: data recved is not integerer");
     }
@@ -67,7 +68,8 @@ bool CRedisClient::lpop(const std::string &key, std::string &value)
     CResult result;
     lpop( key, result );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    ReplyType type = result.getType();
+    if ( type == REDIS_REPLY_ERROR )
     {
         throw ReplyErr( result.getErrorString() );
     }else if ( result.getType() == REDIS_REPLY_NIL )

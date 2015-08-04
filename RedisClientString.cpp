@@ -195,13 +195,14 @@ bool CRedisClient::get( const std::string &key, std::string &value )
     CResult result;
     get( key, result );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    ReplyType type = result.getType();
+    if ( type == REDIS_REPLY_ERROR )
     {
         throw ReplyErr( result.getErrorString() );
-    }else if ( result.getType() == REDIS_REPLY_NIL )
+    }else if ( type == REDIS_REPLY_NIL )
     {
         return false;
-    }else if ( result.getType() == REDIS_REPLY_STRING )
+    }else if ( type == REDIS_REPLY_STRING )
     {
         value = result.getString();
         return true;

@@ -33,13 +33,13 @@ uint8_t CRedisClient::hset(const std::string &key, const std::string &field, con
     CResult result;
 
    hset( key, field, value, result );
-
-   if ( result.getType() == REDIS_REPLY_ERROR )
+   ReplyType type = result.getType();
+   if ( type == REDIS_REPLY_ERROR )
    {
         throw ReplyErr( result.getErrorString() );
    }
 
-   if ( result.getType() != REDIS_REPLY_INTEGERER )
+   if ( type != REDIS_REPLY_INTEGERER )
    {
        throw ProtocolErr( "HSET: data recved is not integerer" );
    }
@@ -65,18 +65,18 @@ bool CRedisClient::hget( const std::string &key, const std::string &field, strin
 {
     CResult result;
     hget( key, field, result );
-
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    ReplyType type = result.getType();
+    if ( type == REDIS_REPLY_ERROR )
     {
         throw ReplyErr( result.getErrorString() );
     }
 
-    if ( result.getType() == REDIS_REPLY_NIL )
+    if ( type == REDIS_REPLY_NIL )
     {
             return false;
     }
 
-    if ( result.getType() == REDIS_REPLY_STRING )
+    if ( type == REDIS_REPLY_STRING )
     {
         value = result.getString();
         return true;
@@ -179,5 +179,90 @@ uint64_t CRedisClient::hgetall(const string &key, CRedisClient::MapString &value
     }
     return value.size();
 }
+
+void CRedisClient::hincrby(const string &key, const string &field, uint64_t increment, CResult &result)
+{
+    _socket.clearBuffer();
+    Command cmd( "HINCRBY" );
+    cmd << key << field << increment;
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+uint64_t CRedisClient::hincrby(const string &key, const string &field, uint64_t increment)
+{
+    CResult result;
+    hincrby( key, field, increment,result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_INTEGERER != type )
+    {
+        throw ProtocolErr( "HINCRBY: data recved is not intgerer" );
+    }
+    return result.getInt();
+}
+
+void CRedisClient::hincrbyfloat(const string &key, const string &field, float increment, CResult &result)
+{
+    _socket.clearBuffer();
+    Command cmd( "HINCRBYFLOAT" );
+    cmd << key << field << increment;
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+float CRedisClient::hincrbyfloat(const string &key, const string &field, float increment)
+{
+    CResult result;
+    hincrbyfloat( key, field, increment,result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_STRING != type )
+    {
+        throw ProtocolErr( "HINCRBYFLOAT: data recved is not string" );
+    }
+    return _valueFromString<float>(  result.getString() );
+}
+
+void CRedisClient::hkeys(const string&key, CResult &result)
+{
+   _socket.clearBuffer();
+   Command cmd( "HKEYS" );
+   cmd << key;
+   _sendCommand( cmd );
+   _getReply( result );
+}
+
+uint64_t CRedisClient::hkeys(const string &key, CRedisClient::VecString &value)
+{
+    CResult result;
+    hkeys( key, result );
+
+    ReplyType type = result.getType();
+   if ( REDIS_REPLY_ERROR == type )
+   {
+       throw ReplyErr( result.getErrorString() );
+   }else if ( REDIS_REPLY_ARRAY != type )
+   {
+        throw ProtocolErr("HKEYS: data recved is not arry");
+   }
+
+   CResult::ListCResult::const_iterator it = result.getArry().begin();
+   CResult::ListCResult::const_iterator end = result.getArry.end();
+   for ( ; it != end; it++ )
+   {
+        value.push_back( static_cast<string>(*it) );
+   }
+   return value.size();
+}
+
+
+
 
 

@@ -154,7 +154,7 @@ void TestHash( void )
             std::cout << "testHash key exists field:" << field << std::endl;
         else
             std::cout << "testHash key not exists field:" << field << std::endl;
-        //-----------------------test hgetall---------------------------------------------
+        //-----------------------test hgetall-------------------------------------------
         CRedisClient::MapString allValue;
         uint64_t allNum = redis.hgetall( "testHash", allValue );
         std::cout << "allNum: " << allNum <<std::endl;
@@ -164,6 +164,12 @@ void TestHash( void )
         {
             std::cout << it->first << ":" << it->second << std::endl;
         }
+        //------------------------test incrby-------------------------------------------
+        uint64_t incrybyNum = redis.hincrby( "testHash", "num", 20 );
+        std::cout << "incrybyNum: " << incrybyNum << std::endl;
+        //------------------------test incrbyfloat-------------------------------------
+        float floatNum = redis.hincrbyfloat( "testHast", "float", 10.1e2 );
+        std::cout << "floatNum: " << floatNum << std::endl;
 
     }catch( RdException& e )
     {
@@ -176,20 +182,21 @@ void TestHash( void )
 
 
 ///////////////////////////////////////// test CResult////////////////////////////////////////
-//int main()
-//{
-//    CResult result("123");
-//    result.setType( REDIS_REPLY_STRING );
-//
-//    result += "345";
-//    CResult result2  ;
-//    result2 = result;
-//
-//   // result.clear();
-//
-//    std::cout << result<< std::endl;
-//    std::cout << result2<< std::endl;
-//}
+int main()
+{
+    CResult result("123");
+    result.setType( REDIS_REPLY_STRING );
+
+    result += "345";
+    CResult result2  ;
+    result2 = result;
+
+
+   // result.clear();
+
+    std::cout << result<< std::endl;
+    std::cout << result2<< std::endl;
+}
 
 
 /*
@@ -228,14 +235,14 @@ int main()
 */
 
 
-int main()
-{
-    TestHash();
-   // TestList();
-    //TestKey();
-   // TestString();
-    return 0;
-}
+//int main()
+//{
+//    TestHash();
+//   // TestList();
+//    //TestKey();
+//   // TestString();
+//    return 0;
+//}
 
 
 

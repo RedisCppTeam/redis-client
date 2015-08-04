@@ -190,13 +190,36 @@ public:
 
     uint64_t hdel (const string& key, const VecString& fields );
 
+
     void hexists( const string& key, const string& field , CResult& result );
 
     bool hexists( const string& key, const string& field );
 
+
     void hgetall( const string& key , CResult& result );
 
     uint64_t hgetall( const string& key, MapString& value );
+
+
+    void hincrby( const string& key, const string& field, uint64_t increment,CResult& result );
+
+    uint64_t hincrby( const string& key, const string& field ,uint64_t increment );
+
+
+    void hincrbyfloat( const string& key, const string& field, float increment, CResult& result );
+
+    float hincrbyfloat( const string& key, const string& field, float increment );
+
+
+    void hkeys( const string& key, CResult& result );
+
+    uint64_t hkeys( const string& key, VecString& value );
+
+    //---------------------------Set---------------------------------------------------
+
+
+
+    //---------------------------SortedSet-------------------------------------------
 
 
     //--------------------------transtraction method------------------------------
@@ -212,6 +235,20 @@ public:
     bool transactionCmd( const string& cmd, VecString& params );
 
     void exec(CResult &result );
+
+    //----------------------------HyperLogLog-------------------------------------------
+
+
+    //----------------------------pub/sub--------------------------------------------------
+
+
+    //-----------------------------Script-----------------------------------------------------
+
+    //-----------------------------connection----------------------------------------------
+
+
+    //-----------------------------Server---------------------------------------------------
+
 
 protected:
      /**
