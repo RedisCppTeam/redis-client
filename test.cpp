@@ -12,7 +12,7 @@
 #include "Command.h"
 #include "CRedisClient.h"
 #include <stdio.h>
-
+#include <sstream>
 #include "RdException.hpp"
 #include "CResult.h"
 
@@ -102,7 +102,7 @@ void TestString( void )
 
            std::cout << "====testString====" << std::endl;
            //------------------test set---------------------------
-           redis.set( "name", "123" );
+           redis._set( "name", "123" );
 
            //------------------test set---------------------------
            // bool setRet = redis.setPX( "name2", "yuhaiyang", 20000,NX );
@@ -180,6 +180,84 @@ void TestHash( void )
         {
             std::cout << *hkeysit << std::endl;
         }
+        //------------------------test hlen-----------------------------------------------
+        uint64_t fieldNum = redis.hlen( "testHash" );
+        std::cout << "fieldNum: " << fieldNum << std::endl;
+        //------------------------test hmget---------------------------------------------
+        CResult result;
+        CRedisClient::VecString hmgeFields;
+        hmgeFields.push_back("name4");
+        hmgeFields.push_back("yuhaiyang");
+        hmgeFields.push_back("num");
+        redis.hmget( "testHash", hmgeFields,result );
+        std::cout << "hmget:" << std::endl;
+        std::cout << result << std::endl;
+    }catch( RdException& e )
+    {
+        std::cout << "Redis exception:" << e.what() << std::endl;
+    }catch( Poco::Exception& e )
+    {
+        std::cout << "Poco_exception:" << e.what() << std::endl;
+    }
+}
+
+void TestHash2()
+{
+    try
+    {
+        CRedisClient redis;
+        redis.connect( "127.0.0.1", 6379 );
+        CResult result;
+        //-------------------------------test hmset---------------------------
+   //     CRedisClient::MapString pairs;
+   //     string pair, value;
+   //     std::stringstream ss;
+   //     for ( int i = 0; i < 1000; i++ )
+   //     {
+   //         pair = "pair_";
+   //         value = "value_";
+   //         ss.str("");
+
+   //         ss << i;
+   //         pair += ss.str();
+   //         value += ss.str();
+   //         pairs.insert( CRedisClient::MapString::value_type(pair,value) );
+   //     }
+   //     redis.hmset( "testHash", pairs );
+        //-------------------------------test hsetnx---------------------------
+ //       bool hsetNxRet = redis.hsetnx( "testHash", "num3", "123" );
+ //       if ( hsetNxRet )
+ //          std::cout << "ok" << std::endl;
+ //       else
+ //           std::cout << "false" << std::endl;
+        //------------------------------test hvals--------------------------------
+   //     CRedisClient::VecString hvals;
+   //     uint64_t num = redis.hvals( "testHash", hvals );
+   //     std::cout << "num: " << num << std::endl;
+   //     CRedisClient::VecString::const_iterator it = hvals.begin();
+   //     CRedisClient::VecString::const_iterator end = hvals.end();
+   //     for ( ; it != end; ++it )
+   //     {
+   //         std::cout << *it << std::endl;
+   //     }
+
+        //-------------------------------test hscan-----------------------------
+
+        std::cout << "====================hscan value===================" << std::endl;
+        CRedisClient::VecString hscanValues;
+
+       redis.hscan( "testHash", 0, hscanValues );
+       while ( redis.hscan( "testHash", -2, hscanValues ) );
+
+    CRedisClient::VecString::const_iterator hscanIt = hscanValues.begin();
+    CRedisClient::VecString::const_iterator hscanEnd = hscanValues.end();
+
+    for ( ; hscanIt != hscanEnd ; ++hscanIt )
+    {
+        std::cout << *hscanIt << std::endl;
+    }
+    std::cout << "totalNum: " << hscanValues.size() << std::endl;
+
 
     }catch( RdException& e )
     {
@@ -190,6 +268,37 @@ void TestHash( void )
     }
 }
 
+///////////////////////////////////////////// test set //////////////////////////////////////////
+void TestSet( void )
+{
+    try
+    {
+        CRedisClient redis;
+        redis.connect( "127.0.0.1", 6379 );
+
+        string value;
+        CResult result;
+
+        //--------------------------test sadd-------------------------------
+        CRedisClient::VecString members;
+        members.push_back( "yuhaiyang" );
+        members.push_back( "zhouli" );
+        members.push_back( "严兴俊" );
+        uint64_t saddNum = redis.sadd( "testSet", members );
+        std::cout << "saddNum: " << saddNum << std::endl;
+        //-------------------------test scard--------------------------------
+        uint64_t scardNum = redis.scard( "testSet" );
+        std::cout << "scardNum:" << scardNum << std::endl;
+        //-------------------------test sdiff----------------------------------
+
+    }catch( RdException& e )
+    {
+        std::cout << "Redis exception:" << e.what() << std::endl;
+    }catch( Poco::Exception& e )
+    {
+        std::cout << "Poco_exception:" << e.what() << std::endl;
+    }
+}
 
 ///////////////////////////////////////// test CResult////////////////////////////////////////
 //int main()
@@ -245,27 +354,17 @@ int main()
 */
 
 
-//int main()
-//{
-//    TestHash();
-//   // TestList();
-//    //TestKey();
-//   // TestString();
-//    return 0;
-//}
-
 int main()
 {
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
-
-    redis.closeConnect();
-    redis.reconnect();
-
-    redis.set( "name", "yuhaiyang");
-
+   // TestHash();
+   // TestHash2();
+   // TestList();
+    //TestKey();
+   // TestString();
+    TestSet();
     return 0;
 }
+
 
 
 

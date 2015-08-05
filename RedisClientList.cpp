@@ -20,7 +20,8 @@ void CRedisClient::lpush(const std::string &key, const VecString& value, CResult
     cmd << key;
 
     VecString::const_iterator it = value.begin();
-    for ( ; it !=value.end(); it++ )
+    VecString::const_iterator end = value.end();
+    for ( ; it != end; ++it )
     {
         cmd << *it;
     }

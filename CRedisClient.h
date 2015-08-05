@@ -29,6 +29,8 @@ typedef enum
     XX				///< -- Only set the key if it already exist.
 } SET_OPTION;
 
+
+
 /**
  *@brief CRedisClient redis client
  */
@@ -109,7 +111,7 @@ public:
      * @param keys [out] vector of keys maching pattern 
      * @return The number of keys returned.
      */
-    int64_t keys(const string& pattern, VecString &value );
+    int64_t keys(const string& pattern, VecString &values );
 
 
     void del(VecString& keys , CResult &result);
@@ -124,7 +126,7 @@ public:
      * @param value
      * @warning  could throw Poco::Exception and ProtocolErr exception
      */
-    void set(const string& key, const string& value );
+    void _set(const string& key, const string& value );
 
 
 
@@ -198,7 +200,7 @@ public:
 
     void hgetall( const string& key , CResult& result );
 
-    uint64_t hgetall( const string& key, MapString& value );
+    uint64_t hgetall( const string& key, MapString& values );
 
 
     void hincrby( const string& key, const string& field, uint64_t increment,CResult& result );
@@ -213,11 +215,61 @@ public:
 
     void hkeys( const string& key, CResult& result );
 
-    uint64_t hkeys( const string& key, VecString& value );
+    uint64_t hkeys( const string& key, VecString& values );
+
+
+    void hlen( const string& key, CResult& result );
+
+    uint64_t hlen( const string& key );
+
+
+    void hmget( const string& key, const VecString& fields, CResult& result );
+
+
+    void hmset( const string& key, const MapString& pairs, CResult& result );
+
+    void hmset( const string& key, const MapString& pairs );
+
+
+    void hsetnx( const string& key, const string& field, const string& value, CResult& result );
+
+    bool hsetnx( const string& key, const string& field, const string& value );
+
+
+    void hvals( const string& key, CResult& result );
+
+    uint64_t hvals( const string& key, VecString& values );
+
+
+
+
+    void hscan( const string& key, int64_t cursor, const string& match, uint64_t count, CResult& result );
+
+    /**
+     * @brief hscan
+     * @param key [in]
+     * @param cursor [in] 0: get value from the first. >=1 : get value from the cursor. <0 get value from last time call hscan.
+     * @param values [out] value returned.
+     * @param match [in] It is possible to only iterate elements matching a given glob-style pattern
+     * @param count	[in] Basically with COUNT the user specified the amount of work that should be done at every call in order to retrieve elements from the collection.
+     * @return true:There are some value you don't scan.  false: you have scaned all value.
+     */
+    bool hscan( const string& key, int64_t cursor, VecString& values, const string& match="", uint64_t count=0 );
 
     //---------------------------Set---------------------------------------------------
+    void sadd( const string& key, const VecString& members, CResult& result );
+
+    uint64_t sadd( const string& key, const VecString& members );
 
 
+    void scard( const string& key, CResult& result );
+
+    uint64_t scard( const string& key );
+
+
+    void sdiff( const VecString& key, CResult& result );
+
+    void sdiff( const VecString& key, VecString& values );
 
     //---------------------------SortedSet-------------------------------------------
 
@@ -282,6 +334,9 @@ protected:
 
         return value;
     }
+
+    void _getValueFromArry( const CResult::ListCResult& arry, VecString& values );
+
     /**
      * @brief set
      * @param key
@@ -291,7 +346,10 @@ protected:
      * @param time		expire time.
      * @param suffix2	"NX","XX"
      */
-    void	set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" ) ;
+    void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" ) ;
+
+
+
 private:
     DISALLOW_COPY_AND_ASSIGN( CRedisClient );
 

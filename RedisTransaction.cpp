@@ -68,8 +68,9 @@ bool CRedisClient::transactionCmd(const std::string &cmmand,VecString &params)
     Command cmd( cmmand );
 
     VecString::const_iterator it = params.begin();
+    VecString::const_iterator end = params.end();
 
-    for ( ; it != params.end(); it++ )
+    for ( ; it != end; ++it )
     {
         cmd << *it;
     }

@@ -55,7 +55,7 @@ public:
         size_t size = _param.size();
         _dataString << '*' << size << _CRLF;
         vector<string>::const_iterator it = _param.begin();
-        for ( ; it != _param.end(); it++ )
+        for ( ; it != _param.end(); ++it )
         {
             _dataString << '$' << it->size() << _CRLF;
             _dataString << *it << _CRLF;

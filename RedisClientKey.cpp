@@ -23,11 +23,10 @@ void CRedisClient::keys(const std::string &pattern, CResult &result )
    _getReply( result );
 }
 
-int64_t CRedisClient::keys(const std::string &pattern, VecString &value )
+int64_t CRedisClient::keys(const std::string &pattern, VecString &values )
 {
     CResult result;
     keys( pattern, result );
-    CResult::ListCResult::const_iterator it = result.getArry().begin();
     ReplyType type = result.getType();
 
     if ( type == REDIS_REPLY_ERROR )
@@ -40,11 +39,8 @@ int64_t CRedisClient::keys(const std::string &pattern, VecString &value )
         throw ProtocolErr( "KEYS: data recved is not arry");
     }
 
-    for ( ; it != result.getArry().end(); it++ )
-    {
-        value.push_back( result.getString() );
-    }
-    return value.size();
+    _getValueFromArry( result.getArry(), values );
+    return values.size();
 }
 
 void CRedisClient::del( CRedisClient::VecString &keys, CResult& result )
@@ -53,8 +49,9 @@ void CRedisClient::del( CRedisClient::VecString &keys, CResult& result )
 
     Command cmd( "DEL" );
     VecString::const_iterator it = keys.begin();
+    VecString::const_iterator end = keys.end();
 
-    for ( ; it != keys.end(); it++ )
+    for ( ; it != end; ++it )
     {
         cmd << *it ;
     }

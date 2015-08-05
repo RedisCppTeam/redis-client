@@ -72,6 +72,7 @@ void CRedisClient::connect()
 
 void CRedisClient::reconnect()
 {
+    // fix bug #13 .call close() in advance to ensure the success of the connection.
     _socket.close();
     connect();
 }
@@ -202,5 +203,16 @@ uint64_t CRedisClient::_replyMultiBulk(CResult& result, const std::string &line 
    }
    
    return result.getArry().size();
+}
+
+void CRedisClient::_getValueFromArry(const CResult::ListCResult &arry, CRedisClient::VecString &values )
+{
+    CResult::ListCResult::const_iterator it = arry.begin();
+    CResult::ListCResult::const_iterator end = arry.end();
+
+    for ( ; it != end; ++it )
+    {
+        values.push_back( static_cast<string>(*it) );
+    }
 }
 
