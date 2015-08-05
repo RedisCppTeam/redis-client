@@ -278,7 +278,7 @@ uint64_t CRedisClient::hlen(const string &key)
         throw ReplyErr( result.getErrorString() );
    }else if ( REDIS_REPLY_INTEGERER != type )
    {
-        throw ProtocolErr( "HLEN: data recved is not interger" );
+        throw ProtocolErr( "HLEN: data recved is not intergerer" );
    }
    return result.getInt();
 }
@@ -363,7 +363,7 @@ bool CRedisClient::hsetnx(const string &key, const string &field, const string &
         throw ReplyErr( result.getErrorString() );
     }else if ( REDIS_REPLY_INTEGERER != type )
     {
-        throw ProtocolErr( "HSETNX: data recved is not interger" );
+        throw ProtocolErr( "HSETNX: data recved is not intergerer" );
     }
     return ( result.getInt()==1?true:false );
 }

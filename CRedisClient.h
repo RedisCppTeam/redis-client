@@ -267,9 +267,14 @@ public:
     uint64_t scard( const string& key );
 
 
-    void sdiff( const VecString& key, CResult& result );
+    void sdiff( const VecString& keys, CResult& result );
 
-    void sdiff( const VecString& key, VecString& values );
+    uint64_t sdiff(const VecString& keys, VecString& values );
+
+
+    void sdiffstore( const string& newKey,const VecString& keys,CResult& result );
+
+    uint64_t sdiffstore(const string& newKey, const VecString& keys);
 
     //---------------------------SortedSet-------------------------------------------
 
