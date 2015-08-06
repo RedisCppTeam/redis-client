@@ -216,3 +216,107 @@ void CRedisClient::_getValueFromArry(const CResult::ListCResult &arry, CRedisCli
     }
 }
 
+
+
+bool CRedisClient::_getStatus(  Command& cmd , string& status )
+{
+    CResult result;
+    _socket.clearBuffer();
+    _sendCommand( cmd );
+    _getReply( result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }
+    if ( REDIS_REPLY_STATUS != type )
+    {
+       throw ProtocolErr( cmd.getCommand() + ": data recved is not status" );
+    }
+    status = result.getStatus();
+    return true;
+}
+
+
+
+bool CRedisClient::_getInt(  Command& cmd , int& value )
+{
+    CResult result;
+    _socket.clearBuffer();
+    _sendCommand( cmd );
+    _getReply( result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }
+    if ( REDIS_REPLY_INTEGERER != type )
+    {
+       throw ProtocolErr( cmd.getCommand() + ": data recved is not iintergerer" );
+    }
+    value = result.getInt();
+    return true;
+}
+
+bool CRedisClient::_getString(  Command& cmd , string& value  )
+{
+    CResult result;
+    _socket.clearBuffer();
+    _sendCommand( cmd );
+    _getReply( result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }
+    if ( REDIS_REPLY_STRING != type )
+    {
+       throw ProtocolErr( cmd.getCommand() + ": data recved is not string" );
+    }
+    value = result.getString();
+    return true;
+}
+
+bool CRedisClient::_getStringVec(  Command& cmd , VecString& values  )
+{
+    CResult result;
+    _socket.clearBuffer();
+    _sendCommand( cmd );
+    _getReply( result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }
+    if ( REDIS_REPLY_ARRAY != type )
+    {
+       throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
+    }
+
+    _getValueFromArry( result.getArry(),values );
+    return true;
+}
+
+
+
+

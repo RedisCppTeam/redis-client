@@ -10,3 +10,9 @@
 
 const char* Command::_CRLF = "\r\n";	///< 一行的结束标志
 
+
+
+string Command::getCommand()
+{
+    return ( *_param.begin() );
+}

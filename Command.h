@@ -65,7 +65,7 @@ public:
      /**
      * @brief operator string generate a command
      */
-    operator string()
+    operator string(  )
     {
         makeCommand();
         return _dataString.str();
@@ -83,6 +83,7 @@ public:
         return _dataString.str().data();
     }
 
+    string getCommand( void );
 private:
     std::stringstream _dataString;		///< 实现各种类型与 string 的互转。
     std::vector<string> _param;			///< 存放一次交互的参数个数

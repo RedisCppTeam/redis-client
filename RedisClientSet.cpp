@@ -130,3 +130,36 @@ uint64_t CRedisClient::sdiffstore(const string &newKey, const CRedisClient::VecS
     }
     return result.getInt();
 }
+
+void CRedisClient::sinter(const CRedisClient::VecString &keys, CResult &result)
+{
+    _socket.clearBuffer();
+    Command cmd( "SINTER" );
+    VecString::const_iterator it = keys.begin();
+    VecString::const_iterator end = keys.end();
+    for ( ; it != end; ++it )
+    {
+        cmd << *it;
+    }
+
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+uint64_t CRedisClient::sinter(const CRedisClient::VecString &keys, VecString &values)
+{
+    CResult result;
+    sinter( keys, result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_ARRAY != type )
+    {
+        throw ProtocolErr( "SINTER: data recved is not arry");
+    }
+
+    _getValueFromArry( result.getArry(), values );
+    return values.size();
+}

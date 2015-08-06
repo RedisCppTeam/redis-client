@@ -276,6 +276,12 @@ public:
 
     uint64_t sdiffstore(const string& newKey, const VecString& keys);
 
+
+    void sinter( const VecString& keys, CResult& result );
+
+    uint64_t sinter( const VecString& keys, VecString& values  );
+
+
     //---------------------------SortedSet-------------------------------------------
 
 
@@ -353,7 +359,16 @@ protected:
      */
     void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" ) ;
 
-
+    /**
+     * @brief _getStatus
+     * @param cmd
+     * @param status recved from
+     * @return
+     */
+    bool _getStatus(Command &cmd, string &status);
+    bool _getInt(Command &cmd, int &value);
+    bool _getString(Command &cmd, string &value);
+    bool _getStringVec(Command &cmd, VecString &values);
 
 private:
     DISALLOW_COPY_AND_ASSIGN( CRedisClient );

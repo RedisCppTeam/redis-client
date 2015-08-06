@@ -63,28 +63,33 @@ void CRedisClient::hget(const std::string &key, const std::string &field,  CResu
 
 bool CRedisClient::hget( const std::string &key, const std::string &field, string &value )
 {
-    CResult result;
-    hget( key, field, result );
-    ReplyType type = result.getType();
-    if ( type == REDIS_REPLY_ERROR )
-    {
-        throw ReplyErr( result.getErrorString() );
-    }
+   // CResult result;
+   // hget( key, field, result );
+   // ReplyType type = result.getType();
+   // if ( type == REDIS_REPLY_ERROR )
+   // {
+   //     throw ReplyErr( result.getErrorString() );
+   // }
 
-    if ( type == REDIS_REPLY_NIL )
-    {
-            return false;
-    }
+   // if ( type == REDIS_REPLY_NIL )
+   // {
+   //         return false;
+   // }
 
-    if ( type == REDIS_REPLY_STRING )
-    {
-        value = result.getString();
-        return true;
-    }else
-    {
-          throw ProtocolErr( "HSET: data recved is not string" );
-    }
+   // if ( type == REDIS_REPLY_STRING )
+   // {
+   //     value = result.getString();
+   //     return true;
+   // }else
+   // {
+   //       throw ProtocolErr( "HSET: data recved is not string" );
+   // }
+    Command cmd( "HGET" );
+    cmd << key << field;
+    return _getString( cmd , value );
 }
+
+
 
 void CRedisClient::hdel(const string &key, const CRedisClient::VecString &fields, CResult &result )
 {
@@ -93,7 +98,7 @@ void CRedisClient::hdel(const string &key, const CRedisClient::VecString &fields
     cmd << key;
 
     VecString::const_iterator it = fields.begin();
-    VecString::const_iterator end = fields.begin();
+    VecString::const_iterator end = fields.end();
     for ( ; it != end; ++it )
     {
         cmd << *it;
