@@ -130,7 +130,7 @@ public:
 
 
 
-    bool setEX( const string& key, const string& value, long time, SET_OPTION opt=DEFAULT );
+    bool setEX( const string& key, const string& value, long time, SET_OPTION opt=DEFAULT ) ;
     bool setPX( const string& key, const string& value, long time, SET_OPTION opt=DEFAULT );
 
     bool setNX( const string& key, const string& value );
