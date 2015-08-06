@@ -15,85 +15,27 @@
 
 
 //------------------------------hash method-----------------------------------
-
-void CRedisClient::hset(const std::string &key, const std::string &field, const std::string &value, CResult &result)
-{
-    _socket.clearBuffer();
-
-    Command cmd( "HSET" );
-    cmd << key << field << value;
-
-    _sendCommand( cmd );
-
-    _getReply( result );
-}
-
 uint8_t CRedisClient::hset(const std::string &key, const std::string &field, const std::string &value)
 {
-    CResult result;
-
-   hset( key, field, value, result );
-   ReplyType type = result.getType();
-   if ( type == REDIS_REPLY_ERROR )
-   {
-        throw ReplyErr( result.getErrorString() );
-   }
-
-   if ( type != REDIS_REPLY_INTEGERER )
-   {
-       throw ProtocolErr( "HSET: data recved is not integerer" );
-   }
-   return result.getInt();
+   Command cmd( "HSET" );
+   cmd << key << field << value;
+   int64_t num = 0;
+   _getInt( cmd , num );
+   return num;
 }
 
 
-
-
-void CRedisClient::hget(const std::string &key, const std::string &field,  CResult &result )
-{
-    _socket.clearBuffer();
-
-    Command cmd( "HGET" );
-    cmd << key << field ;
-
-    _sendCommand( cmd );
-
-     _getReply( result );
-}
 
 bool CRedisClient::hget( const std::string &key, const std::string &field, string &value )
 {
-   // CResult result;
-   // hget( key, field, result );
-   // ReplyType type = result.getType();
-   // if ( type == REDIS_REPLY_ERROR )
-   // {
-   //     throw ReplyErr( result.getErrorString() );
-   // }
-
-   // if ( type == REDIS_REPLY_NIL )
-   // {
-   //         return false;
-   // }
-
-   // if ( type == REDIS_REPLY_STRING )
-   // {
-   //     value = result.getString();
-   //     return true;
-   // }else
-   // {
-   //       throw ProtocolErr( "HSET: data recved is not string" );
-   // }
     Command cmd( "HGET" );
     cmd << key << field;
     return _getString( cmd , value );
 }
 
 
-
-void CRedisClient::hdel(const string &key, const CRedisClient::VecString &fields, CResult &result )
+uint64_t CRedisClient::hdel( const string &key, const CRedisClient::VecString &fields )
 {
-    _socket.clearBuffer();;
     Command cmd( "HDEL" );
     cmd << key;
 
@@ -104,86 +46,31 @@ void CRedisClient::hdel(const string &key, const CRedisClient::VecString &fields
         cmd << *it;
     }
 
-    _sendCommand( cmd );
-    _getReply( result );
+    int64_t num = 0;
+    _getInt( cmd , num );
+    return num;
 }
 
-uint64_t CRedisClient::hdel( const string &key, const CRedisClient::VecString &fields )
-{
-    CResult result;
-    hdel( key, fields, result );
-
-    ReplyType type = result.getType();
-
-    if ( REDIS_REPLY_ERROR == type )
-    {
-        throw ReplyErr( result.getErrorString() );
-    }else if ( REDIS_REPLY_INTEGERER != type )
-    {
-        throw ProtocolErr( "HDEL: data recv is not intgerer" );
-    }
-    return result.getInt();
-}
-
-void CRedisClient::hexists(const string &key, const string &field, CResult &result)
-{
-    _socket.clearBuffer();;
-    Command cmd( "HEXISTS" );
-    cmd << key << field;
-    _sendCommand( cmd );
-    _getReply( result );
-}
 
 bool CRedisClient::hexists(const string &key, const string &field)
 {
-    CResult result;
-    hexists( key, field, result );
-
-    ReplyType type = result.getType();
-
-    if ( REDIS_REPLY_ERROR == type )
-    {
-        throw ReplyErr( result.getErrorString() );
-    }else if ( REDIS_REPLY_INTEGERER != type )
-    {
-        throw ProtocolErr( "HEXISTS: data recv is not intgerer" );
-    }
-    return result.getInt();
+    Command cmd( "HEXISTS" );
+    cmd << key << field;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return ( num==1 ? true:false );
 }
 
-void CRedisClient::hgetall(const string &key, CResult &result )
+
+uint64_t CRedisClient::hgetall(const string &key, CRedisClient::MapString &pairs)
 {
-    _socket.clearBuffer();
     Command cmd( "HGETALL" );
     cmd << key;
-    _sendCommand( cmd );
-    _getReply( result );
-}
 
-uint64_t CRedisClient::hgetall(const string &key, CRedisClient::MapString &values)
-{
     CResult result;
-    hgetall( key, result );
-    ReplyType type = result.getType();
-
-    if ( REDIS_REPLY_ERROR == type )
-    {
-        throw ReplyErr( result.getErrorString() );
-    }else if ( REDIS_REPLY_ARRAY != type )
-    {
-        throw ProtocolErr( "HGETALL: data recv is not arry" );
-    }
-
-    CResult::ListCResult::const_iterator it = result.getArry().begin();
-    CResult::ListCResult::const_iterator it2 = it;
-    CResult::ListCResult::const_iterator end = result.getArry().end();
-
-    for ( ; it != end; ++it )
-    {
-        it2 = it++;		// the next element is value.
-        values.insert( MapString::value_type( *it2, *it ) );
-    }
-    return values.size();
+    _getArry( cmd , result );
+    _getStringMapFromArry( result.getArry(), pairs );
+    return pairs.size();
 }
 
 void CRedisClient::hincrby(const string &key, const string &field, uint64_t increment, CResult &result)
@@ -259,7 +146,7 @@ uint64_t CRedisClient::hkeys(const string &key, CRedisClient::VecString &values)
         throw ProtocolErr("HKEYS: data recved is not arry");
    }
 
-   _getValueFromArry( result.getArry(), values );
+   _getStringVecFromArry( result.getArry(), values );
    return values.size();
 }
 
@@ -457,7 +344,7 @@ bool CRedisClient::hscan(const string &key, int64_t cursor, VecString& values,co
     lastCur = _valueFromString<uint64_t>( it->getString() );
     ++it;
 
-    _getValueFromArry( it->getArry(), values );
+    _getStringVecFromArry( it->getArry(), values );
 
     return ( lastCur == 0 ? false : true );
 }

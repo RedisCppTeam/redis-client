@@ -39,7 +39,7 @@ int64_t CRedisClient::keys(const std::string &pattern, VecString &values )
         throw ProtocolErr( "KEYS: data recved is not arry");
     }
 
-    _getValueFromArry( result.getArry(), values );
+    _getStringVecFromArry( result.getArry(), values );
     return values.size();
 }
 

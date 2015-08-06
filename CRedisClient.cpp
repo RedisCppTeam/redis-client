@@ -205,7 +205,7 @@ uint64_t CRedisClient::_replyMultiBulk(CResult& result, const std::string &line 
    return result.getArry().size();
 }
 
-void CRedisClient::_getValueFromArry(const CResult::ListCResult &arry, CRedisClient::VecString &values )
+void CRedisClient::_getStringVecFromArry(const CResult::ListCResult &arry, CRedisClient::VecString &values )
 {
     CResult::ListCResult::const_iterator it = arry.begin();
     CResult::ListCResult::const_iterator end = arry.end();
@@ -213,6 +213,19 @@ void CRedisClient::_getValueFromArry(const CResult::ListCResult &arry, CRedisCli
     for ( ; it != end; ++it )
     {
         values.push_back( static_cast<string>(*it) );
+    }
+}
+
+void CRedisClient::_getStringMapFromArry(const CResult::ListCResult &arry, CRedisClient::MapString &pairs)
+{
+    CResult::ListCResult::const_iterator it = arry.begin();
+    CResult::ListCResult::const_iterator it2 = it;
+    CResult::ListCResult::const_iterator end = arry.end();
+
+    for ( ; it != end; ++it )
+    {
+        it2 = it++;		// the next element is value.
+        pairs.insert( MapString::value_type( *it2, *it ) );
     }
 }
 
@@ -244,7 +257,7 @@ bool CRedisClient::_getStatus(  Command& cmd , string& status )
 
 
 
-bool CRedisClient::_getInt(  Command& cmd , int& value )
+bool CRedisClient::_getInt(  Command& cmd , int64_t& value )
 {
     CResult result;
     _socket.clearBuffer();
@@ -292,9 +305,8 @@ bool CRedisClient::_getString(  Command& cmd , string& value  )
     return true;
 }
 
-bool CRedisClient::_getStringVec(  Command& cmd , VecString& values  )
+bool CRedisClient::_getArry(Command &cmd, CResult &result )
 {
-    CResult result;
     _socket.clearBuffer();
     _sendCommand( cmd );
     _getReply( result );
@@ -313,10 +325,7 @@ bool CRedisClient::_getStringVec(  Command& cmd , VecString& values  )
        throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
     }
 
-    _getValueFromArry( result.getArry(),values );
     return true;
 }
-
-
 
 

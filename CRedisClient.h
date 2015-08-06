@@ -162,9 +162,6 @@ public:
     bool lpop(const std::string &key, string &value);
 
     //------------------------------hash method-----------------------------------
-
-    void hset( const string& key, const string& field,const string& value, CResult& result );
-
     /**
      * @brief hset  insert into a value to hash name is key field is field .
      * @param key  hash name
@@ -174,9 +171,6 @@ public:
      */
     uint8_t hset( const string& key, const string& field, const string&value );
 
-
-
-    void hget(const string& key, const string& field, CResult &result );
 
     /**
      * @brief hget
@@ -188,19 +182,13 @@ public:
     bool hget(const string& key, const string& field, std::string &value );
 
 
-    void hdel(const string& key, const VecString& fields, CResult& result );
-
     uint64_t hdel (const string& key, const VecString& fields );
 
-
-    void hexists( const string& key, const string& field , CResult& result );
 
     bool hexists( const string& key, const string& field );
 
 
-    void hgetall( const string& key , CResult& result );
-
-    uint64_t hgetall( const string& key, MapString& values );
+    uint64_t hgetall( const string& key, MapString& pairs );
 
 
     void hincrby( const string& key, const string& field, uint64_t increment,CResult& result );
@@ -312,7 +300,6 @@ public:
 
     //-----------------------------Server---------------------------------------------------
 
-
 protected:
      /**
      * @brief sendCommand. send a Command to redis-server
@@ -346,7 +333,9 @@ protected:
         return value;
     }
 
-    void _getValueFromArry( const CResult::ListCResult& arry, VecString& values );
+    void _getStringVecFromArry( const CResult::ListCResult& arry, VecString& values );
+
+    void _getStringMapFromArry( const CResult::ListCResult& arry, MapString& pairs );
 
     /**
      * @brief set
@@ -361,14 +350,15 @@ protected:
 
     /**
      * @brief _getStatus
-     * @param cmd
-     * @param status recved from
-     * @return
+     * @param cmd [in] Command you want send.
+     * @param data [out] recved from server.
+     * @return true:recv data successful. false: recv empty object.
      */
     bool _getStatus(Command &cmd, string &status);
-    bool _getInt(Command &cmd, int &value);
+    bool _getInt(Command &cmd, int64_t &value);
     bool _getString(Command &cmd, string &value);
-    bool _getStringVec(Command &cmd, VecString &values);
+    bool _getArry(Command &cmd, CResult& result );
+    bool _getCResult(Command &cmd, CResult &result);
 
 private:
     DISALLOW_COPY_AND_ASSIGN( CRedisClient );

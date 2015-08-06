@@ -131,39 +131,39 @@ void TestHash( void )
         redis.connect( "127.0.0.1", 6379 );
 
         //-------------------------test hset hget---------------------------------
-        string value;
-        int32_t hashRet = redis.hset( "testHash", "name4", "yang" );
-        std::cout << "hashRet: " << hashRet << std::endl;
+       // string value;
+       // int32_t hashRet = redis.hset( "testHash", "name5", "yang" );
+       // std::cout << "hashRet: " << hashRet << std::endl;
 
-        bool ret = redis.hget( "testHash", "name4" ,value );
+       // bool ret = redis.hget( "testHash", "name4" ,value );
 
-        std::cout << "ret: " << ret << std::endl;
-        std::cout << "value:" << value << std::endl;
+       // std::cout << "ret: " << ret << std::endl;
+       // std::cout << "value:" << value << std::endl;
 
-        //------------------------test hdel------------------------------------------
-        CRedisClient::VecString fields;
-        fields.push_back( "name" );
-        fields.push_back( "name2" );
+       // //------------------------test hdel------------------------------------------
+       // CRedisClient::VecString fields;
+       // fields.push_back( "name4" );
+       // fields.push_back( "name5" );
 
-        uint64_t delNum = redis.hdel( "member", fields );
-        std::cout << "delNum: " << delNum << std::endl;
-        //------------------------test hexists---------------------------------------
-        string field  = "name4";
-        bool isExists = redis.hexists( "testHash", field );
-        if ( isExists )
-            std::cout << "testHash key exists field:" << field << std::endl;
-        else
-            std::cout << "testHash key not exists field:" << field << std::endl;
+       // uint64_t delNum = redis.hdel( "member", fields );
+       // std::cout << "delNum: " << delNum << std::endl;
+       // //------------------------test hexists---------------------------------------
+       // string field  = "name4";
+       // bool isExists = redis.hexists( "testHash", field );
+       // if ( isExists )
+       //     std::cout << "testHash key exists field:" << field << std::endl;
+       // else
+       //     std::cout << "testHash key not exists field:" << field << std::endl;
         //-----------------------test hgetall-------------------------------------------
-     //   CRedisClient::MapString allValue;
-     //   uint64_t allNum = redis.hgetall( "testHash", allValue );
-     //   std::cout << "allNum: " << allNum <<std::endl;
-     //   CRedisClient::MapString::const_iterator it = allValue.begin();
+        CRedisClient::MapString allValue;
+        uint64_t allNum = redis.hgetall( "testHash", allValue );
+        std::cout << "allNum: " << allNum <<std::endl;
+        CRedisClient::MapString::const_iterator it = allValue.begin();
 
-     //   for ( ; it != allValue.end(); it++ )
-     //   {
-     //       std::cout << it->first << ":" << it->second << std::endl;
-     //   }
+        for ( ; it != allValue.end(); it++ )
+        {
+            std::cout << it->first << ":" << it->second << std::endl;
+        }
         //------------------------test incrby-------------------------------------------
         uint64_t incrybyNum = redis.hincrby( "testHash", "num", 20 );
         std::cout << "incrybyNum: " << incrybyNum << std::endl;

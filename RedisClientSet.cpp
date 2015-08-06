@@ -95,7 +95,7 @@ uint64_t CRedisClient::sdiff(const CRedisClient::VecString &keys, CRedisClient::
         throw ProtocolErr( "SDIFF: data recved is not arry");
     }
 
-    _getValueFromArry( result.getArry(), values );
+    _getStringVecFromArry( result.getArry(), values );
     return values.size();
 }
 
@@ -160,6 +160,6 @@ uint64_t CRedisClient::sinter(const CRedisClient::VecString &keys, VecString &va
         throw ProtocolErr( "SINTER: data recved is not arry");
     }
 
-    _getValueFromArry( result.getArry(), values );
+    _getStringVecFromArry( result.getArry(), values );
     return values.size();
 }
