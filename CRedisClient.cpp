@@ -257,7 +257,7 @@ bool CRedisClient::_getStatus(  Command& cmd , string& status )
 
 
 
-bool CRedisClient::_getInt(  Command& cmd , int64_t& value )
+bool CRedisClient::_getInt(  Command& cmd , int64_t& number )
 {
     CResult result;
     _socket.clearBuffer();
@@ -277,7 +277,7 @@ bool CRedisClient::_getInt(  Command& cmd , int64_t& value )
     {
        throw ProtocolErr( cmd.getCommand() + ": data recved is not iintergerer" );
     }
-    value = result.getInt();
+    number  = result.getInt();
     return true;
 }
 
@@ -305,7 +305,7 @@ bool CRedisClient::_getString(  Command& cmd , string& value  )
     return true;
 }
 
-bool CRedisClient::_getArry(Command &cmd, CResult &result )
+bool CRedisClient::_getArry(Command &cmd, CResult &result)
 {
     _socket.clearBuffer();
     _sendCommand( cmd );
@@ -325,6 +325,56 @@ bool CRedisClient::_getArry(Command &cmd, CResult &result )
        throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
     }
 
+    return true;
+}
+
+bool CRedisClient::_getArry(Command &cmd, VecString &values )
+{
+    _socket.clearBuffer();
+    _sendCommand( cmd );
+    CResult result;
+    _getReply( result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }
+    if ( REDIS_REPLY_ARRAY != type )
+    {
+       throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
+    }
+
+    _getStringVecFromArry( result.getArry(), values );
+    return true;
+}
+
+bool CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
+{
+    _socket.clearBuffer();
+    _sendCommand( cmd );
+    CResult result;
+    _getReply( result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }
+    if ( REDIS_REPLY_ARRAY != type )
+    {
+       throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
+    }
+
+    _getStringMapFromArry( result.getArry(), pairs );
     return true;
 }
 

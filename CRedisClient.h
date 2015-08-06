@@ -195,9 +195,6 @@ public:
 
     uint64_t hincrby( const string& key, const string& field ,uint64_t increment );
 
-
-    void hincrbyfloat( const string& key, const string& field, float increment, CResult& result );
-
     float hincrbyfloat( const string& key, const string& field, float increment );
 
 
@@ -205,8 +202,6 @@ public:
 
     uint64_t hkeys( const string& key, VecString& values );
 
-
-    void hlen( const string& key, CResult& result );
 
     uint64_t hlen( const string& key );
 
@@ -219,17 +214,9 @@ public:
     void hmset( const string& key, const MapString& pairs );
 
 
-    void hsetnx( const string& key, const string& field, const string& value, CResult& result );
-
     bool hsetnx( const string& key, const string& field, const string& value );
 
-
-    void hvals( const string& key, CResult& result );
-
     uint64_t hvals( const string& key, VecString& values );
-
-
-
 
     void hscan( const string& key, int64_t cursor, const string& match, uint64_t count, CResult& result );
 
@@ -242,7 +229,7 @@ public:
      * @param count	[in] Basically with COUNT the user specified the amount of work that should be done at every call in order to retrieve elements from the collection.
      * @return true:There are some value you don't scan.  false: you have scaned all value.
      */
-    bool hscan( const string& key, int64_t cursor, VecString& values, const string& match="", uint64_t count=0 );
+    bool hscan( const string& key, int64_t cursor, MapString& values, const string& match="", uint64_t count=0 );
 
     //---------------------------Set---------------------------------------------------
     void sadd( const string& key, const VecString& members, CResult& result );
@@ -355,10 +342,18 @@ protected:
      * @return true:recv data successful. false: recv empty object.
      */
     bool _getStatus(Command &cmd, string &status);
-    bool _getInt(Command &cmd, int64_t &value);
+    bool _getInt(Command &cmd, int64_t &number);
     bool _getString(Command &cmd, string &value);
-    bool _getArry(Command &cmd, CResult& result );
-    bool _getCResult(Command &cmd, CResult &result);
+    /**
+     * @brief _getArry
+     * @param cmd
+     * @param result [out] it must arry.
+     * @return
+     */
+    bool _getArry(Command& cmd, CResult& result );
+    bool _getArry(Command &cmd, VecString& values );
+    bool _getArry(Command &cmd, MapString& pairs );
+
 
 private:
     DISALLOW_COPY_AND_ASSIGN( CRedisClient );

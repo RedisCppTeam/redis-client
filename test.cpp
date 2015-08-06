@@ -155,31 +155,31 @@ void TestHash( void )
        // else
        //     std::cout << "testHash key not exists field:" << field << std::endl;
         //-----------------------test hgetall-------------------------------------------
-        CRedisClient::MapString allValue;
-        uint64_t allNum = redis.hgetall( "testHash", allValue );
-        std::cout << "allNum: " << allNum <<std::endl;
-        CRedisClient::MapString::const_iterator it = allValue.begin();
+    //    CRedisClient::MapString allValue;
+    //    uint64_t allNum = redis.hgetall( "testHash", allValue );
+    //    std::cout << "allNum: " << allNum <<std::endl;
+    //    CRedisClient::MapString::const_iterator it = allValue.begin();
 
-        for ( ; it != allValue.end(); it++ )
-        {
-            std::cout << it->first << ":" << it->second << std::endl;
-        }
+    //    for ( ; it != allValue.end(); it++ )
+    //    {
+    //        std::cout << it->first << ":" << it->second << std::endl;
+    //    }
         //------------------------test incrby-------------------------------------------
-        uint64_t incrybyNum = redis.hincrby( "testHash", "num", 20 );
-        std::cout << "incrybyNum: " << incrybyNum << std::endl;
-        //------------------------test incrbyfloat-------------------------------------
-        float floatNum = redis.hincrbyfloat( "testHast", "float", 10.1e2 );
-        std::cout << "floatNum: " << floatNum << std::endl;
+  //      uint64_t incrybyNum = redis.hincrby( "testHash", "num2", 20 );
+  //      std::cout << "incrybyNum: " << incrybyNum << std::endl;
+  //      //------------------------test incrbyfloat-------------------------------------
+  //      float floatNum = redis.hincrbyfloat( "testHash", "float", 10.1e2 );
+  //      std::cout << "floatNum: " << floatNum << std::endl;
         //------------------------test hkeys-------------------------------------------
-      //  CRedisClient::VecString hkeysValue;
-      //  uint64_t hkeysNum = redis.hkeys( "testHash", hkeysValue );
-      //  std::cout << "hkeysNum: " << hkeysNum << std::endl;
+   //    CRedisClient::VecString hkeysValue;
+   //    uint64_t hkeysNum = redis.hkeys( "testHash", hkeysValue );
+   //    std::cout << "hkeysNum: " << hkeysNum << std::endl;
 
-      //  CRedisClient::VecString::const_iterator hkeysit = hkeysValue.begin();
-      //  for ( ; hkeysit != hkeysValue.end(); hkeysit++ )
-      //  {
-      //      std::cout << *hkeysit << std::endl;
-      //  }
+   //    CRedisClient::VecString::const_iterator hkeysit = hkeysValue.begin();
+   //    for ( ; hkeysit != hkeysValue.end(); hkeysit++ )
+   //    {
+   //        std::cout << *hkeysit << std::endl;
+   //    }
         //------------------------test hlen-----------------------------------------------
         uint64_t fieldNum = redis.hlen( "testHash" );
         std::cout << "fieldNum: " << fieldNum << std::endl;
@@ -209,54 +209,54 @@ void TestHash2()
         redis.connect( "127.0.0.1", 6379 );
         CResult result;
         //-------------------------------test hmset---------------------------
-   //     CRedisClient::MapString pairs;
-   //     string pair, value;
-   //     std::stringstream ss;
-   //     for ( int i = 0; i < 1000; i++ )
-   //     {
-   //         pair = "pair_";
-   //         value = "value_";
-   //         ss.str("");
+        CRedisClient::MapString pairs;
+        string pair, value;
+        std::stringstream ss;
+        for ( int i = 0; i < 1000; i++ )
+        {
+            pair = "pair_";
+            value = "value_";
+            ss.str("");
 
-   //         ss << i;
-   //         pair += ss.str();
-   //         value += ss.str();
-   //         pairs.insert( CRedisClient::MapString::value_type(pair,value) );
-   //     }
-   //     redis.hmset( "testHash", pairs );
+            ss << i;
+            pair += ss.str();
+            value += ss.str();
+            pairs.insert( CRedisClient::MapString::value_type(pair,value) );
+        }
+        redis.hmset( "testHash", pairs );
         //-------------------------------test hsetnx---------------------------
- //       bool hsetNxRet = redis.hsetnx( "testHash", "num3", "123" );
- //       if ( hsetNxRet )
- //          std::cout << "ok" << std::endl;
- //       else
- //           std::cout << "false" << std::endl;
+        bool hsetNxRet = redis.hsetnx( "testHash", "num4", "123" );
+        if ( hsetNxRet )
+           std::cout << "ok" << std::endl;
+        else
+            std::cout << "false" << std::endl;
         //------------------------------test hvals--------------------------------
-   //     CRedisClient::VecString hvals;
-   //     uint64_t num = redis.hvals( "testHash", hvals );
-   //     std::cout << "num: " << num << std::endl;
-   //     CRedisClient::VecString::const_iterator it = hvals.begin();
-   //     CRedisClient::VecString::const_iterator end = hvals.end();
-   //     for ( ; it != end; ++it )
-   //     {
-   //         std::cout << *it << std::endl;
-   //     }
-
+//        CRedisClient::VecString hvals;
+//        uint64_t num = redis.hvals( "testHash", hvals );
+//        std::cout << "num: " << num << std::endl;
+//        CRedisClient::VecString::const_iterator it = hvals.begin();
+//        CRedisClient::VecString::const_iterator end = hvals.end();
+//        for ( ; it != end; ++it )
+//        {
+//            std::cout << *it << std::endl;
+//        }
+//
         //-------------------------------test hscan-----------------------------
 
-        std::cout << "====================hscan value===================" << std::endl;
-        CRedisClient::VecString hscanValues;
+       std::cout << "====================hscan value===================" << std::endl;
+       CRedisClient::MapString hscanPairs;
 
-       redis.hscan( "testHash", 0, hscanValues );
-       while ( redis.hscan( "testHash", -2, hscanValues ) );
+      redis.hscan( "testHash", 0, hscanPairs );
+      while ( redis.hscan( "testHash", -1, hscanPairs ) );
 
-    CRedisClient::VecString::const_iterator hscanIt = hscanValues.begin();
-    CRedisClient::VecString::const_iterator hscanEnd = hscanValues.end();
+   CRedisClient::MapString::const_iterator hscanIt = hscanPairs.begin();
+   CRedisClient::MapString::const_iterator hscanEnd = hscanPairs.end();
 
-    for ( ; hscanIt != hscanEnd ; ++hscanIt )
-    {
-        std::cout << *hscanIt << std::endl;
-    }
-    std::cout << "totalNum: " << hscanValues.size() << std::endl;
+   for ( ; hscanIt != hscanEnd ; ++hscanIt )
+   {
+       std::cout << hscanIt->first <<": " << hscanIt->second << std::endl;
+   }
+   std::cout << "totalNum: " << hscanPairs.size() << std::endl;
 
 
     }catch( RdException& e )
@@ -375,8 +375,8 @@ int main()
 
 int main()
 {
-    TestHash();
-   // TestHash2();
+    //TestHash();
+    TestHash2();
    // TestList();
     //TestKey();
    // TestString();
