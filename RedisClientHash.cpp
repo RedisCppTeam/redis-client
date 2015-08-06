@@ -221,7 +221,7 @@ bool CRedisClient::hscan(const string &key, int64_t cursor, MapString &values, c
 
     if ( "" != match )
     {
-          cmd << "MATH" << match;
+          cmd << "MATCH" << match;
     }
 
     if ( 0 != count )

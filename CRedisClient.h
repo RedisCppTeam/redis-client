@@ -24,11 +24,10 @@ using namespace Poco;
 
 typedef enum
 {
-    DEFAULT,		///< -- A default option.
+    DEFAULT,	///< -- A default option.
     NX,				///< -- Only set the key if it does not already exist.
     XX				///< -- Only set the key if it already exist.
 } SET_OPTION;
-
 
 
 /**
@@ -228,6 +227,10 @@ public:
      * @param match [in] It is possible to only iterate elements matching a given glob-style pattern
      * @param count	[in] Basically with COUNT the user specified the amount of work that should be done at every call in order to retrieve elements from the collection.
      * @return true:There are some value you don't scan.  false: you have scaned all value.
+     *
+     * eg: get all key between pair_100 and pair_199
+     *       	redis.hscan( "testHash", 0, hscanPairs,"pair_1??" );
+     *			while ( redis.hscan( "testHash", -1, hscanPairs ,"pair_1??") );
      */
     bool hscan( const string& key, int64_t cursor, MapString& values, const string& match="", uint64_t count=0 );
 

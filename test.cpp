@@ -209,27 +209,27 @@ void TestHash2()
         redis.connect( "127.0.0.1", 6379 );
         CResult result;
         //-------------------------------test hmset---------------------------
-        CRedisClient::MapString pairs;
-        string pair, value;
-        std::stringstream ss;
-        for ( int i = 0; i < 1000; i++ )
-        {
-            pair = "pair_";
-            value = "value_";
-            ss.str("");
+ //       CRedisClient::MapString pairs;
+ //       string pair, value;
+ //       std::stringstream ss;
+ //       for ( int i = 0; i < 1000; i++ )
+ //       {
+ //           pair = "pair_";
+ //           value = "value_";
+ //           ss.str("");
 
-            ss << i;
-            pair += ss.str();
-            value += ss.str();
-            pairs.insert( CRedisClient::MapString::value_type(pair,value) );
-        }
-        redis.hmset( "testHash", pairs );
+ //           ss << i;
+ //           pair += ss.str();
+ //           value += ss.str();
+ //           pairs.insert( CRedisClient::MapString::value_type(pair,value) );
+ //       }
+ //       redis.hmset( "testHash", pairs );
         //-------------------------------test hsetnx---------------------------
-        bool hsetNxRet = redis.hsetnx( "testHash", "num4", "123" );
-        if ( hsetNxRet )
-           std::cout << "ok" << std::endl;
-        else
-            std::cout << "false" << std::endl;
+ //       bool hsetNxRet = redis.hsetnx( "testHash", "num4", "123" );
+ //       if ( hsetNxRet )
+ //          std::cout << "ok" << std::endl;
+ //       else
+ //           std::cout << "false" << std::endl;
         //------------------------------test hvals--------------------------------
 //        CRedisClient::VecString hvals;
 //        uint64_t num = redis.hvals( "testHash", hvals );
@@ -246,8 +246,8 @@ void TestHash2()
        std::cout << "====================hscan value===================" << std::endl;
        CRedisClient::MapString hscanPairs;
 
-      redis.hscan( "testHash", 0, hscanPairs );
-      while ( redis.hscan( "testHash", -1, hscanPairs ) );
+      redis.hscan( "testHash", 0, hscanPairs,"pair_1??" );
+      while ( redis.hscan( "testHash", -1, hscanPairs ,"pair_1??") );
 
    CRedisClient::MapString::const_iterator hscanIt = hscanPairs.begin();
    CRedisClient::MapString::const_iterator hscanEnd = hscanPairs.end();
