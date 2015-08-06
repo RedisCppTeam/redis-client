@@ -346,7 +346,7 @@ protected:
      * @param time		expire time.
      * @param suffix2	"NX","XX"
      */
-    void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" ) ;
+    void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
 
     /**
      * @brief _getStatus
