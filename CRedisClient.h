@@ -235,29 +235,27 @@ public:
     bool hscan( const string& key, int64_t cursor, MapString& values, const string& match="", uint64_t count=0 );
 
     //---------------------------Set---------------------------------------------------
-    void sadd( const string& key, const VecString& members, CResult& result );
-
     uint64_t sadd( const string& key, const VecString& members );
-
-
-    void scard( const string& key, CResult& result );
 
     uint64_t scard( const string& key );
 
-
-    void sdiff( const VecString& keys, CResult& result );
-
     uint64_t sdiff(const VecString& keys, VecString& values );
 
-
-    void sdiffstore( const string& newKey,const VecString& keys,CResult& result );
-
-    uint64_t sdiffstore(const string& newKey, const VecString& keys);
-
-
-    void sinter( const VecString& keys, CResult& result );
+    uint64_t sdiffstore(const string& destKey, const VecString& keys);
 
     uint64_t sinter( const VecString& keys, VecString& values  );
+
+    uint64_t sinterstore(const string& destKey , const VecString& keys);
+
+    /**
+     * @brief sismember
+     * @param key
+     * @param member
+     * @return true : member   ∈ key.  false member ∉ key.
+     */
+    bool sismember( const string& key, const string& member );
+
+    uint64_t smembers( const string& key,VecString& members );
 
 
     //---------------------------SortedSet-------------------------------------------

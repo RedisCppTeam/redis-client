@@ -19,6 +19,15 @@
 using namespace std;
 
 
+void PrintVector( const string& key,CRedisClient::VecString& values )
+{
+    CRedisClient::VecString::const_iterator it = values.begin();
+    CRedisClient::VecString::const_iterator end = values.end();
+    for ( ; it != end; ++it )
+    {
+        std::cout << key << ": " << *it << std::endl;
+    }
+}
 
 void TestKey( void )
 {
@@ -131,14 +140,14 @@ void TestHash( void )
         redis.connect( "127.0.0.1", 6379 );
 
         //-------------------------test hset hget---------------------------------
-       // string value;
-       // int32_t hashRet = redis.hset( "testHash", "name5", "yang" );
-       // std::cout << "hashRet: " << hashRet << std::endl;
+        string value;
+        int32_t hashRet = redis.hset( "testHash", "name5", "{ \n\"value\" : \"yuhaiyang\"\r\n}\n" );
+        std::cout << "hashRet: " << hashRet << std::endl;
 
-       // bool ret = redis.hget( "testHash", "name4" ,value );
+        bool ret = redis.hget( "testHash", "name5" ,value );
 
-       // std::cout << "ret: " << ret << std::endl;
-       // std::cout << "value:" << value << std::endl;
+        std::cout << "ret: " << ret << std::endl;
+        std::cout << "value:" << value << std::endl;
 
        // //------------------------test hdel------------------------------------------
        // CRedisClient::VecString fields;
@@ -181,17 +190,17 @@ void TestHash( void )
    //        std::cout << *hkeysit << std::endl;
    //    }
         //------------------------test hlen-----------------------------------------------
-        uint64_t fieldNum = redis.hlen( "testHash" );
-        std::cout << "fieldNum: " << fieldNum << std::endl;
-        //------------------------test hmget---------------------------------------------
-        CResult result;
-        CRedisClient::VecString hmgeFields;
-        hmgeFields.push_back("name4");
-        hmgeFields.push_back("yuhaiyang");
-        hmgeFields.push_back("num");
-        redis.hmget( "testHash", hmgeFields,result );
-        std::cout << "hmget:" << std::endl;
-        std::cout << result << std::endl;
+   //     uint64_t fieldNum = redis.hlen( "testHash" );
+   //     std::cout << "fieldNum: " << fieldNum << std::endl;
+   //     //------------------------test hmget---------------------------------------------
+   //     CResult result;
+   //     CRedisClient::VecString hmgeFields;
+   //     hmgeFields.push_back("name4");
+   //     hmgeFields.push_back("yuhaiyang");
+   //     hmgeFields.push_back("num");
+   //     redis.hmget( "testHash", hmgeFields,result );
+   //     std::cout << "hmget:" << std::endl;
+   //     std::cout << result << std::endl;
     }catch( RdException& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
@@ -290,25 +299,64 @@ void TestSet( void )
         uint64_t scardNum = redis.scard( "testSet" );
         std::cout << "scardNum:" << scardNum << std::endl;
         //-------------------------test sdiff----------------------------------
-       // CRedisClient::VecString keys;
-       // keys.push_back("testSet");
-       // keys.push_back("testSet2");
-       // CRedisClient::VecString sdiffValues;
-       // uint64_t sdiffNum = redis.sdiff( keys, sdiffValues );
-       // std::cout << "sdiffNum: " << sdiffNum << std::endl;
-       // CRedisClient::VecString::const_iterator it = sdiffValues.begin();
-       // CRedisClient::VecString::const_iterator end = sdiffValues.end();
-       //
-       // for ( ; it != end ; ++it )
-       // {
-       //     std::cout << "sdiffData: " <<*it << std::endl;
-       // }
-        //-------------------------test sdiffsore----------------------------
+        CRedisClient::VecString keys;
+        keys.push_back("testSet");
+        keys.push_back("testSet2");
+        CRedisClient::VecString sdiffValues;
+        uint64_t sdiffNum = redis.sdiff( keys, sdiffValues );
+        CRedisClient::VecString::const_iterator it = sdiffValues.begin();
+        CRedisClient::VecString::const_iterator end = sdiffValues.end();
+
+        std::cout << "=====================================sdiffData==========================" << std::endl;
+        std::cout << "sdiffNum: " << sdiffNum << std::endl;
+        for ( ; it != end ; ++it )
+        {
+            std::cout << "sdiffData: " <<*it << std::endl;
+        }
+        std::cout << "============================== sdiffData end!!! ========================" << std::endl;
+        //-------------------------test sdiffstore----------------------------
         CRedisClient::VecString sdiffstorekeys;
         sdiffstorekeys.push_back("testSet");
         sdiffstorekeys.push_back("testSet2");
         uint64_t sdiffstoreNum = redis.sdiffstore( "diffSetKey",sdiffstorekeys );
+        std::cout << "===========================sdiffNum=================================" << std::endl;
         std::cout << "sdiffstoreNum: " << sdiffstoreNum << std::endl;
+        //---------------------------test sinter--------------------------------
+        CRedisClient::VecString sinterValues;
+        CRedisClient::VecString sinterKeys;
+        sinterKeys.push_back( "testSet" );
+        sinterKeys.push_back( "testSet2" );
+        uint64_t sinterNum = redis.sinter( sinterKeys, sinterValues );
+        std::cout << "===========================sinterNum================================" << std::endl;
+        std::cout << "sinterNum: " << sinterNum << std::endl;
+        CRedisClient::VecString::const_iterator sinterIt = sinterValues.begin();
+        CRedisClient::VecString::const_iterator sinterEnd = sinterValues.end();
+        for ( ; sinterIt != sinterEnd; ++sinterIt )
+        {
+            std::cout << "sinterIt: " << *sinterIt << std::endl;
+        }
+        //-----------------------------test sinterstore---------------------------
+        CRedisClient::VecString sinterstoreKeys;
+        sinterstoreKeys.push_back( "testSet" );
+        sinterstoreKeys.push_back( "testSet2" );
+        uint64_t sinterstoreNum = redis.sinterstore( "interSetKey", sinterstoreKeys );
+        std::cout << "sinterstoreNum: " << sinterstoreNum << std::endl;
+        //----------------------------test sismember----------------------------
+        bool ret = redis.sismember( "testSet", "yuhaiyang2" );
+        if ( ret )
+        {
+            std::cout << "存在" << std::endl;
+        }else
+        {
+            std::cout << "不存在" << std::endl;
+        }
+
+        CRedisClient::VecString membersMembers;
+        uint64_t smembersNum = redis.smembers( "testSet", membersMembers );
+        std::cout << "smembersNum" << smembersNum << std::endl;
+        PrintVector( "members", membersMembers );
+
+
 
     }catch( RdException& e )
     {
@@ -375,12 +423,12 @@ int main()
 
 int main()
 {
-    //TestHash();
-    TestHash2();
+   // TestHash();
+   //   TestHash2();
    // TestList();
     //TestKey();
    // TestString();
-   // TestSet();
+    TestSet();
     return 0;
 }
 
