@@ -75,6 +75,7 @@ string CRedisSocket::readN( const int& nConut )
 	if ( nConut <= 0 )
 		throw ArgmentErr("Invalid [in] arguments!");
 
+	_refill();
 	while ( ( cnt = _pEnd - _pNext ) > 0 )
 	{
 		cnt = cnt > nConut ? nConut : cnt;
