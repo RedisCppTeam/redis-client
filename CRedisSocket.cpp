@@ -67,7 +67,31 @@ bool CRedisSocket::readLine( string& line )
     }
 }
 
+string CRedisSocket::readN( const int& nConut )
+{
+	int cnt;
+	string sumStr;
 
+	if ( nConut <= 0 )
+		throw ArgmentErr("Invalid [in] arguments!");
+
+	while ( ( cnt = _pEnd - _pNext ) > 0 )
+	{
+		cnt = cnt > nConut ? nConut : cnt;
+		sumStr += string(_pNext, cnt);
+		_pNext += cnt;
+
+		if ( sumStr.length() >= static_cast<uint32_t>(nConut) )
+		{
+			_pNext += 2;
+			break;
+		}
+
+		_refill();
+	}
+
+	return sumStr;
+}
 
 void CRedisSocket::clearBuffer( void )
 {
@@ -86,7 +110,7 @@ void CRedisSocket::_allocBuffer()
 
 void CRedisSocket::_refill()
 {
-    if (_pNext == _pEnd)
+    if (_pNext >= _pEnd)
     {
         int n = receiveBytes(_pBuffer, RECEIVE_BUFFER_SIZE);
         if ( n <=0 )
