@@ -257,6 +257,7 @@ public:
 
     uint64_t smembers( const string& key,VecString& members );
 
+    bool smove( const string& source,const string& dest, const string& member );
 
     //---------------------------SortedSet-------------------------------------------
 

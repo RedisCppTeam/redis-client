@@ -112,3 +112,12 @@ uint64_t CRedisClient::smembers( const string &key, CRedisClient::VecString &mem
     return members.size();
 }
 
+bool CRedisClient::smove(const string &source, const string &dest, const string &member)
+{
+    Command cmd( "SMOVE" );
+    cmd << source << dest << member;
+    int64_t num;
+    _getInt( cmd, num );
+    return	( num==0 ? false : true );
+}
+

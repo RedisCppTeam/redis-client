@@ -299,21 +299,14 @@ void TestSet( void )
         uint64_t scardNum = redis.scard( "testSet" );
         std::cout << "scardNum:" << scardNum << std::endl;
         //-------------------------test sdiff----------------------------------
+        std::cout << "=====================================sdiffData==========================" << std::endl;
         CRedisClient::VecString keys;
         keys.push_back("testSet");
         keys.push_back("testSet2");
         CRedisClient::VecString sdiffValues;
         uint64_t sdiffNum = redis.sdiff( keys, sdiffValues );
-        CRedisClient::VecString::const_iterator it = sdiffValues.begin();
-        CRedisClient::VecString::const_iterator end = sdiffValues.end();
-
-        std::cout << "=====================================sdiffData==========================" << std::endl;
         std::cout << "sdiffNum: " << sdiffNum << std::endl;
-        for ( ; it != end ; ++it )
-        {
-            std::cout << "sdiffData: " <<*it << std::endl;
-        }
-        std::cout << "============================== sdiffData end!!! ========================" << std::endl;
+
         //-------------------------test sdiffstore----------------------------
         CRedisClient::VecString sdiffstorekeys;
         sdiffstorekeys.push_back("testSet");
@@ -468,13 +461,13 @@ void testReadN( void )
 
 int main()
 {
-    testReadN();
+   // testReadN();
     //TestHash();
 //    TestHash2();
    // TestList();
     //TestKey();
    // TestString();
- //   TestSet();
+    TestSet();
     return 0;
 }
 

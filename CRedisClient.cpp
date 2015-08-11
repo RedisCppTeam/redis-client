@@ -177,7 +177,9 @@ bool CRedisClient::_replyBulk(CResult& result , const std::string &line)
 		return false;
 	}
 
-    _socket.readN( protoLen, result );
+    string tmp;
+    _socket.readN( protoLen , result );
+    _socket.readN( 2 , tmp );
     result.setType( REDIS_REPLY_STRING );
 	return true;
 }
