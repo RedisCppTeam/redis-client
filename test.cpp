@@ -111,7 +111,7 @@ void TestString( void )
 
            std::cout << "====testString====" << std::endl;
            //------------------test set---------------------------
-           redis._set( "name", "123" );
+           redis.set( "name", "123" );
 
            //------------------test set---------------------------
            // bool setRet = redis.setPX( "name2", "yuhaiyang", 20000,NX );
@@ -421,14 +421,60 @@ int main()
 */
 
 
+void testReadN( void )
+{
+	try
+	{
+
+		CRedisClient redis;
+		redis.connect("127.0.0.1", 6379);
+		string mykey = "special";
+		string val ="{\"a\":\"ok\"\r\n}";
+        redis.set(mykey, val);
+
+		if ( redis.get(mykey, val) )
+		{
+			std::cout << "my val:" << val << std::endl;
+		}
+		else
+		{
+			std::cout << "get failed:" << val << std::endl;
+		}
+
+
+		//------------------------test hlen-----------------------------------------------
+		string myhx="myhx";
+		uint64_t fieldNum = redis.hlen(myhx);
+		std::cout << "fieldNum: " << fieldNum << std::endl;
+		//------------------------test hmget---------------------------------------------
+		CResult result;
+		CRedisClient::VecString hmgeFields;
+		hmgeFields.push_back("a");
+		hmgeFields.push_back("f");
+		hmgeFields.push_back("c");
+		for(int i=0;i<1;i++){
+		redis.hmget(myhx, hmgeFields, result);
+		std::cout << "hmget:" << std::endl;
+		std::cout << result << std::endl;
+		}
+	} catch( RdException& e )
+	{
+		std::cout << "Redis exception:" << e.what() << std::endl;
+	} catch( Poco::Exception& e )
+	{
+		std::cout << "Poco_exception:" << e.what() << std::endl;
+	}
+}
+
 int main()
 {
-   // TestHash();
-   //   TestHash2();
+    testReadN();
+    //TestHash();
+//    TestHash2();
    // TestList();
     //TestKey();
    // TestString();
-    TestSet();
+ //   TestSet();
     return 0;
 }
 

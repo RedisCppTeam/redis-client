@@ -167,6 +167,21 @@ bool CRedisClient::_getReply( CResult &result )
 
 bool CRedisClient::_replyBulk(CResult& result , const std::string &line)
 {
+	// get the number of CResult received .
+	int64_t protoLen = _valueFromString<int64_t>(line.substr(1));
+
+	if ( protoLen == -1 )
+	{
+		result = "";
+		result.setType(REDIS_REPLY_NIL);
+		return false;
+	}
+
+
+	result= _socket.readN(protoLen);
+	result.setType(REDIS_REPLY_STRING);
+	return true;
+#if 0
     // get the number of CResult received .
     int64_t len = _valueFromString<int64_t>( line.substr(1) );
 
@@ -188,6 +203,7 @@ bool CRedisClient::_replyBulk(CResult& result , const std::string &line)
         result.clear();
         throw ProtocolErr( "invalid bulk reply data; length of data is unexpected" );
     }
+#endif
 }
 
 
