@@ -69,7 +69,7 @@ bool CRedisSocket::readLine( string& line )
 
 string CRedisSocket::readN( const int& nConut )
 {
-	int cnt;
+	int cnt,insufficientLen;
 	string sumStr;
 
 	if ( nConut <= 0 )
@@ -78,7 +78,8 @@ string CRedisSocket::readN( const int& nConut )
 	_refill();
 	while ( ( cnt = _pEnd - _pNext ) > 0 )
 	{
-		cnt = cnt > nConut ? nConut : cnt;
+		insufficientLen = nConut-sumStr.length();
+		cnt = cnt > insufficientLen ? insufficientLen : cnt;
 		sumStr += string(_pNext, cnt);
 		_pNext += cnt;
 
