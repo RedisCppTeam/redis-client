@@ -125,7 +125,7 @@ public:
      * @param value
      * @warning  could throw Poco::Exception and ProtocolErr exception
      */
-    void _set(const string& key, const string& value );
+    void set(const string& key, const string& value );
 
 
 
@@ -334,7 +334,7 @@ protected:
      * @param time		expire time.
      * @param suffix2	"NX","XX"
      */
-    void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
+    void	set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
 
     /**
      * @brief _getStatus
@@ -351,9 +351,9 @@ protected:
      * @param result [out] it must arry.
      * @return
      */
-    bool _getArry(Command& cmd, CResult& result );
-    bool _getArry(Command &cmd, VecString& values );
-    bool _getArry(Command &cmd, MapString& pairs );
+    void  _getArry(Command& cmd, CResult& result );
+    void  _getArry(Command &cmd, VecString& values );
+    void  _getArry(Command &cmd, MapString& pairs );
 
 
 private:

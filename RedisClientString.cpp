@@ -12,7 +12,7 @@
 #include "CRedisClient.h"
 
 //-----------------------------string method--------------------------------------
-void CRedisClient::_set(const string &key, const string &value, CResult &result, const string& suffix , long time,const string suffix2 )
+void CRedisClient::set(const string &key, const string &value, CResult &result, const string& suffix , long time,const string suffix2 )
 {
     _socket.clearBuffer();
 
@@ -38,10 +38,10 @@ void CRedisClient::_set(const string &key, const string &value, CResult &result,
     _getReply( result );
 }
 
-void CRedisClient::_set(const std::string &key,const std::string &value)
+void CRedisClient::set(const std::string &key,const std::string &value)
 {
     CResult result;
-    _set( key, value, result );
+    set( key, value, result );
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
@@ -80,7 +80,7 @@ bool CRedisClient::setEX(const std::string &key, const std::string &value, long 
     }
 
     CResult result;
-    _set( key, value, result,"EX", time,suffix );
+    set( key, value, result,"EX", time,suffix );
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
@@ -117,7 +117,7 @@ bool CRedisClient::setPX(const std::string &key, const std::string &value, long 
     }
 
     CResult result;
-    _set( key, value, result,"PX", time,suffix );
+    set( key, value, result,"PX", time,suffix );
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
@@ -138,7 +138,7 @@ bool CRedisClient::setPX(const std::string &key, const std::string &value, long 
 bool CRedisClient::setNX(const std::string &key, const std::string &value)
 {
     CResult result;
-    _set( key, value, result,"NX" );
+    set( key, value, result,"NX" );
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
@@ -158,7 +158,7 @@ bool CRedisClient::setNX(const std::string &key, const std::string &value)
 bool CRedisClient::setXX(const std::string &key, const std::string &value)
 {
     CResult result;
-    _set( key, value, result,"XX" );
+    set( key, value, result,"XX" );
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {

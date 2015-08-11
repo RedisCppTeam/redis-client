@@ -45,9 +45,9 @@ int CRedisSocket::peek()
         return EOF_CHAR;
 }
 
-bool CRedisSocket::readLine( string& line )
+bool CRedisSocket::readLine(string& data )
 {
-    line.clear();
+    data.clear();
     int ch = get();
     //----修复读取一行的内容中只包含'\r'或'\n'的情况----by FanYongTao ,needs review
     while(1)
@@ -61,38 +61,28 @@ bool CRedisSocket::readLine( string& line )
             return true;
         }else
         {
-            line += ch;
+            data += ch;
             ch = get();
         }
     }
 }
 
-string CRedisSocket::readN( const int& nConut )
+
+void CRedisSocket::readN(const uint64_t n, string& data )
 {
-	int cnt,insufficientLen;
-	string sumStr;
+    uint64_t readed = 0;
+    char ch = 0;
+    data.clear();
 
-	if ( nConut <= 0 )
-		throw ArgmentErr("Invalid [in] arguments!");
-
-	_refill();
-	while ( ( cnt = _pEnd - _pNext ) > 0 )
-	{
-		insufficientLen = nConut-sumStr.length();
-		cnt = cnt > insufficientLen ? insufficientLen : cnt;
-		sumStr += string(_pNext, cnt);
-		_pNext += cnt;
-
-		if ( sumStr.length() >= static_cast<uint32_t>(nConut) )
-		{
-			_pNext += 2;
-			break;
-		}
-
-		_refill();
-	}
-
-	return sumStr;
+    for ( readed=0; readed != n; ++readed )
+    {
+        ch = get();
+        if ( ch == EOF_CHAR )
+        {
+            break;
+        }
+        data += ch;
+    }
 }
 
 void CRedisSocket::clearBuffer( void )

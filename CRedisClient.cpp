@@ -177,33 +177,9 @@ bool CRedisClient::_replyBulk(CResult& result , const std::string &line)
 		return false;
 	}
 
-
-	result= _socket.readN(protoLen);
-	result.setType(REDIS_REPLY_STRING);
+    _socket.readN( protoLen, result );
+    result.setType( REDIS_REPLY_STRING );
 	return true;
-#if 0
-    // get the number of CResult received .
-    int64_t len = _valueFromString<int64_t>( line.substr(1) );
-
-    if ( len == -1 )
-    {
-        result = "";
-        result.setType( REDIS_REPLY_NIL );
-        return false;
-    }
-
-    _socket.readLine( result );
-
-    if ( result.length() == static_cast<uint32_t>(len) )
-    {
-        result.setType( REDIS_REPLY_STRING );
-        return true;
-    }else
-    {
-        result.clear();
-        throw ProtocolErr( "invalid bulk reply data; length of data is unexpected" );
-    }
-#endif
 }
 
 
@@ -321,17 +297,14 @@ bool CRedisClient::_getString(  Command& cmd , string& value  )
     return true;
 }
 
-bool CRedisClient::_getArry(Command &cmd, CResult &result)
+void CRedisClient::_getArry(Command &cmd, CResult &result)
 {
     _socket.clearBuffer();
     _sendCommand( cmd );
     _getReply( result );
 
     ReplyType type = result.getType();
-    if ( REDIS_REPLY_NIL ==  type )
-    {
-        return false;
-    }
+
     if ( REDIS_REPLY_ERROR == type )
     {
         throw ReplyErr( result.getErrorString() );
@@ -341,10 +314,10 @@ bool CRedisClient::_getArry(Command &cmd, CResult &result)
        throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
     }
 
-    return true;
+    return ;
 }
 
-bool CRedisClient::_getArry(Command &cmd, VecString &values )
+void CRedisClient::_getArry(Command &cmd, VecString &values )
 {
     _socket.clearBuffer();
     _sendCommand( cmd );
@@ -352,10 +325,7 @@ bool CRedisClient::_getArry(Command &cmd, VecString &values )
     _getReply( result );
 
     ReplyType type = result.getType();
-    if ( REDIS_REPLY_NIL ==  type )
-    {
-        return false;
-    }
+
     if ( REDIS_REPLY_ERROR == type )
     {
         throw ReplyErr( result.getErrorString() );
@@ -366,10 +336,10 @@ bool CRedisClient::_getArry(Command &cmd, VecString &values )
     }
 
     _getStringVecFromArry( result.getArry(), values );
-    return true;
+    return;
 }
 
-bool CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
+void CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
 {
     _socket.clearBuffer();
     _sendCommand( cmd );
@@ -377,10 +347,7 @@ bool CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
     _getReply( result );
 
     ReplyType type = result.getType();
-    if ( REDIS_REPLY_NIL ==  type )
-    {
-        return false;
-    }
+
     if ( REDIS_REPLY_ERROR == type )
     {
         throw ReplyErr( result.getErrorString() );
@@ -391,7 +358,7 @@ bool CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
     }
 
     _getStringMapFromArry( result.getArry(), pairs );
-    return true;
+    return ;
 }
 
 

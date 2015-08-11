@@ -21,23 +21,21 @@ public:
 	int peek( void );
 
 	/**
-	 * @brief readLine 从 socket 读取一行
-	 * @param line
+     * @brief readLine: read a line of data.
+     * @param data [out]  data recved
 	 * @return
 	 *
 	 */
-	bool readLine( string& line );
+    bool readLine( string& data );
 
-	/**
-	 * @brief 从 socket 读取指定的字节数据
-	 * @param n specified length
-	 * @return 指定个长度的字符串
-	 * @warning Throw TimeoutException NetException ArgmentErr ConnectErr When error encounter
-	 */
-	string readN( const int& n );
-
-	/**
-	 * @brief clearBuffer 清空原始 socket 和应用缓冲区
+    /**
+     * @brief readN
+     * @param n [in] 		the length of the data you want to receive.
+     * @param data [out]		date recved
+     */
+    void readN( const uint64_t n, string &data );
+    /**
+     * @brief clearBuffer clear buffer of socket
 	 */
 	void clearBuffer( void );
 
@@ -59,8 +57,8 @@ private:
 	};
 
 	char* _pBuffer;		///< a buffer that  stores received data.
-	char* _pNext;		///< a pointer that points to the data to be  read.
-	char* _pEnd;		///< the end of the buffer.
+    char* _pNext;			///< a pointer that points to the data to be  read.
+    char* _pEnd;			///< the end of the buffer.
 };
 
 #endif // CREDISSOCKET_H
