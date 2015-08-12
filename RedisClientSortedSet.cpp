@@ -3,12 +3,12 @@
 #include "CRedisClient.h"
 
 
-uint64_t CRedisClient::zadd(const string &key, const CRedisClient::MapString &pairs)
+uint64_t CRedisClient::zadd(const string &key, const CRedisClient::MapString &reply)
 {
     Command cmd( "ZADD" );
     cmd << key;
-    MapString::const_iterator it = pairs.begin();
-    MapString::const_iterator end = pairs.end();
+    MapString::const_iterator it = reply.begin();
+    MapString::const_iterator end = reply.end();
 
     for ( ; it !=end ; ++it )
     {
@@ -209,11 +209,18 @@ string CRedisClient::zscore(const string& key,const string& member)
     return str;
 }
 
+void CRedisClient::addAggregate(Command& cmd,int aggregate)
+{
+    static const char * aggre[]={"SUM","MIN","MAX"};
+    cmd <<"AGGREGATE";
+    cmd<<aggre[aggregate];
+}
+
 
 
 uint64_t CRedisClient::zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate)
 {
-    static const char * aggre[]={"SUM","MIN","MAX"};
+
     Command cmd( "ZUNIONSTORE" );
     cmd << destination <<  numkeys;
 
@@ -231,9 +238,7 @@ uint64_t CRedisClient::zunionstore (const string& destination,const uint64_t num
     {
         cmd << *it2;
     }
-
-    cmd <<"AGGREGATE";
-    cmd<<aggre[aggregate];
+    addAggregate(cmd,aggregate);
     int64_t num;
     _getInt(cmd,num);
     return num;
@@ -243,8 +248,6 @@ uint64_t CRedisClient::zunionstore (const string& destination,const uint64_t num
 
 uint64_t CRedisClient::zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate)
 {
-    static const char * aggre[]={"SUM","MIN","MAX"};
-
     Command cmd( "ZUNIONSTORE" );
     cmd << destination <<  numkeys;
 
@@ -254,8 +257,7 @@ uint64_t CRedisClient::zunionstore (const string& destination,const uint64_t num
     {
         cmd << *it;
     }
-    cmd <<"AGGREGATE";
-    cmd<<aggre[aggregate];
+    addAggregate(cmd,aggregate);
     int64_t num;
     _getInt(cmd,num);
     return num;
@@ -266,8 +268,6 @@ uint64_t CRedisClient::zunionstore (const string& destination,const uint64_t num
 
 uint64_t CRedisClient::zinterstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate)
 {
-    static const char * aggre[]={"SUM","MIN","MAX"};
-
     Command cmd( "ZINTERSTORE" );
     cmd << destination <<  numkeys;
 
@@ -286,8 +286,7 @@ uint64_t CRedisClient::zinterstore (const string& destination,const uint64_t num
         cmd << *it2;
     }
 
-    cmd <<"AGGREGATE";
-    cmd<<aggre[aggregate];
+    addAggregate(cmd,aggregate);
     int64_t num;
     _getInt(cmd,num);
     return num;
@@ -297,7 +296,7 @@ uint64_t CRedisClient::zinterstore (const string& destination,const uint64_t num
 
 uint64_t CRedisClient::zinterstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate)
 {
-    static const char * aggre[]={"SUM","MIN","MAX"};
+
     Command cmd( "ZINTERSTORE" );
     cmd << destination <<  numkeys;
 
@@ -307,8 +306,7 @@ uint64_t CRedisClient::zinterstore (const string& destination,const uint64_t num
     {
         cmd << *it;
     }
-    cmd <<"AGGREGATE";
-    cmd<<aggre[aggregate];
+    addAggregate(cmd,aggregate);
     int64_t num;
     _getInt(cmd,num);
     return num;

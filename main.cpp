@@ -19,7 +19,8 @@ using namespace std;
 
 int main()
 {
-    //TestSortedSet tss;
+
+    TestSortedSet tss;
     TestServer tsv;
     //tss.clearAll();
     //tss.add();
@@ -35,7 +36,10 @@ int main()
    // tsv.bgrewriteaof();
     //tsv.bgsave();
    // tsv.debugSegfault();
-    tsv.flushall();
+   // tsv.flushall();
+
+
+
 }
 
 

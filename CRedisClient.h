@@ -261,7 +261,7 @@ public:
     //---------------------------SortedSet-------------------------------------------
 
 
-        uint64_t  zadd(const string& key,const MapString& pairs);
+        uint64_t  zadd(const string& key,const MapString& reply);
 
         uint64_t zcard(const string& key);
 
@@ -293,6 +293,7 @@ public:
 
         string zscore(const string& key,const string& member);
 
+        void addAggregate(Command& cmd,int aggregate);
         uint64_t zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate=0);
         uint64_t zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate=0);
 
