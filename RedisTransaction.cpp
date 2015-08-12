@@ -15,7 +15,7 @@ void CRedisClient::watch(const CRedisClient::VecString &keys)
     string status;
     _getStatus( cmd, status );
 
-    if ( "OK" != stauts )
+    if ( "OK" != status )
     {
         ProtocolErr( "WATCH recv unexpected data: " + status );
     }
