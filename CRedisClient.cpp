@@ -167,21 +167,27 @@ bool CRedisClient::_getReply( CResult &result )
 
 bool CRedisClient::_replyBulk(CResult& result , const std::string &line)
 {
-	// get the number of CResult received .
-	int64_t protoLen = _valueFromString<int64_t>(line.substr(1));
+    // get the number of CResult received .
+    int64_t len = _valueFromString<int64_t>( line.substr(1) );
 
-	if ( protoLen == -1 )
-	{
-		result = "";
-		result.setType(REDIS_REPLY_NIL);
-		return false;
-	}
+    if ( len == -1 )
+    {
+        result = "";
+        result.setType( REDIS_REPLY_NIL );
+        return false;
+    }
 
-    string tmp;
-    _socket.readN( protoLen , result );
-    _socket.readN( 2 , tmp );
-    result.setType( REDIS_REPLY_STRING );
-	return true;
+    _socket.readLine( result );
+
+    if ( result.length() == static_cast<uint32_t>(len) )
+    {
+        result.setType( REDIS_REPLY_STRING );
+        return true;
+    }else
+    {
+        result.clear();
+        throw ProtocolErr( "invalid bulk reply data; length of data is unexpected" );
+    }
 }
 
 
@@ -299,14 +305,17 @@ bool CRedisClient::_getString(  Command& cmd , string& value  )
     return true;
 }
 
-void CRedisClient::_getArry(Command &cmd, CResult &result)
+bool CRedisClient::_getArry(Command &cmd, CResult &result)
 {
     _socket.clearBuffer();
     _sendCommand( cmd );
     _getReply( result );
 
     ReplyType type = result.getType();
-
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
     if ( REDIS_REPLY_ERROR == type )
     {
         throw ReplyErr( result.getErrorString() );
@@ -316,10 +325,10 @@ void CRedisClient::_getArry(Command &cmd, CResult &result)
        throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
     }
 
-    return ;
+    return true;
 }
 
-void CRedisClient::_getArry(Command &cmd, VecString &values )
+bool CRedisClient::_getArry(Command &cmd, VecString &values )
 {
     _socket.clearBuffer();
     _sendCommand( cmd );
@@ -327,7 +336,10 @@ void CRedisClient::_getArry(Command &cmd, VecString &values )
     _getReply( result );
 
     ReplyType type = result.getType();
-
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
     if ( REDIS_REPLY_ERROR == type )
     {
         throw ReplyErr( result.getErrorString() );
@@ -337,11 +349,28 @@ void CRedisClient::_getArry(Command &cmd, VecString &values )
        throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
     }
 
-    _getStringVecFromArry( result.getArry(), values );
-    return;
+
+
+    CResult::ListCResult::const_iterator it = result.getArry().begin();
+    CResult::ListCResult::const_iterator end = result.getArry().end();
+
+    for ( ; it != end; ++it )
+    {
+        if ( REDIS_REPLY_NIL== it->getType()  )
+        {
+           throw ProtocolErr( cmd.getCommand() + ": data recved is  arry but member exist NIL" );
+        }
+        if (( REDIS_REPLY_ARRAY!= it->getType()  )&&( REDIS_REPLY_STRING!= it->getType()  ))
+        {
+           throw ProtocolErr( cmd.getCommand() + ": data recved is  arry but member is not string" );
+        }
+        values.push_back( static_cast<string>(*it) );
+    }
+    //_getStringVecFromArry( result.getArry(), values );
+    return true;
 }
 
-void CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
+bool CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
 {
     _socket.clearBuffer();
     _sendCommand( cmd );
@@ -349,7 +378,10 @@ void CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
     _getReply( result );
 
     ReplyType type = result.getType();
-
+    if ( REDIS_REPLY_NIL ==  type )
+    {
+        return false;
+    }
     if ( REDIS_REPLY_ERROR == type )
     {
         throw ReplyErr( result.getErrorString() );
@@ -359,8 +391,29 @@ void CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
        throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
     }
 
-    _getStringMapFromArry( result.getArry(), pairs );
-    return ;
+
+
+
+    CResult::ListCResult::const_iterator it = result.getArry().begin();
+    CResult::ListCResult::const_iterator it2 = it;
+    CResult::ListCResult::const_iterator end = result.getArry().end();
+
+    for ( ; it != end; ++it )
+    {
+        if ( REDIS_REPLY_NIL== it->getType() )
+        {
+           throw ProtocolErr( cmd.getCommand() + ": data recved is  arry but member exist NIL" );
+        }
+        if (( REDIS_REPLY_ARRAY!= it->getType()  )&&( REDIS_REPLY_STRING!= it->getType()  ))
+        {
+           throw ProtocolErr( cmd.getCommand() + ": data recved is  arry but member is not string,string" );
+        }
+        it2 = it++;		// the next element is value.
+        pairs.insert( MapString::value_type( *it2, *it ) );
+    }
+
+    //_getStringMapFromArry( result.getArry(), pairs );
+    return true;
 }
 
 
