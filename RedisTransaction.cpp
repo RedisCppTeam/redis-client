@@ -2,62 +2,47 @@
 #include "Command.h"
 #include "CRedisClient.h"
 
-//void CRedisClient::watch(const CRedisClient::VecString &keys)
-//{
-//    _socket.clearBuffer();;
-//
-//    Command cmd( "WATCH" );
-//
-//    VecString::const_iterator it = keys.begin();
-//    for ( ; it != keys.end(); it++ )
-//    {
-//        cmd << *it ;
-//    }
-//
-//    _sendCommand( cmd );
-//
-//    if ( _replyStatus( ) == "OK" )
-//    {
-//        return;
-//    }else
-//    {
-//        throw ProtocolErr("WATCH: data recved is not OK");
-//    }
-//}
-//
-//void CRedisClient::unwatch()
-//{
-//    _socket.clearBuffer();;
-//
-//    Command cmd( "UNWATCH" );
-//
-//    _sendCommand( cmd );
-//    if ( _replyStatus( ) == "OK" )
-//    {
-//           return;
-//    }else
-//    {
-//            throw ProtocolErr("UNWATCH: data recved is not OK");
-//    }
-//}
-//
-//
+void CRedisClient::watch(const CRedisClient::VecString &keys)
+{
+    Command cmd( "WATCH" );
+
+    VecString::const_iterator it = keys.begin();
+    for ( ; it != keys.end(); ++it )
+    {
+        cmd << *it ;
+    }
+
+    string status;
+    _getStatus( cmd, status );
+
+    if ( "OK" != stauts )
+    {
+        ProtocolErr( "WATCH recv unexpected data: " + status );
+    }
+}
+
+void CRedisClient::unwatch()
+{
+    Command cmd( "UNWATCH" );
+    string status;
+    _getStatus( cmd, status );
+
+   if ( "OK" != status )
+   {
+       ProtocolErr( "UNWATCH recv unexpected data: " + status );
+   }
+ }
+
+
 void CRedisClient::multi( void )
 {
-    CResult result;
-    _socket.clearBuffer();
-
     Command cmd("MULTI");
+    string status;
+    _getStatus( cmd, status );
 
-    _sendCommand( cmd );
-    _getReply( result );
-
-    if ( result.getType() == REDIS_REPLY_STATUS && result=="OK" )
+    if ( "OK" != status )
     {
-           return;
-    }else
-    {
-            throw ProtocolErr("MULTI: data recved is not OK");
+        ProtocolErr( "MULTI recv unexpected data: " + status );
     }
 }
 
