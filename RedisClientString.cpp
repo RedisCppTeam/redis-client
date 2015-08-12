@@ -1,17 +1,202 @@
 /**
  * @file	RedisClientString.cpp
- * @brief CRedisClient 的 String 方法。
- *
- * @author: 		yuhaiyang
- * @date: 		2015年6月14日
- *
- * 修订说明:初始版本
+ * @brief the String method of the CRedisClient
+ * @author: 		yp
+ * @date: 		June 14, 2015
+ * Revision Description: initial version
  */
 
 #include "Command.h"
 #include "CRedisClient.h"
 
 //-----------------------------string method--------------------------------------
+
+
+
+uint64_t CRedisClient::append( const string& key, const string& value )
+{
+	Command cmd( "APPEND" );
+	cmd << key << value;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+uint64_t CRedisClient::bitcount( const string& key, int64_t start, int64_t end )
+{
+	Command cmd( "BITCOUNT" );
+	cmd << key << start << end;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+uint64_t CRedisClient::bitop( const string& operation, const string& destkey, VecString& keys )
+{
+	Command cmd( "BITOP" );
+	cmd << operation << destkey;
+	VecString::const_iterator it = keys.begin();
+	for ( ; it != keys.end(); it++ )
+	{
+		cmd << *it;
+	}
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+int64_t CRedisClient::decr( const string& key )
+{
+	Command cmd( "DECR" );
+	cmd << key;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+
+
+int64_t CRedisClient::decrby( const string& key, int64_t decrement )
+{
+	Command cmd( "DECRBY" );
+	cmd << key << decrement;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+bool CRedisClient::get( const std::string &key, std::string &value )
+{
+    Command cmd( "GET" );
+    cmd << key;
+    return _getString( cmd, value );
+}
+
+
+uint8_t CRedisClient::getbit( const string& key, uint32_t offset )
+{
+	Command cmd( "GETBIT" );
+	cmd << key << offset;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+
+void CRedisClient::getrange( const string& key, int64_t start, int64_t end, string &value )
+{
+	value.clear();
+	Command cmd( "GETRANGE" );
+	cmd << key << start << end;
+
+	if(!_getString( cmd, value ))
+		throw ProtocolErr( "GETRANGE: data recved is not string" );
+}
+
+
+bool CRedisClient::getset(const string& key, const string &value, string &oldvalue )
+{
+	oldvalue.clear();
+	Command cmd( "GETSET" );
+	cmd << key << value;
+	return _getString( cmd, oldvalue );
+}
+
+
+int64_t CRedisClient::incr( const string& key )
+{
+	Command cmd( "INCR" );
+	cmd << key;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+int64_t CRedisClient::incrby( const string& key, int64_t increment )
+{
+	Command cmd( "INCRBY" );
+	cmd << key << increment;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+float CRedisClient::incrbyfloat( const string& key, float increment )
+{
+	Command cmd( "INCRBYFLOAT" );
+	cmd << key << increment;
+	string value;
+	if(!_getString( cmd , value ))
+		throw ProtocolErr( "INCRBYFLOAT: data recved is not string" );
+
+	return _valueFromString<float>( value );
+}
+
+
+void CRedisClient::mget(VecString& keys, CResult& result )
+{
+	Command cmd( "MGET" );
+	VecString::const_iterator it = keys.begin();
+	for ( ; it != keys.end(); it++ )
+	{
+		cmd << *it;
+	}
+
+	_getArry( cmd, result );
+}
+
+
+
+
+void CRedisClient::mset( CRedisClient::MapString &value )
+{
+	Command cmd( "MSET" );
+	CRedisClient::MapString::const_iterator it = value.begin();
+	for ( ; it != value.end(); it++ )
+	{
+		cmd << it->first;
+		cmd << it->second;
+	}
+
+	string status;
+	_getStatus( cmd, status );
+	if ( status != "OK" )
+		throw ProtocolErr( "MSET: data recved is not OK" );
+}
+
+
+
+
+uint8_t CRedisClient::msetnx( CRedisClient::MapString &value )
+{
+	Command cmd( "MSETNX" );
+	CRedisClient::MapString::const_iterator it = value.begin();
+	for ( ; it != value.end(); it++ )
+	{
+		cmd << it->first;
+		cmd << it->second;
+	}
+
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
+
+
+
+
+
+
+
+
 void CRedisClient::_set(const string &key, const string &value, CResult &result, const string& suffix , long time,const string suffix2 )
 {
     _socket.clearBuffer();
@@ -176,40 +361,33 @@ bool CRedisClient::setXX(const std::string &key, const std::string &value)
 }
 
 
-void CRedisClient::get(const std::string &key, CResult& result )
+uint8_t CRedisClient::setbit( const string& key, uint32_t offset, const string& value )
 {
-    _socket.clearBuffer();
-
-    Command cmd( "GET" );
-    cmd << key ;
-    _sendCommand( cmd );
-
-    _getReply( result );
+	Command cmd( "SETBIT" );
+	cmd << key << offset << value;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
 }
 
 
-
-bool CRedisClient::get( const std::string &key, std::string &value )
+uint64_t CRedisClient::setrange( const string& key, uint32_t offset, const string& value )
 {
-    value.clear();
-    CResult result;
-    get( key, result );
+	Command cmd( "SETRANGE" );
+	cmd << key << offset << value;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
+}
 
-    ReplyType type = result.getType();
-    if ( type == REDIS_REPLY_ERROR )
-    {
-        throw ReplyErr( result.getErrorString() );
-    }else if ( type == REDIS_REPLY_NIL )
-    {
-        return false;
-    }else if ( type == REDIS_REPLY_STRING )
-    {
-        value = result.getString();
-        return true;
-    }else
-    {
-        throw ProtocolErr( "GET: data recved is not string" );
-    }
+
+uint64_t CRedisClient::strlen( const string& key )
+{
+	Command cmd( "STRLEN" );
+	cmd << key;
+	int64_t num = 0;
+	_getInt( cmd, num );
+	return num;
 }
 
 
