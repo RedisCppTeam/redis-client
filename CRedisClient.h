@@ -172,19 +172,6 @@ public:
 
 
     /**
-      * @brief set
-      * @param key
-      * @param value
-      * @param result
-      * @param suffix		"EX","PX"
-      * @param time		expire time.
-      * @param suffix2	"NX","XX"
-      */
-     void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
-
-
-
-    /**
      * @brief set set a string type key = value
      * @param key
      * @param value
@@ -558,6 +545,16 @@ protected:
 
     void _getStringMapFromArry( const CResult::ListCResult& arry, MapString& pairs );
 
+    /**
+     * @brief set
+     * @param key
+     * @param value
+     * @param result
+     * @param suffix		"EX","PX"
+     * @param time		expire time.
+     * @param suffix2	"NX","XX"
+     */
+    void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
 
     /**
      * @brief _getStatus
