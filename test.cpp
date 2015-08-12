@@ -285,9 +285,6 @@ void TestSet( void )
         CRedisClient redis;
         redis.connect( "127.0.0.1", 6379 );
 
-        string value;
-        CResult result;
-
         //--------------------------test sadd-------------------------------
         CRedisClient::VecString members;
         members.push_back( "yuhaiyang" );
@@ -349,7 +346,82 @@ void TestSet( void )
         std::cout << "smembersNum" << smembersNum << std::endl;
         PrintVector( "members", membersMembers );
 
+        //-----------------------------test smove-------------------------------------
+        bool smoveRet = redis.smove( "testSet2", "testSet","duzong");
+        if ( smoveRet )
+        {
+            std::cout << "smove ok" << std::endl;
+        }else
+        {
+            std::cout << "smove failed" << std::endl;
+        }
 
+        //-----------------------------test spop--------------------------------------
+        string spopMember;
+        bool spopRet = redis.spop( "testSet3", spopMember );
+        if ( spopRet )
+        {
+            std::cout << "spop ok" << std::endl;
+            std::cout << "spop data:" << spopMember << std::endl;
+        }else
+        {
+            std::cout << "spop faliled" << std::endl;
+        }
+
+        //-----------------------------test srandmember-----------------------------
+        string srandmember;
+        bool srandRet = redis.srandmember( "testSet3", srandmember );
+        if ( srandRet )
+        {
+            std::cout << "srandmember ok" <<std::endl;
+            std::cout << "srandmember data:" << srandmember << std::endl;
+        }else
+        {
+            std::cout << "srandmember failed" << std::endl;
+        }
+        CRedisClient::VecString srandMember;
+        redis.srandmember( "testSet2", 20, srandMember );
+        PrintVector( "srandmember", srandMember );
+
+        //-----------------------------test srem---------------------------------------------
+        CRedisClient::VecString sremMembers;
+        sremMembers.push_back( "nihao" );
+        sremMembers.push_back( "yuhaiyang" );
+        sremMembers.push_back( "zhouli" );
+        uint64_t sremNum = redis.srem( "testSet", sremMembers );
+        std::cout << "sremNum:" << sremNum << std::endl;
+        //-----------------------------test sunion--------------------------------------------
+        CRedisClient::VecString sunionMembers;
+        CRedisClient::VecString sunionKeys;
+        sunionKeys.push_back("testSet");
+        sunionKeys.push_back("testSet2");
+        redis.sunion( sunionKeys, sunionMembers );
+        PrintVector( "sunionmembers", sunionMembers );
+        //--------------------------test sunionstore------------------------------------------
+        uint64_t sunionstoreNum = redis.sunionstroe( "sunionstoreSet", sunionKeys );
+        std::cout << "sunionstoreNum: " << sunionstoreNum << std::endl;
+        //--------------------------test sscan--------------------------------------------------
+
+        std::cout << "====================sscan value===================" << std::endl;
+        string value = "value_";
+        stringstream ss;
+        CRedisClient::VecString sscanMembers1;
+        for ( int i = 0; i < 100; ++i )
+        {
+            value = "value_";
+             ss.clear();
+             ss.str("");
+             ss << i;
+             value += ss.str();
+             sscanMembers1.push_back( value );
+        }
+        redis.sadd( "testSet4", sscanMembers1 );
+
+       CRedisClient::VecString sscanMembers;
+       redis.sscan( "testSet4", 0, sscanMembers,"value_?" );
+       while ( redis.sscan( "testSet4", -1, sscanMembers ,"value_?") );
+
+       PrintVector( "sscan", sscanMembers );
 
     }catch( RdException& e )
     {

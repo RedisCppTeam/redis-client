@@ -217,8 +217,6 @@ public:
 
     uint64_t hvals( const string& key, VecString& values );
 
-    void hscan( const string& key, int64_t cursor, const string& match, uint64_t count, CResult& result );
-
     /**
      * @brief hscan
      * @param key [in]
@@ -257,8 +255,43 @@ public:
 
     uint64_t smembers( const string& key,VecString& members );
 
+    /**
+     * @brief smove
+     * @param source
+     * @param dest
+     * @param member
+     * @return true: move members ok false: move member failed.
+     */
     bool smove( const string& source,const string& dest, const string& member );
 
+    bool spop( const string& key, string& member );
+
+    /**
+     * @brief srandmember
+     * @param key
+     * @param member
+     * @return true: get a member random is successful. false: key is empty
+     */
+    bool srandmember( const string& key, string& member );
+
+    /**
+     * @brief srandmember
+     * @param key
+     * @param count		如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。
+     * 								如果 count 大于等于集合基数，那么返回整个集合。
+     *								如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。
+     * @param members
+     * @return the number of fetched members.
+     */
+    uint64_t srandmember( const string& key, int count,VecString& members );
+
+    uint64_t srem( const string& key, VecString& members );
+
+    uint64_t sunion( const VecString& keys, VecString& members );
+
+    uint64_t sunionstroe( const string& dest,const VecString& keys );
+
+    bool sscan( const string& key, int64_t cursor, VecString& values, const string& match="", uint64_t count=0  );
     //---------------------------SortedSet-------------------------------------------
 
 

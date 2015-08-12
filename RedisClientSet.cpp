@@ -121,3 +121,110 @@ bool CRedisClient::smove(const string &source, const string &dest, const string 
     return	( num==0 ? false : true );
 }
 
+bool CRedisClient::spop(const string &key, string &member)
+{
+    member.clear();
+    Command cmd( "SPOP" );
+    cmd << key;
+
+    return ( _getString( cmd, member ) );
+}
+
+bool CRedisClient::srandmember(const string &key, string &member)
+{
+    Command cmd ( "SRANDMEMBER" );
+    cmd << key;
+    return ( _getString( cmd, member) );
+}
+
+uint64_t CRedisClient::srandmember(const string &key, int count, CRedisClient::VecString &members)
+{
+    Command cmd( "SRANDMEMBER" );
+    cmd << key << count ;
+
+    _getArry( cmd, members );
+    return members.size();
+}
+
+uint64_t CRedisClient::srem(const string &key, CRedisClient::VecString &members)
+{
+    Command cmd ( "SREM" );
+    cmd << key;
+
+    VecString::const_iterator it = members.begin();
+    VecString::const_iterator end = members.end();
+    for ( ; it != end; ++it )
+    {
+        cmd << *it;
+    }
+    int64_t num;
+    _getInt( cmd, num );
+    return num;
+}
+
+uint64_t CRedisClient::sunion(const CRedisClient::VecString &keys , VecString &members)
+{
+    Command cmd( "SUNION" );
+
+    VecString::const_iterator it = keys.begin();
+    VecString::const_iterator end = keys.end();
+    for ( ; it != end; ++it )
+    {
+        cmd << *it;
+    }
+
+    _getArry( cmd, members );
+    return members.size();
+}
+
+uint64_t CRedisClient::sunionstroe(const string &dest, const CRedisClient::VecString &keys)
+{
+    Command cmd( "SUNIONSTORE" );
+    cmd << dest;
+    VecString::const_iterator it = keys.begin();
+    VecString::const_iterator end = keys.end();
+    for ( ; it != end; ++it )
+    {
+        cmd << *it;
+    }
+    int64_t num;
+    _getInt( cmd, num );
+    return num;
+}
+
+bool CRedisClient::sscan(const string &key, int64_t cursor, VecString &values, const string &match, uint64_t count)
+{
+     static uint64_t lastCur = 0;
+     uint64_t realCur = 0;
+     CResult result;
+
+     if ( cursor >= 0 )
+     {
+         realCur = cursor;
+     }else
+     {
+         realCur = lastCur;
+     }
+
+     Command cmd( "SSCAN" );
+     cmd << key << realCur;
+
+     if ( "" != match )
+     {
+           cmd << "MATCH" << match;
+     }
+
+     if ( 0 != count )
+     {
+            cmd << "COUNT" << count;
+     }
+
+     _getArry( cmd, result );
+
+     CResult::ListCResult::const_iterator it = result.getArry().begin();
+     lastCur = _valueFromString<uint64_t>( it->getString() );
+    ++it;
+
+    _getStringVecFromArry( it->getArry(), values );
+    return ( lastCur == 0 ? false : true );
+}

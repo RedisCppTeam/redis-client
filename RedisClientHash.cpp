@@ -182,25 +182,6 @@ uint64_t CRedisClient::hvals(const string &key, CRedisClient::VecString &values)
     return values.size();
 }
 
-void CRedisClient::hscan(const string &key, int64_t cursor, const string &match, uint64_t count, CResult &result)
-{
-    _socket.clearBuffer();
-    Command cmd( "HSCAN" );
-    cmd << key << cursor;
-
-    if ( "" != match )
-    {
-          cmd << "MATH" << match;
-    }
-
-    if ( 0 != count )
-    {
-           cmd << "COUNT" << count;
-    }
-
-    _sendCommand( cmd );
-    _getReply( result );
-}
 
 bool CRedisClient::hscan(const string &key, int64_t cursor, MapString &values, const string &match, uint64_t count )
 {
