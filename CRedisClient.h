@@ -119,6 +119,58 @@ public:
     //-----------------------------string method--------------------------------------
 
 
+    uint64_t append( const string& key, const string& value );
+
+
+    uint64_t bitcount( const string& key, int64_t start = 0, int64_t end = -1 ) ;
+
+
+    uint64_t bitop( const string& operation, const string& destkey, VecString& keys );
+
+
+    int64_t decr( const string& key );
+
+    int64_t decrby( const string& key, int64_t decrement );
+
+
+
+
+    /**
+     * @brief get
+     * @param key
+     * @param value
+     * @return true: get value successful, false: key is not exist.
+     */
+    bool get(const string& key, string &value );
+
+
+    uint8_t getbit( const string& key, uint32_t offset );
+
+
+    void getrange( const string& key, int64_t start, int64_t end, string &value );
+
+
+    bool getset(const string& key, const string &value, string &oldvalue );
+
+
+
+    int64_t incr( const string& key );
+
+    int64_t incrby( const string& key, int64_t increment );
+
+
+    float incrbyfloat( const string& key, float increment );
+
+    void mget( VecString& keys, CResult& result );
+
+
+    void mset( CRedisClient::MapString &value );
+
+
+    uint8_t msetnx( CRedisClient::MapString &value );
+
+
+
     /**
      * @brief set set a string type key = value
      * @param key
@@ -135,15 +187,19 @@ public:
     bool setNX( const string& key, const string& value );
     bool setXX( const string& key, const string& value );
 
-    void get(const string& key, CResult &result );
+    uint8_t setbit( const string& key, uint32_t offset, const string& value );
 
-    /**
-     * @brief get
-     * @param key
-     * @param value
-     * @return true: get value successful, false: key is not exist.
-     */
-    bool get(const string& key, string &value );
+
+    uint64_t setrange( const string& key, uint32_t offset, const string& value );
+
+
+    uint64_t strlen( const string& key );
+
+
+
+
+
+
     //------------------------------list method--------------------------------------
 
     void lpush(const string& key, const VecString& value , CResult &result);
@@ -359,6 +415,40 @@ public:
 
 
     //----------------------------pub/sub--------------------------------------------------
+
+
+      //uint64_t psubscribe( VecString& pattern, VecString& value );
+
+
+      uint64_t publish( const string& channel, const string& message );
+
+
+      void psubchannels( VecString& pattern, VecString& value );
+
+
+      void psubnumsub( VecString& channel, CRedisClient::MapString& value );
+
+
+      uint64_t psubnumpat();
+
+
+      void punsubscribe( VecString& pattern, CResult& result );
+
+      //void subscribe( VecString& channel, CResult& result );
+
+
+
+      void unsubscribe( VecString& channel, CResult& result );
+
+
+
+
+
+
+
+
+
+
 
 
     //-----------------------------Script-----------------------------------------------------
