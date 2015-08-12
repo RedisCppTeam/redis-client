@@ -109,13 +109,13 @@ void TestString( void )
         std::cout << "======testString======" << std::endl;
 
 
-//        std::cout << "------testAPPEND------" << std::endl;
-//        uint16_t iRet = redis.append("myphone", "nokia");
-//        std::cout << "iRet: " << iRet << std::endl;
-//        std::string value;
-//        bool bRet = redis.get("myphone", value);
-//        std::cout << "bRet: " << bRet << std::endl;
-//        std::cout << "value:" << value << std::endl;
+        std::cout << "------testAPPEND------" << std::endl;
+        uint16_t iRet = redis.append("myphone", "nokia");
+        std::cout << "iRet: " << iRet << std::endl;
+        std::string value;
+        bool bRet = redis.get("myphone", value);
+        std::cout << "bRet: " << bRet << std::endl;
+        std::cout << "value:" << value << std::endl;
 
 
 
@@ -374,11 +374,6 @@ void TestString( void )
 //	redis._set("mykey", "Hello world");
 //	uint64_t iRet = redis.strlen("mykey");
 //	std::cout << "iRet: " << iRet << std::endl;
-
-
-
-
-
     }catch( RdException& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
@@ -788,8 +783,6 @@ void testReadN( void )
 	}
 }
 
-=======
-
 void TestPSub( void )
 {
     try
@@ -800,20 +793,20 @@ void TestPSub( void )
 
         std::cout << "======testPSub======" << std::endl;
 
-//	std::cout << "------testPUBLISH------" << std::endl;
-//	uint64_t iRet = redis.publish("msg", "good morning");
-//	std::cout << "iRet: " << iRet << std::endl;
+    std::cout << "------testPUBLISH------" << std::endl;
+    uint64_t iRet = redis.publish("msg", "good morning");
+    std::cout << "iRet: " << iRet << std::endl;
 
 
-//	std::cout << "------testPUBSUB CHANNELS------" << std::endl;
-//	CRedisClient::VecString pattern, value;
-//	redis.psubchannels(pattern, value);
-//	CRedisClient::VecString::const_iterator it = value.begin();
-//	CRedisClient::VecString::const_iterator end = value.end();
-//	for ( ; it != end; ++it )
-//	{
-//		std::cout << "value: " << static_cast<string>(*it) << std::endl;
-//	}
+    std::cout << "------testPUBSUB CHANNELS------" << std::endl;
+    CRedisClient::VecString pattern, value;
+    redis.psubchannels(pattern, value);
+    CRedisClient::VecString::const_iterator it = value.begin();
+    CRedisClient::VecString::const_iterator end = value.end();
+    for ( ; it != end; ++it )
+    {
+        std::cout << "value: " << static_cast<string>(*it) << std::endl;
+    }
 
 
 
@@ -855,12 +848,6 @@ void TestPSub( void )
 //	redis.unsubscribe(channel, result);
 
 
-
-
-
-
-
-
     }catch( RdException& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
@@ -882,7 +869,7 @@ int main()
 //    TestHash2();
    // TestList();
     //TestKey();
-   // TestString();
+    TestString();
     TestSet();
       TestPSub();
     return 0;
