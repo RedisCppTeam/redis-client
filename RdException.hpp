@@ -66,9 +66,6 @@ NEW_EXCEPTION( ConvertErr )
 ///<
 NEW_EXCEPTION( TypeErr )
 
-///< Invalid arguments
-NEW_EXCEPTION( ArgmentErr )
-
 #endif // RDEXCEPTION_H
 
 

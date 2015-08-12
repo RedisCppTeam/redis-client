@@ -21,7 +21,6 @@ uint64_t CRedisClient::sadd(const string &key, const CRedisClient::VecString &me
 }
 
 
-
 uint64_t CRedisClient::scard(const string &key)
 {
     Command cmd( "SCARD" );
@@ -47,6 +46,7 @@ uint64_t CRedisClient::sdiff(const CRedisClient::VecString &keys, CRedisClient::
     _getArry( cmd, values );
     return values.size();
 }
+
 
 uint64_t CRedisClient::sdiffstore(const string &destKey, const CRedisClient::VecString &keys )
 {
