@@ -125,7 +125,7 @@ public:
      * @param value
      * @warning  could throw Poco::Exception and ProtocolErr exception
      */
-    void set(const string& key, const string& value );
+    void _set(const string& key, const string& value );
 
 
 
@@ -235,33 +235,77 @@ public:
     bool hscan( const string& key, int64_t cursor, MapString& values, const string& match="", uint64_t count=0 );
 
     //---------------------------Set---------------------------------------------------
+
+
     uint64_t sadd( const string& key, const VecString& members );
+
+
+
 
     uint64_t scard( const string& key );
 
+
     uint64_t sdiff(const VecString& keys, VecString& values );
 
-    uint64_t sdiffstore(const string& destKey, const VecString& keys);
+
+    void sdiffstore( const string& newKey,const VecString& keys,CResult& result );
+
+    uint64_t sdiffstore(const string& newKey, const VecString& keys);
+
+
+    void sinter( const VecString& keys, CResult& result );
 
     uint64_t sinter( const VecString& keys, VecString& values  );
 
-    uint64_t sinterstore(const string& destKey , const VecString& keys);
-
-    /**
-     * @brief sismember
-     * @param key
-     * @param member
-     * @return true : member   ∈ key.  false member ∉ key.
-     */
-    bool sismember( const string& key, const string& member );
-
-    uint64_t smembers( const string& key,VecString& members );
-
-    bool smove( const string& source,const string& dest, const string& member );
 
     //---------------------------SortedSet-------------------------------------------
 
 
+        uint64_t  zadd(const string& key,const MapString& pairs);
+
+        uint64_t zcard(const string& key);
+
+        uint64_t zcount(const string& key,const string& min,const string& max);
+
+        string zincrby(const string& key,float increment,const string& member);//返回值有error
+
+        bool zrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
+        bool zrange(const string& key,const int64_t start,const int64_t stop,MapString& reply);
+
+        bool zrangebyscore(const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
+        bool zrangebyscore(const string& key,const string& min,const string& max,MapString& reply,int64_t offset=0,int64_t count=0);
+
+        uint64_t zrank(const string& key,const string& member);//cunzai nil
+
+        uint64_t zrem(const string& key,VecString& member);//返回值有error
+
+        uint64_t zremrangebyrank(const string& key,const int64_t start,const int64_t stop);
+
+        uint64_t zremrangebyscore(const string& key,const string& min,const string&max);
+
+        bool zrevrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
+        bool zrevrange(const string& key,const int64_t start,const int64_t stop,MapString& reply);
+
+        bool zrevrangebyscore(const string& key,const string& max,const string& min,VecString& reply,int64_t offset=0,int64_t count=0);
+        bool zrevrangebyscore(const string& key,const string& max,const string& min,MapString& reply,int64_t offset=0,int64_t count=0);
+
+        uint64_t zrevrank(const string& key,const string& member);
+
+        string zscore(const string& key,const string& member);
+
+        uint64_t zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate=0);
+        uint64_t zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate=0);
+
+        uint64_t zinterstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate=0);
+        uint64_t zinterstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate=0);
+
+        bool zscan( const string& key, int64_t cursor, MapString& reply, const string& match="", uint64_t count=0 );
+
+        bool zrangebylex (const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
+
+        uint64_t zlexcount (const string& key,const string& min,const string& max);
+
+        uint64_t zremrangebylex (const string& key,const string& min,const string& max);
     //--------------------------transtraction method------------------------------
 
     void watch( const VecString& keys );
@@ -288,6 +332,56 @@ public:
 
 
     //-----------------------------Server---------------------------------------------------
+
+    string bgrewriteaof();
+
+    string bgsave();
+
+    string  clientGetname();
+
+    bool clientKill(const string& ip,const uint32_t port);
+
+    bool clientList(VecString& clients);//是否需要整理收到的信息
+
+    bool clientSetname (const string& connectionName);
+
+    bool configGet(const string& parameter,VecString& reply);
+
+    void configResetstat();
+
+    bool configRewrite();
+
+    bool configSet(const string& parameter,const string& value);
+
+    uint64_t dbsize();
+
+    string debugObject(const string& key);//有错误的回复
+
+    void debugSegfault();//有点危险
+
+    void flushall();
+
+    void flushdb();
+
+    bool info(VecString& reply);//是否需要整理收到的信息
+
+    uint64_t lastsave();
+
+    void monitor();// ? 实时打印
+
+    void psync();//返回值不明确
+
+    bool save();
+
+    string shutdown();
+
+    void slaveof(const string& host,const string& port);
+
+    bool slowlog(const VecString&  subcommand ,CResult& reply);
+
+    void sync();//返回值不明确
+
+    void time(string& currentseconds,string& microseconds);
 
 protected:
      /**
@@ -335,7 +429,7 @@ protected:
      * @param time		expire time.
      * @param suffix2	"NX","XX"
      */
-    void	set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
+    void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
 
     /**
      * @brief _getStatus
@@ -352,9 +446,9 @@ protected:
      * @param result [out] it must arry.
      * @return
      */
-    void  _getArry(Command& cmd, CResult& result );
-    void  _getArry(Command &cmd, VecString& values );
-    void  _getArry(Command &cmd, MapString& pairs );
+    bool _getArry(Command& cmd, CResult& result );
+    bool _getArry(Command &cmd, VecString& values );
+    bool _getArry(Command &cmd, MapString& pairs );
 
 
 private:

@@ -4,8 +4,10 @@
 
 
 
-uint64_t CRedisClient::sadd(const string &key, const CRedisClient::VecString &members)
+
+void CRedisClient::sadd(const string &key, const CRedisClient::VecString &members, CResult &result)
 {
+    _socket.clearBuffer();
     Command cmd( "SADD" );
     cmd << key;
     VecString::const_iterator it = members.begin();
@@ -15,27 +17,58 @@ uint64_t CRedisClient::sadd(const string &key, const CRedisClient::VecString &me
     {
         cmd << *it;
     }
-    int64_t num;
-    _getInt( cmd , num );
-    return num;
+
+    _sendCommand( cmd );
+    _getReply( result );
 }
 
+uint64_t CRedisClient::sadd(const string &key, const CRedisClient::VecString &members)
+{
+    CResult result;
+    sadd( key, members, result );
 
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_INTEGERER != type )
+    {
+        throw ProtocolErr( "SADD: data recved is not intergerer" );
+    }
+
+    return result.getInt();
+}
+
+void CRedisClient::scard(const string &key, CResult &result)
+{
+    _socket.clearBuffer();
+    Command cmd( "SCARD" );
+    cmd << key;
+    _sendCommand( cmd );
+    _getReply( result );
+}
 
 uint64_t CRedisClient::scard(const string &key)
 {
-    Command cmd( "SCARD" );
-    cmd << key;
-    int64_t num;
-    _getInt( cmd , num );
-    return num;
+    CResult result;
+    scard( key, result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_INTEGERER != type )
+    {
+        throw ProtocolErr( "SCARD: data recved is not intergerer");
+    }
+    return result.getInt();
 }
 
 
 
-
-uint64_t CRedisClient::sdiff(const CRedisClient::VecString &keys, CRedisClient::VecString &values)
+void CRedisClient::sdiff(const CRedisClient::VecString &keys, CResult &result)
 {
+    _socket.clearBuffer();
     Command cmd( "SDIFF" );
     VecString::const_iterator it = keys.begin();
     VecString::const_iterator end = keys.end();
@@ -44,28 +77,63 @@ uint64_t CRedisClient::sdiff(const CRedisClient::VecString &keys, CRedisClient::
         cmd << *it;
     }
 
-    _getArry( cmd, values );
+    _sendCommand( cmd );
+    _getReply( result );
+}
+
+uint64_t CRedisClient::sdiff(const CRedisClient::VecString &keys, CRedisClient::VecString &values)
+{
+    CResult result;
+    sdiff( keys, result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_ARRAY != type )
+    {
+        throw ProtocolErr( "SDIFF: data recved is not arry");
+    }
+
+    _getStringVecFromArry( result.getArry(), values );
     return values.size();
 }
 
-uint64_t CRedisClient::sdiffstore(const string &destKey, const CRedisClient::VecString &keys )
+void CRedisClient::sdiffstore(const string &newKey, const CRedisClient::VecString &keys, CResult &result)
 {
+    _socket.clearBuffer();
     Command cmd( "SDIFFSTORE" );
-     cmd << destKey;
-     VecString::const_iterator it = keys.begin();
-     VecString::const_iterator end = keys.end();
-     for ( ; it != end; ++it )
-     {
-         cmd << *it;
-     }
+    cmd << newKey;
+    VecString::const_iterator it = keys.begin();
+    VecString::const_iterator end = keys.end();
+    for ( ; it != end; ++it )
+    {
+        cmd << *it;
+    }
 
-     int64_t num = 0;
-     _getInt( cmd, num );
-     return num;
+    _sendCommand( cmd );
+    _getReply( result );
 }
 
-uint64_t CRedisClient::sinter(const CRedisClient::VecString &keys, VecString &values)
+uint64_t CRedisClient::sdiffstore(const string &newKey, const CRedisClient::VecString &keys )
 {
+    CResult result;
+    sdiffstore( newKey,keys, result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_ERROR == type )
+    {
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_INTEGERER != type )
+    {
+        throw ProtocolErr( "SDIFFSTORE: data recved is not integerer");
+    }
+    return result.getInt();
+}
+
+void CRedisClient::sinter(const CRedisClient::VecString &keys, CResult &result)
+{
+    _socket.clearBuffer();
     Command cmd( "SINTER" );
     VecString::const_iterator it = keys.begin();
     VecString::const_iterator end = keys.end();
@@ -74,50 +142,24 @@ uint64_t CRedisClient::sinter(const CRedisClient::VecString &keys, VecString &va
         cmd << *it;
     }
 
-    _getArry( cmd, values );
-    return values.size();
+    _sendCommand( cmd );
+    _getReply( result );
 }
 
-uint64_t CRedisClient::sinterstore( const string& destKey ,const CRedisClient::VecString &keys )
+uint64_t CRedisClient::sinter(const CRedisClient::VecString &keys, VecString &values)
 {
-    Command cmd( "SINTERSTORE" );
-    cmd << destKey;
-    VecString::const_iterator it = keys.begin();
-    VecString::const_iterator end = keys.end();
-    for ( ; it != end; ++it )
+    CResult result;
+    sinter( keys, result );
+
+    ReplyType type = result.getType();
+    if ( REDIS_REPLY_ERROR == type )
     {
-        cmd << *it;
+        throw ReplyErr( result.getErrorString() );
+    }else if ( REDIS_REPLY_ARRAY != type )
+    {
+        throw ProtocolErr( "SINTER: data recved is not arry");
     }
 
-    int64_t num = 0;
-    _getInt( cmd, num );
-    return num;
+    _getStringVecFromArry( result.getArry(), values );
+    return values.size();
 }
-
-bool CRedisClient::sismember(const string &key, const string &member)
-{
-    Command cmd( "SISMEMBER" );
-    cmd << key << member;
-
-    int64_t num = 0;
-    _getInt( cmd, num );
-    return ( num == 1 ? true: false );
-}
-
-uint64_t CRedisClient::smembers( const string &key, CRedisClient::VecString &members )
-{
-    Command cmd( "SMEMBERS" );
-    cmd << key;
-    _getArry( cmd, members );
-    return members.size();
-}
-
-bool CRedisClient::smove(const string &source, const string &dest, const string &member)
-{
-    Command cmd( "SMOVE" );
-    cmd << source << dest << member;
-    int64_t num;
-    _getInt( cmd, num );
-    return	( num==0 ? false : true );
-}
-
