@@ -464,7 +464,7 @@ protected:
      * @param time		expire time.
      * @param suffix2	"NX","XX"
      */
-    void	set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
+    void	_set(const string& key, const string& value, CResult& result,const string& suffix="",long time=0,const string suffix2="" );
 
     /**
      * @brief _getStatus
@@ -481,9 +481,9 @@ protected:
      * @param result [out] it must arry.
      * @return
      */
-    void  _getArry(Command& cmd, CResult& result );
-    void  _getArry(Command &cmd, VecString& values );
-    void  _getArry(Command &cmd, MapString& pairs );
+    bool _getArry(Command& cmd, CResult& result );
+    uint64_t _getArry(Command &cmd, VecString& values );
+    uint64_t _getArry(Command &cmd, MapString& pairs );
 
 
 private:

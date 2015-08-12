@@ -38,7 +38,7 @@ void CRedisClient::_set(const string &key, const string &value, CResult &result,
     _getReply( result );
 }
 
-void CRedisClient::_set(const std::string &key,const std::string &value)
+void CRedisClient::set(const std::string &key,const std::string &value)
 {
     CResult result;
     _set( key, value, result );
