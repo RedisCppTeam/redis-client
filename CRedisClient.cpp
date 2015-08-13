@@ -167,10 +167,10 @@ bool CRedisClient::_getReply( CResult &result )
 
 
 
-bool CRedisClient::_replyBulk(CResult& result , const std::string &line)
+bool CRedisClient::_replyBulk(CResult& result , const std::string &len )
 {
     // get the number of CResult received .
-    int64_t protoLen = _valueFromString<int64_t>(line.substr(1));
+    int64_t protoLen = _valueFromString<int64_t>(len .substr(1));
 
     if ( protoLen == -1 )
     {
@@ -180,6 +180,9 @@ bool CRedisClient::_replyBulk(CResult& result , const std::string &line)
     }
 
     _socket.readN( protoLen, result );
+    string tmp;
+    _socket.readN( 2, tmp );
+
     result.setType( REDIS_REPLY_STRING );
     return true;
 }

@@ -481,7 +481,7 @@ protected:
      * @param line
      * @return true: successful false :not exists
      */
-    bool _replyBulk(CResult &result, const string& line );
+    bool _replyBulk(CResult &result, const string& len );
 
     uint64_t _replyMultiBulk(CResult &result , const std::string &line);
 
