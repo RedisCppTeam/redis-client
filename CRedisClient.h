@@ -477,7 +477,7 @@ public:
 
     bool slowlog(const VecString&  subcommand ,CResult& reply);
 
-    void sync();//返回值不明确
+    //void sync();//返回值不明确
 
     void time(string& currentseconds,string& microseconds);
 
