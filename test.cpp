@@ -783,6 +783,30 @@ void testReadN( void )
     }
 }
 
+
+
+void testpsubscribecallback(CResult& result, void* pData)
+{
+	ReplyType type = result.getType();
+
+	if ( REDIS_REPLY_ERROR == type )
+	{
+		throw ReplyErr( result.getErrorString() );
+	}
+	if ( REDIS_REPLY_ARRAY != type )
+	{
+		throw ProtocolErr( "testpsubscribecallback: data recved is not arry" );
+	}
+
+	CResult::ListCResult::const_iterator it = result.getArry().begin();
+	CResult::ListCResult::const_iterator end = result.getArry().end();
+
+	for ( ; it != end; ++it )
+	{
+		std::cout << "value: " <<  static_cast<string>(*it) << std::endl;
+	}
+}
+
 void TestPSub( void )
 {
     try
@@ -808,6 +832,29 @@ void TestPSub( void )
             std::cout << "value: " << static_cast<string>(*it) << std::endl;
         }
 
+//	std::cout << "------testPSUBSCRIBE------" << std::endl;
+//	CRedisClient::VecString pattern;
+//	pattern.push_back("news.*");
+//	pattern.push_back("tweet.*");
+//	redis.psubscribe(pattern, testpsubscribecallback, NULL);
+
+
+
+
+//    std::cout << "------testPUBLISH------" << std::endl;
+//    uint64_t iRet = redis.publish("msg", "good morning");
+//    std::cout << "iRet: " << iRet << std::endl;
+
+
+//    std::cout << "------testPUBSUB CHANNELS------" << std::endl;
+//    CRedisClient::VecString pattern, value;
+//    redis.psubchannels(pattern, value);
+//    CRedisClient::VecString::const_iterator it = value.begin();
+//    CRedisClient::VecString::const_iterator end = value.end();
+//    for ( ; it != end; ++it )
+//    {
+//        std::cout << "value: " << static_cast<string>(*it) << std::endl;
+//    }
 
 
         //	std::cout << "------testPUBSUB NUMSUB------" << std::endl;
@@ -960,6 +1007,18 @@ void TestSortedSet( void )
         vec.clear();
         for ( i = 10; i < 60; i++ )
         {
+//	std::cout << "------testSUBSCRIBE------" << std::endl;
+//	CRedisClient::VecString channel;
+//	channel.push_back("msg");
+//	channel.push_back("chat_room");
+//	redis.subscribe(channel, testpsubscribecallback, NULL);
+
+
+
+//	std::cout << "------testUNSUBSCRIBE------" << std::endl;
+//	CRedisClient::VecString channel;
+//	CResult result;
+//	redis.unsubscribe(channel, result);
 
             member="member_";
             ss.str("");
@@ -1177,6 +1236,7 @@ int main()
     //TestSortedSet();
 //    TestServer();
 
+      TestPSub();
     return 0;
 }
 

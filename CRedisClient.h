@@ -387,30 +387,31 @@ public:
 
 
     //----------------------------pub/sub--------------------------------------------------
+      typedef void (*psubscribecallback)(CResult& result, void* pData);
+
+      void psubscribe( VecString& pattern, psubscribecallback callback, void* pData );
 
 
-    //uint64_t psubscribe( VecString& pattern, VecString& value );
+      uint64_t publish( const string& channel, const string& message );
 
 
-    uint64_t publish( const string& channel, const string& message );
+      void psubchannels( VecString& pattern, VecString& value );
 
 
-    void psubchannels( VecString& pattern, VecString& value );
+      void psubnumsub( VecString& channel, CRedisClient::MapString& value );
 
 
-    void psubnumsub( VecString& channel, CRedisClient::MapString& value );
+      uint64_t psubnumpat();
 
 
-    uint64_t psubnumpat();
+      void punsubscribe( VecString& pattern, CResult& result );
 
-
-    void punsubscribe( VecString& pattern, CResult& result );
-
-    //void subscribe( VecString& channel, CResult& result );
+      void subscribe( VecString& channel, psubscribecallback callback, void* pData );
 
 
 
-    void unsubscribe( VecString& channel, CResult& result );
+      void unsubscribe( VecString& channel, CResult& result );
+
 
 
     //-----------------------------Script-----------------------------------------------------

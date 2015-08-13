@@ -12,22 +12,25 @@
 
 
 
-
-
-
-
-
-// uint64_t CRedisClient::psubscribe( VecString& pattern, VecString& value )
-// {
-//	Command cmd( "PSUBSCRIBE" );
-//	VecString::const_iterator it = pattern.begin();
-//	for ( ; it != pattern.end(); it++ )
-//	{
-//		cmd << *it;
-//	}
-//	_getArry( cmd, value );
-//	return value.size();
-// }
+ void CRedisClient::psubscribe( VecString& pattern, psubscribecallback callback, void* pData)
+ {
+	Command cmd( "PSUBSCRIBE" );
+	VecString::const_iterator it = pattern.begin();
+	for ( ; it != pattern.end(); it++ )
+	{
+		cmd << *it;
+	}
+	_socket.setReceiveTimeout(0);
+	CResult result;
+	_getArry( cmd, result );
+	callback(result, pData);
+	while(true)
+	{
+		result.clear();
+		_getReply( result );
+		callback(result, pData);
+	}
+ }
 
 
 
@@ -114,16 +117,25 @@
 
 
 
-// void CRedisClient::subscribe( VecString& channel, CResult& result )
-// {
-//	Command cmd( "SUBSCRIBE" );
-//	VecString::const_iterator it = channel.begin();
-//	for ( ; it != channel.end(); it++ )
-//	{
-//		cmd << *it ;
-//	}
-//	_getArry( cmd, result );
-// }
+ void CRedisClient::subscribe( VecString& channel, psubscribecallback callback, void* pData )
+ {
+	Command cmd( "SUBSCRIBE" );
+	VecString::const_iterator it = channel.begin();
+	for ( ; it != channel.end(); it++ )
+	{
+		cmd << *it ;
+	}
+	_socket.setReceiveTimeout(0);
+	CResult result;
+	_getArry( cmd, result );
+	callback(result, pData);
+	while(true)
+	{
+		result.clear();
+		_getReply( result );
+		callback(result, pData);
+	}
+ }
 
 
 
