@@ -29,6 +29,14 @@ public:
  */
     bool readLine( string& line );
 
+
+    /**
+    * @brief readN
+    * @param n [in] 		The length of the data you want to receive.
+    * @param data [out]		date recved
+    */
+    void readN( const uint64_t n, string &data );
+
     /**
      * @brief clearBuffer 清空原始 socket 和应用缓冲区
      */

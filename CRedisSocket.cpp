@@ -67,7 +67,22 @@ bool CRedisSocket::readLine( string& line )
     }
 }
 
+void CRedisSocket::readN(const uint64_t n, string& data )
+{
+    uint64_t readed = 0;
+    char ch = 0;
+    data.clear();
 
+    for ( readed=0; readed != n; ++readed )
+    {
+        ch = get();
+        if ( ch == EOF_CHAR )
+        {
+            break;
+        }
+        data += ch;
+    }
+}
 
 void CRedisSocket::clearBuffer( void )
 {
