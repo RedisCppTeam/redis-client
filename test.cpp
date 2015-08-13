@@ -1167,15 +1167,15 @@ int main()
     redis.connect( "127.0.0.1", 6379 );
     VEC  vec;
     // testReadN();
-    //TestHash();
-    //TestHash2();
+    TestHash();
+    TestHash2();
     //TestList();
     //TestKey();
     //TestString();
     //TestSet();
     //TestPSub();
     //TestSortedSet();
-    TestServer();
+//    TestServer();
 
     return 0;
 }
