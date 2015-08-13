@@ -105,9 +105,9 @@ public:
 
     void keys(const std::string &pattern, CResult& result);
     /**
-     * @brief keys get all keys matching pattern. 
-     * @param pattern [in] The conditions of the matching. 
-     * @param keys [out] vector of keys maching pattern 
+     * @brief keys get all keys matching pattern.
+     * @param pattern [in] The conditions of the matching.
+     * @param keys [out] vector of keys maching pattern
      * @return The number of keys returned.
      */
     int64_t keys(const string& pattern, VecString &values );
@@ -323,53 +323,52 @@ public:
     bool sscan( const string& key, int64_t cursor, VecString& values, const string& match="", uint64_t count=0  );
     //---------------------------SortedSet-------------------------------------------
 
+    uint64_t  zadd(const string& key,const MapString& pairs);
 
-        uint64_t  zadd(const string& key,const MapString& reply);
+    uint64_t zcard(const string& key);
 
-        uint64_t zcard(const string& key);
+    uint64_t zcount(const string& key,const string& min,const string& max);
 
-        uint64_t zcount(const string& key,const string& min,const string& max);
+    string zincrby(const string& key,float increment,const string& member);
 
-        string zincrby(const string& key,float increment,const string& member);//返回值有error
+    uint64_t zrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
+    uint64_t zrange(const string& key,const int64_t start,const int64_t stop,MapString& reply);
 
-        bool zrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
-        bool zrange(const string& key,const int64_t start,const int64_t stop,MapString& reply);
+    uint64_t zrangebyscore(const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
+    uint64_t zrangebyscore(const string& key,const string& min,const string& max,MapString& reply,int64_t offset=0,int64_t count=0);
 
-        bool zrangebyscore(const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
-        bool zrangebyscore(const string& key,const string& min,const string& max,MapString& reply,int64_t offset=0,int64_t count=0);
+    bool zrank(const string& key,const string& member,int64_t& reply);//cunzai nil
 
-        uint64_t zrank(const string& key,const string& member);//cunzai nil
+    uint64_t zrem(const string& key,VecString& members);
 
-        uint64_t zrem(const string& key,VecString& member);//返回值有error
+    uint64_t zremrangebyrank(const string& key,const int64_t start,const int64_t stop);
 
-        uint64_t zremrangebyrank(const string& key,const int64_t start,const int64_t stop);
+    uint64_t zremrangebyscore(const string& key,const string& min,const string& max);
 
-        uint64_t zremrangebyscore(const string& key,const string& min,const string&max);
+    uint64_t zrevrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
+    uint64_t zrevrange(const string& key,const int64_t start,const int64_t stop,MapString& reply);
 
-        bool zrevrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
-        bool zrevrange(const string& key,const int64_t start,const int64_t stop,MapString& reply);
+    uint64_t zrevrangebyscore(const string& key,const string& max,const string& min,VecString& reply,int64_t offset=0,int64_t count=0);
+    uint64_t zrevrangebyscore(const string& key,const string& max,const string& min,MapString& reply,int64_t offset=0,int64_t count=0);
 
-        bool zrevrangebyscore(const string& key,const string& max,const string& min,VecString& reply,int64_t offset=0,int64_t count=0);
-        bool zrevrangebyscore(const string& key,const string& max,const string& min,MapString& reply,int64_t offset=0,int64_t count=0);
+    uint64_t zrevrank(const string& key,const string& member);
 
-        uint64_t zrevrank(const string& key,const string& member);
+    string zscore(const string& key,const string& member);
 
-        string zscore(const string& key,const string& member);
+    void addAggregate(Command& cmd,int aggregate);
+    uint64_t zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate=0);
+    uint64_t zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate=0);
 
-        void addAggregate(Command& cmd,int aggregate);
-        uint64_t zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate=0);
-        uint64_t zunionstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate=0);
+    uint64_t zinterstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate=0);
+    uint64_t zinterstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate=0);
 
-        uint64_t zinterstore (const string& destination,const uint64_t numkeys,const VecString& keys,const VecString& weigets,int aggregate=0);
-        uint64_t zinterstore (const string& destination,const uint64_t numkeys,const VecString& keys,int aggregate=0);
+    bool zscan( const string& key, int64_t cursor, MapString& reply, const string& match="", uint64_t count=0 );
 
-        bool zscan( const string& key, int64_t cursor, MapString& reply, const string& match="", uint64_t count=0 );
+    uint64_t zrangebylex (const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
 
-        bool zrangebylex (const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
+    uint64_t zlexcount (const string& key,const string& min,const string& max);
 
-        uint64_t zlexcount (const string& key,const string& min,const string& max);
-
-        uint64_t zremrangebylex (const string& key,const string& min,const string& max);
+    uint64_t zremrangebylex (const string& key,const string& min,const string& max);
     //--------------------------transtraction method------------------------------
 
     void watch( const VecString& keys );
@@ -390,28 +389,28 @@ public:
     //----------------------------pub/sub--------------------------------------------------
 
 
-      //uint64_t psubscribe( VecString& pattern, VecString& value );
+    //uint64_t psubscribe( VecString& pattern, VecString& value );
 
 
-      uint64_t publish( const string& channel, const string& message );
+    uint64_t publish( const string& channel, const string& message );
 
 
-      void psubchannels( VecString& pattern, VecString& value );
+    void psubchannels( VecString& pattern, VecString& value );
 
 
-      void psubnumsub( VecString& channel, CRedisClient::MapString& value );
+    void psubnumsub( VecString& channel, CRedisClient::MapString& value );
 
 
-      uint64_t psubnumpat();
+    uint64_t psubnumpat();
 
 
-      void punsubscribe( VecString& pattern, CResult& result );
+    void punsubscribe( VecString& pattern, CResult& result );
 
-      //void subscribe( VecString& channel, CResult& result );
+    //void subscribe( VecString& channel, CResult& result );
 
 
 
-      void unsubscribe( VecString& channel, CResult& result );
+    void unsubscribe( VecString& channel, CResult& result );
 
 
     //-----------------------------Script-----------------------------------------------------
@@ -429,11 +428,11 @@ public:
 
     bool clientKill(const string& ip,const uint32_t port);
 
-    bool clientList(VecString& clients);//是否需要整理收到的信息
+    void clientList(CResult& result);
 
     bool clientSetname (const string& connectionName);
 
-    bool configGet(const string& parameter,VecString& reply);
+    uint64_t configGet(const string& parameter,VecString& reply);
 
     void configResetstat();
 
@@ -443,21 +442,19 @@ public:
 
     uint64_t dbsize();
 
-    string debugObject(const string& key);//有错误的回复
+    string debugObject(const string& key);
 
-    void debugSegfault();//有点危险
+    void debugSegfault();
 
     void flushall();
 
     void flushdb();
 
-    bool info(VecString& reply);//是否需要整理收到的信息
+    uint64_t info(VecString& reply);
 
     uint64_t lastsave();
 
-    void monitor();// ? 实时打印
-
-    void psync();//返回值不明确
+    void monitor(void* input=NULL,void* output=NULL,void (*p)(string& str,void* in,void* out)=NULL);
 
     bool save();
 
@@ -465,14 +462,12 @@ public:
 
     void slaveof(const string& host,const string& port);
 
-    bool slowlog(const VecString&  subcommand ,CResult& reply);
-
-    //void sync();//返回值不明确
+    void slowlog(const VecString&  subcommand ,CResult& reply);
 
     void time(string& currentseconds,string& microseconds);
 
 protected:
-     /**
+    /**
      * @brief sendCommand. send a Command to redis-server
      * @param cmd [in]  command will be send.
      */
