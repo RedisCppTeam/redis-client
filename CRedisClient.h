@@ -226,8 +226,6 @@ public:
     float hincrbyfloat( const string& key, const string& field, float increment );
 
 
-    void hkeys( const string& key, CResult& result );
-
     uint64_t hkeys( const string& key, VecString& values );
 
 

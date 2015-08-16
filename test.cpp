@@ -987,55 +987,38 @@ void TestSortedSet( void )
         redis.zrange(key,1,10,vec);
         print("redis.zrange(key,1,10,vec)",vec);
         //--------------------------------------------------------------------------------------------------------------------
+        map.clear();
         redis.zrange(key,1,10,map);
         print("redis.zrange(key,1,10,map)",map);
-        //---------------------------------------------------------------------------------------------------------------------
-        cout << "------test zrangebyscore------" << endl;
-        vec.clear();
-        redis.zrangebyscore(key,"20","50",vec,0,10);
-        print("redis.zrangebyscore(key,20,50,vec,0,10)",vec);
+       //---------------------------------------------------------------------------------------------------------------------
+       cout << "------test zrangebyscore------" << endl;
+       vec.clear();
+       redis.zrangebyscore(key,"20","50",vec,0,10);
+       print("redis.zrangebyscore(key,20,50,vec,0,10)",vec);
 
-        map.clear();
-        redis.zrangebyscore(key,"20","50",map,0,10);
-        print("redis.zrangebyscore(key,20,50,map,0,10)",map);
+       map.clear();
+       redis.zrangebyscore(key,"20","50",map,1,10);
+       print("redis.zrangebyscore(key,20,50,map,1,10)",map);
         //---------------------------------------------------------------------------------------------------------------------
         cout << "------test zrank------" << endl;
         int64_t num;
-        print("redis.zrank(key,member_60,num)",redis.zrank(key,"member_60",num));
-        //---------------------------------------------------------------------------------------------------------------------
-        cout << "------test zrem------" << endl;
-        vec.clear();
-        for ( i = 10; i < 60; i++ )
-        {
-//	std::cout << "------testSUBSCRIBE------" << std::endl;
-//	CRedisClient::VecString channel;
-//	channel.push_back("msg");
-//	channel.push_back("chat_room");
-//	redis.subscribe(channel, testpsubscribecallback, NULL);
-
-
-
-//	std::cout << "------testUNSUBSCRIBE------" << std::endl;
-//	CRedisClient::VecString channel;
-//	CResult result;
-//	redis.unsubscribe(channel, result);
-
-            member="member_";
-            ss.str("");
-            ss << i;
-            member += ss.str();
-            vec.push_back(member);
-        }
-        print("redis.zrem(key,vec)",redis.zrem(key,vec));
+        print("redis.zrank(key,member_600,num)",redis.zrank(key,"member_600",num));
+       //---------------------------------------------------------------------------------------------------------------------
+       cout << "------test zrem------" << endl;
+       vec.clear();
+       vec.push_back( "member_99");
+       vec.push_back( "member_100" );
+       print("redis.zrem(key,vec)",redis.zrem( "sortedSet0",vec));
         //--------------------------------------------------------------------------------------------------------------------
         cout << "------test zremrangebyrank------" << endl;
         print("redis.zremrangebyrank(key,1,5)",redis.zremrangebyrank(key,1,5));
         //--------------------------------------------------------------------------------------------------------------------
         cout << "------test zremrangebyscore------" << endl;
-        print("redis.zremrangebyscore(key,(40,90)",redis.zremrangebyscore(key,"(40","90"));
+        print("redis.zremrangebyscore(key,(40,90)",redis.zremrangebyscore( "sortedSet0","(40","90"));
         //--------------------------------------------------------------------------------------------------------------------
         cout << "------test zrevrange------" << endl;
         map.clear();
+        vec.clear();
         for ( i = 1; i <= 100; i++ )
         {
 
@@ -1050,20 +1033,20 @@ void TestSortedSet( void )
         redis.zadd(key,map);
         redis.zrevrange(key,40,-1,vec);
         print("redis.zrevrange(key,40,-1,vec)",vec);
-        redis.zrevrange(key,40,-1,map);
-        print("redis.zrevrange(key,40,-1,map)",map);
         //---------------------------------------------------------------------------------------------------------------------
         cout << "------test zrevrangebyscore------" << endl;
-        redis.zrevrangebyscore(key,"(23","10",vec);
-        print("redis.zrevrange(key,(23,10,vec)",vec);
-        redis.zrevrangebyscore(key,"(23","10",map);
-        print("redis.zrevrange(key,(23,10,map)",map);
+        vec.clear();
+        redis.zrevrangebyscore(key,"23","(10",vec, 2, 4 );
+        print("redis.zrevrange(key,23,(10,vec, 2, 4)",vec);
+        map.clear();
+        redis.zrevrangebyscore(key,"(23","10",map , 2,4 );
+        print("redis.zrevrange(key,(23,10,map, 2, 4 )",map);
         //---------------------------------------------------------------------------------------------------------------------
         cout << "------test zrevrank------" << endl;
         print("redis.zrevrank(key,member_87)",redis.zrevrank(key,"member_87"));
         //---------------------------------------------------------------------------------------------------------------------
         cout << "------test zscore------" << endl;
-        print("zscore(key,member_87)",redis.zscore(key,"member_87"));
+        print("zscore(key,member_87)",redis.zscore("asd","member_87"));
         //---------------------------------------------------------------------------------------------------------------------
         cout << "------test zunionstore------" << endl;
         map.clear();
@@ -1083,25 +1066,28 @@ void TestSortedSet( void )
         print("redis.zunionstore(key2,2,vec,1)",redis.zunionstore(key2,2,vec,1));
         //---------------------------------------------------------------------------------------------------------------------
         cout << "------test zinterstore------" << endl;
+        map.clear();
         vec.clear();
         vec.push_back(key);
         vec.push_back(key1);
         print("redis.zinterstore(key2,2,vec,2)",redis.zinterstore(key2,2,vec,2));
         cout << "------test zscan------" << endl;
         redis.zscan( key, 0, map);
-        print("redis.zscan( key, -1, map ,)",map);
-        while ( redis.zscan(key, -1, map ) )
-            print("redis.zscan( key, -1, map",map);
+        print("redis.zscan( key, 0, map ,)",map);
+        while ( redis.zscan(key, -1, map ) );
+
+        print("redis.zscan( key, -1, map )",map);
         //----------------------------------------------------------------------------------------------------------------------
+        vec.clear();
         cout << "------test zrangebylex------" << endl;
-        redis.zrangebylex(key,"10","(60",vec);
-        print("redis.zrangebylex(key,10,(60,vec)",vec);
+        redis.zrangebylex(key,"(10","(60",vec);
+        print("redis.zrangebylex(key,(10,(60,vec)",vec);
         //----------------------------------------------------------------------------------------------------------------------
         cout << "------test zlexcount------" << endl;
-        print("redis.zlexcount(key,10,(60)",redis.zlexcount(key,"10","(60"));
+        print("redis.zlexcount(key,10,(60)",redis.zlexcount(key,"(10","(60"));
         //-----------------------------------------------------------------------------------------------------------------------
         cout << "------test zremrangebylex------" << endl;
-        print("redis.zremrangebylex(key,10,(60)",redis.zremrangebylex(key,"10","(60"));
+        print("redis.zremrangebylex(key,10,(60)",redis.zremrangebylex(key,"(10","(60"));
         //-----------------------------------------------------------------------------------------------------------------------
         cout << "------test finish------" << endl;
         sleep( 1 );
@@ -1123,23 +1109,25 @@ void TestServer( void )
         string str;
         CResult res;
         //-----------------------------------------------------------------------------------------------------------------------
-        cout << "------test bgrewriteaof------" << endl;
-        //print("redis.bgrewriteaof()",redis.bgrewriteaof());
+       // cout << "------test bgrewriteaof------" << endl;
+       // print("redis.bgrewriteaof()",redis.bgrewriteaof());
         //-----------------------------------------------------------------------------------------------------------------------
         cout << "------test bgsave------" << endl;
-        //print("redis.bgsave()",redis.bgsave());
+        print("redis.bgsave()",redis.bgsave());
+        //-----------------------------------------------------------------------------------------------------------------------
+        cout << "------test clientSetname------" << endl;
+        print("redis.clientSetname(qwert)",redis.clientSetname("qwert"));
         //-----------------------------------------------------------------------------------------------------------------------
         cout << "------test clientGetname------" << endl;
-        //print("redis.clientGetname()",redis.clientGetname());
+        print("redis.clientGetname()",redis.clientGetname());
         //-----------------------------------------------------------------------------------------------------------------------
         cout << "------test clientKill------" << endl;
+        redis.clientKill( "127.0.0.1",48019 );
         //-----------------------------------------------------------------------------------------------------------------------
         cout << "------test clientList------" << endl;
         //redis.clientList(res);
         //cout<<res<<endl;
-        //-----------------------------------------------------------------------------------------------------------------------
-        cout << "------test clientSetname------" << endl;
-        //print("redis.clientSetname(qwert)",redis.clientSetname("qwert"));
+
         //-----------------------------------------------------------------------------------------------------------------------
         cout << "------test configGet------" << endl;
         //redis.configGet("s*",vec);
@@ -1206,11 +1194,6 @@ void TestServer( void )
         //-----------------------------------------------------------------------------------------------------------------------
         cout << "------test finish------" << endl;
 
-
-
-
-
-
     }catch( RdException& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
@@ -1226,22 +1209,19 @@ int main()
     redis.connect( "127.0.0.1", 6379 );
     VEC  vec;
     // testReadN();
-    TestHash();
-    TestHash2();
+    //TestHash();
+    //TestHash2();
     //TestList();
     //TestKey();
     //TestString();
     //TestSet();
     //TestPSub();
-    //TestSortedSet();
-//    TestServer();
+   //   TestSortedSet();
+    TestServer();
 
-      TestPSub();
+//      TestPSub();
     return 0;
 }
-
-
-
 
 
 
