@@ -102,7 +102,6 @@ public:
 
 	//-----------------------------------key---------------------------------------------
 
-	void keys( const std::string &pattern , CResult& result );
 	/**
 	 * @brief keys get all keys matching pattern.
 	 * @param pattern [in] The conditions of the matching.
@@ -110,8 +109,6 @@ public:
 	 * @return The number of keys returned.
 	 */
 	int64_t keys( const string& pattern , VecString &values );
-
-	void del( VecString& keys , CResult &result );
 
 	int64_t del( VecString &keys );
 	bool exists( const string& key );
