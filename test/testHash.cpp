@@ -6,6 +6,16 @@
  * @date: 		2015年8月18日
  *
  */
+#include <iostream>
+#include "../Command.h"
+#include "../CRedisClient.h"
+#include <stdio.h>
+#include <sstream>
+#include "../RdException.hpp"
+#include "../CResult.h"
+
+using namespace std;
+
 
 void TestHash( void )
 {
