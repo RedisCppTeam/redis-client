@@ -940,7 +940,7 @@ void print(const string &cmd,MAP& map)
     cout<<endl;
 }
 
-
+/*
 void TestSortedSet( void )
 {
     try
@@ -1099,6 +1099,8 @@ void TestSortedSet( void )
         std::cout << "Poco_exception:" << e.what() << std::endl;
     }
 }
+*/
+/*
 void TestServer( void )
 {
     try
@@ -1202,7 +1204,7 @@ void TestServer( void )
         std::cout << "Poco_exception:" << e.what() << std::endl;
     }
 }
-
+*/
 int main()
 {
     CRedisClient redis;
@@ -1217,7 +1219,7 @@ int main()
     //TestSet();
     //TestPSub();
    //   TestSortedSet();
-    TestServer();
+    //TestServer();
 
 //      TestPSub();
     return 0;
