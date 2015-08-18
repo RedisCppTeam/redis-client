@@ -72,7 +72,7 @@ bool CRedisClient::lpop( const string &key , std::string &value )
 	Command cmd("LPOP");
 	cmd << key;
 
-	return _getString(cmd,value);
+	return _getString(cmd, value);
 }
 
 bool CRedisClient::rpop( const string &key , std::string &value )
@@ -192,16 +192,24 @@ bool CRedisClient::brpop( const CRedisClient::VecString &key , uint64_t &timeout
 bool CRedisClient::brpoplpush( const string &source , const string &dest , uint64_t &timeout ,
 		string &value )
 {
+	value.clear();
 	Command cmd("BRPOPLPUSH");
 	cmd << source << dest << timeout;
 	_sendCommand(cmd);
-	CResult result;
 
-	bool flag= _getReply(result);
-	if(result.getType()==REDIS_REPLY_STRING){
-		value=result.getString();
-	}else{
-		value=REDIS_NIL;
+	CResult result;
+	bool flag = _getReply(result);
+	if ( result.getType() == REDIS_REPLY_STRING )
+	{
+		value = result.getString();
+	}
+	else
+	{
+		int size = result.size();
+		if ( 0 == size )
+		{
+			flag = false;
+		}
 	}
 
 	return flag;
