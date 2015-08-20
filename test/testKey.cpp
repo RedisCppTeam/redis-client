@@ -49,6 +49,7 @@ void TestDel( void )
 		std::cout << "Poco_exception:" << e.what() << std::endl;
 	}
 }
+
 void TestKeys( void )
 {
 	try
@@ -184,6 +185,7 @@ void testobj( void )
 
 void testRename( void )
 {
+	cout << "****************** string::rename ******************" << endl;
 	try
 	{
 		CRedisClient redis;
@@ -197,7 +199,7 @@ void testRename( void )
 //		else
 //			cout << "redis.rename failed:" << ret << endl;
 
-		ret = redis.renameNx("mysk", "myskv");
+		ret = redis.renameNx("mykey", "youkey");
 		if ( ret )
 			cout << "redis.renamenx ok:" << ret << endl;
 
