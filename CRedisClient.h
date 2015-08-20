@@ -102,7 +102,6 @@ public:
 
 	//-----------------------------------key---------------------------------------------
 
-	void keys( const std::string &pattern , CResult& result );
 	/**
 	 * @brief keys get all keys matching pattern.
 	 * @param pattern [in] The conditions of the matching.
@@ -110,8 +109,6 @@ public:
 	 * @return The number of keys returned.
 	 */
 	int64_t keys( const string& pattern , VecString &values );
-
-	void del( VecString& keys , CResult &result );
 
 	int64_t del( VecString &keys );
 	bool exists( const string& key );
@@ -373,7 +370,7 @@ public:
 
 	uint8_t getbit( const string& key , uint32_t offset );
 
-	void getrange( const string& key , int64_t start , int64_t end , string &value );
+	bool getrange( const string& key , int64_t start , int64_t end , string &value );
 
 	bool getset( const string& key , const string &value , string &oldvalue );
 
@@ -381,7 +378,7 @@ public:
 
 	int64_t incrby( const string& key , int64_t increment );
 
-	float incrbyfloat( const string& key , float increment );
+	bool incrbyfloat( const string& key , float increment, float& value );
 
 	void mget( VecString& keys , CResult& result );
 
@@ -629,23 +626,22 @@ public:
 	//----------------------------HyperLogLog-------------------------------------------
 
 	//----------------------------pub/sub--------------------------------------------------
-	typedef void (*psubscribecallback)( CResult& result , void* pData );
 
-	void psubscribe( VecString& pattern , psubscribecallback callback , void* pData );
+	void psubscribe( VecString& pattern , CResult& result );
 
 	uint64_t publish( const string& channel , const string& message );
 
-	void psubchannels( VecString& pattern , VecString& value );
+	uint64_t psubchannels( VecString& value, const VecString& pattern = VecString() );
 
-	void psubnumsub( VecString& channel , CRedisClient::MapString& value );
+	uint64_t psubnumsub( CRedisClient::MapString& value, const VecString& channel = VecString() );
 
 	uint64_t psubnumpat( );
 
-	void punsubscribe( VecString& pattern , CResult& result );
+	void punsubscribe( CResult& result, const VecString& pattern = VecString() );
 
-	void subscribe( VecString& channel , psubscribecallback callback , void* pData );
+	void subscribe( VecString& channel , CResult& result );
 
-	void unsubscribe( VecString& channel , CResult& result );
+	void unsubscribe( CResult& result, const VecString& channel = VecString() );
 
 	//-----------------------------Script-----------------------------------------------------
 

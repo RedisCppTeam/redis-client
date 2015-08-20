@@ -12,23 +12,21 @@
 
 
 
- void CRedisClient::psubscribe( VecString& pattern, psubscribecallback callback, void* pData)
+ void CRedisClient::psubscribe( VecString& pattern, CResult& result)
  {
 	Command cmd( "PSUBSCRIBE" );
 	VecString::const_iterator it = pattern.begin();
-	for ( ; it != pattern.end(); it++ )
+	for ( ; it != pattern.end(); ++it )
 	{
 		cmd << *it;
 	}
 	_socket.setReceiveTimeout(0);
-	CResult result;
+	result.clear();
 	_getArry( cmd, result );
-	callback(result, pData);
 	while(true)
 	{
 		result.clear();
 		_getReply( result );
-		callback(result, pData);
 	}
  }
 
@@ -46,7 +44,7 @@
 
 
 
- void CRedisClient::psubchannels( VecString& pattern, VecString& value )
+ uint64_t CRedisClient::psubchannels( VecString& value, const VecString& pattern )
  {
 	Command cmd( "PUBSUB" );
 	cmd << "CHANNELS";
@@ -54,31 +52,31 @@
 	if ( pattern.size() != 0 )
 	{
 		VecString::const_iterator it = pattern.begin();
-		for ( ; it != pattern.end(); it++ )
+		for ( ; it != pattern.end(); ++it )
 		{
 			cmd << *it ;
 		}
 	}
 
-	_getArry( cmd, value );
+	return _getArry( cmd, value );
  }
 
 
 
- void CRedisClient::psubnumsub( VecString& channel, CRedisClient::MapString& value )
+ uint64_t CRedisClient::psubnumsub( CRedisClient::MapString& value, const VecString& channel )
  {
 	Command cmd( "PUBSUB" );
 	cmd << "NUMSUB";
 	if ( channel.size() != 0 )
 	{
 		VecString::const_iterator it = channel.begin();
-		for ( ; it != channel.end(); it++ )
+		for ( ; it != channel.end(); ++it )
 		{
 			cmd << *it ;
 		}
 	}
 
-	_getArry( cmd, value );
+	return _getArry( cmd, value );
  }
 
 
@@ -95,7 +93,7 @@
 
 
 
- void CRedisClient::punsubscribe( VecString& pattern, CResult& result )
+ void CRedisClient::punsubscribe( CResult& result, const VecString& pattern )
  {
 	_socket.clearBuffer();
 
@@ -103,7 +101,7 @@
 	if ( pattern.size() != 0 )
 	{
 		VecString::const_iterator it = pattern.begin();
-		for ( ; it != pattern.end(); it++ )
+		for ( ; it != pattern.end(); ++it )
 		{
 			cmd << *it ;
 		}
@@ -117,30 +115,28 @@
 
 
 
- void CRedisClient::subscribe( VecString& channel, psubscribecallback callback, void* pData )
+ void CRedisClient::subscribe( VecString& channel, CResult& result )
  {
 	Command cmd( "SUBSCRIBE" );
 	VecString::const_iterator it = channel.begin();
-	for ( ; it != channel.end(); it++ )
+	for ( ; it != channel.end(); ++it )
 	{
 		cmd << *it ;
 	}
 	_socket.setReceiveTimeout(0);
-	CResult result;
+	result.clear();
 	_getArry( cmd, result );
-	callback(result, pData);
 	while(true)
 	{
 		result.clear();
 		_getReply( result );
-		callback(result, pData);
 	}
  }
 
 
 
 
- void CRedisClient::unsubscribe( VecString& channel, CResult& result )
+ void CRedisClient::unsubscribe( CResult& result, const VecString& channel )
  {
 	_socket.clearBuffer();
 
@@ -148,7 +144,7 @@
 	if ( channel.size() != 0 )
 	{
 		VecString::const_iterator it = channel.begin();
-		for ( ; it != channel.end(); it++ )
+		for ( ; it != channel.end(); ++it )
 		{
 			cmd << *it ;
 		}
