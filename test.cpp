@@ -1202,12 +1202,15 @@ void TestServer( void )
         std::cout << "Poco_exception:" << e.what() << std::endl;
     }
 }
-
+void whiletest();
+void testeveryKey();
 int main()
 {
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
-    VEC  vec;
+//	whiletest();
+	testeveryKey();
+//    CRedisClient redis;
+//    redis.connect( "127.0.0.1", 6379 );
+//    VEC  vec;
     // testReadN();
     //TestHash();
     //TestHash2();
@@ -1217,7 +1220,7 @@ int main()
     //TestSet();
     //TestPSub();
    //   TestSortedSet();
-    TestServer();
+//    TestServer();
 
 //      TestPSub();
     return 0;

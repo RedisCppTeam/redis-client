@@ -20,7 +20,7 @@
 
 #include "CResult.h"
 
-#define REDIS_NIL "nil"
+//#define REDIS_NIL "nil"
 
 using namespace Poco;
 
@@ -173,6 +173,7 @@ public:
 
 	/**
 	 * @brief 移除 key 的生存时间，让 key 重新成为一个『持久的』(persistent) key
+	 * @brief Remove the key's alive time, so that the key  become persistent
 	 * @param key [in] the key
 	 * @return The true for success,fail for key isn't exists or the key is persist already.
 	 */
@@ -191,46 +192,48 @@ public:
 		REFCOUNT = 0, ENCODING, IDLETIME
 	};
 	/**
-	 * @brief 命令允许从内部察看给定 key 的 Redis 对象
-	 * @param key [in] the key
-	 * @param subcommand [in]  子命令
+	 * @brief 命令允许从内部察看给定key的Redis对象。
+	 * @brief Command allows you to view a Redis object from an internal key
+	 * @param key [in] Name of the key
+	 * @param subcommand [in]  The subcommand
 	 * 		REFCOUNT <key> 返回给定 key 引用所储存的值的次数。此命令主要用于除错。
 	 * 		ENCODING <key> 返回给定 key 锁储存的值所使用的内部表示(representation)。
 	 *		IDLETIME <key> 返回给定 key 自储存以来的空闲时间(idle， 没有被读取也没有被写入)，以秒为单位。
-	 * @return "nil" for no such key, other string for response from redis-server,int type will be convert to string
+	 * @param retStr [out] returned value
+	 * @return false for failed or no such key, other string for response from redis-server,int type will be convert to string
 	 * @warning Throw ArgmentErr exception when input argument error.
 	 */
-	string object( const EobjSubCommand& subcommand , const string& key );
+	bool object( const EobjSubCommand& subcommand , const string& key,string& retStr );
 
 	/**
-	 * @brief 从当前数据库中随机返回(不删除)一个 key 。
-	 * @param  n/a
-	 * @return "nil" for DB is empty, a random key was return;
+	 * @brief Randomly return (not deleted)a key from current database。
+	 * @param  retKey [out]  returned key name
+	 * @return false for  DB is empty or failed,true for success and a random key was return from retKey;
 	 */
-	string randomKey( );
+	bool randomKey( string& retKey );
 
 	/**
 	 * @brief rename key as newkey
 	 * @param  key [in] old key name
 	 * @param  newKey [in] new key name
-	 * @return true for success,false for failed;
+	 * @return true for success,false for command failed;
 	 * @warning throwing exception of 'ReplyErr' if no such key
 	 */
 	bool rename( const string& key , const string& newKey );
 
 	/**
-	 * @brief 当newKey不存在时,将key改名为newkey
+	 * @brief rename key to newkey only when newkey inexistent
 	 * @param  key [in] old key name
 	 * @param  newKey [in] new key name
 	 * @return true for success,false for  newkey exists already or rename failed;
-	 * @warning throwing exception of 'ReplyErr' if no such key
+	 * @warning throwing exception of 'ReplyErr' if no such key or key==newkey
 	 */
 	bool renameNx( const string& key , const string& newKey );
 
 	/**
-	 * @brief 返回键值排序的结果。
+	 * @brief get values after sort
 	 * @param flag   [in] 0 小到大排序, 1 从大到小排序
-	 * @param  key [in] key name
+	 * @param  key [in] the name of key
 	 * @param  retVec [out] returned values arry
 	 * @return true for success,false for  key is empty or nonexistent;
 	 * @warning throwing exception of 'ReplyErr', if /key type isn't list nor set/one of the values isn't digital
@@ -238,17 +241,17 @@ public:
 	bool sort( const string& key , VecString& values , const bool& desc = false );
 
 	/**
-	 * @brief 返回 key 所储存的值的类型
+	 * @brief get value type of key
 	 * @param  key [in] key name
-	 * @param type [out] key 所储存的值的类型
-	 * 	none (key不存在)
+	 * @param type [out] type of the value
+	 * 	none (key inexistent)
 	 * 	string (字符串)
 	 * 	list (列表)
 	 * 	set (集合)
 	 * 	zset (有序集)
 	 * 	hash (哈希表)
 	 *
-	 * @return true for success,false for failed
+	 * @return true for command execute success,false for failed
 	 * @warning throwing exception of 'ReplyErr',
 	 */
 	bool type( const string& key , string& type );
@@ -267,15 +270,15 @@ public:
 			const uint16_t& db = 0 , const uint16_t& timeout = 3 );
 
 	/**
-	 * @brief 基于游标的迭代器（cursor based iterator）： SCAN 命令每次被调用之后， 都会向用户返回一个新的游标， 用户在下次迭代时需要使用这个新游标作为 SCAN 命令的游标参数， 以此来延续之前的迭代过程。
-	 * @param values [out] 得到的键名
-	 * @param index [in] 迭代开始的位置，第一次为0
-	 * @param pattern [in] 键名匹配限制
+	 * @brief cursor based iterator： SCAN  return a new iterator cursor after invoked， next SCAN  continue with this cursor to travel all keys in redis server。
+	 * @param values [out] returned values
+	 * @param index [in] cursor of iterator,0 for first call
+	 * @param pattern [in] a pattern for keys
 	 * @param count [in] 每次迭代出来的元素个数
 	 * @return >0 下次迭代开始的位置，为0时完成本次遍历，<0失败
 	 * @warning 不保证每次执行都返回某个给定数量的元素。
 	 */
-	int scan( VecString& values , const int& index , const string& pattern = "" ,
+	int scan( VecString& values , const int& cursor , const string& pattern = "" ,
 			const int& count = 10 );
 
 	/**
