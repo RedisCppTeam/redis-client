@@ -1,10 +1,10 @@
 #include <iostream>
-#include "Command.h"
-#include "CRedisClient.h"
+#include "../Command.h"
+#include "../CRedisClient.h"
 #include <stdio.h>
 #include <sstream>
-#include "RdException.hpp"
-#include "CResult.h"
+#include "../RdException.hpp"
+#include "../CResult.h"
 
 using namespace std;
 

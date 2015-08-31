@@ -1,10 +1,10 @@
 #include <iostream>
-#include "Command.h"
-#include "CRedisClient.h"
+#include "../Command.h"
+#include "../CRedisClient.h"
 #include <stdio.h>
 #include <sstream>
-#include "RdException.hpp"
-#include "CResult.h"
+#include "../RdException.hpp"
+#include "../CResult.h"
 
 using namespace std;
 
@@ -193,7 +193,7 @@ void TestServer(){
     TestSbgrewriteaof();
 
     sleep(1);//重写需要时间，不能立刻执行bgsave
-    TestSbgsave();   
+    TestSbgsave();
     TestSclientGetname();
     //TestSclientKill();
 

@@ -103,7 +103,7 @@ bool CRedisClient::zrank(const string& key,const string& member,int64_t& reply)
 }
 
 
-uint64_t CRedisClient::zrem(const string& key,VecString& members)
+uint64_t CRedisClient::zrem(const string& key,const VecString& members)
 
 {
     Command cmd( "ZREM" );

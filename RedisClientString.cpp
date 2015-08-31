@@ -38,7 +38,7 @@ uint64_t CRedisClient::bitop( const string& operation, const string& destkey, Ve
 	Command cmd( "BITOP" );
 	cmd << operation << destkey;
 	VecString::const_iterator it = keys.begin();
-	for ( ; it != keys.end(); it++ )
+	for ( ; it != keys.end(); ++it )
 	{
 		cmd << *it;
 	}
@@ -89,14 +89,13 @@ uint8_t CRedisClient::getbit( const string& key, uint32_t offset )
 
 
 
-void CRedisClient::getrange( const string& key, int64_t start, int64_t end, string &value )
+bool CRedisClient::getrange( const string& key, int64_t start, int64_t end, string &value )
 {
 	value.clear();
 	Command cmd( "GETRANGE" );
 	cmd << key << start << end;
 
-	if(!_getString( cmd, value ))
-		throw ProtocolErr( "GETRANGE: data recved is not string" );
+	return _getString( cmd, value );
 }
 
 
@@ -129,15 +128,16 @@ int64_t CRedisClient::incrby( const string& key, int64_t increment )
 }
 
 
-float CRedisClient::incrbyfloat( const string& key, float increment )
+bool CRedisClient::incrbyfloat( const string& key, float increment, float& value )
 {
 	Command cmd( "INCRBYFLOAT" );
 	cmd << key << increment;
-	string value;
-	if(!_getString( cmd , value ))
-		throw ProtocolErr( "INCRBYFLOAT: data recved is not string" );
 
-	return _valueFromString<float>( value );
+	string strVal;
+	bool ret = _getString( cmd, strVal );
+	value = _valueFromString<float>( strVal );
+
+	return ret;
 }
 
 
@@ -145,7 +145,7 @@ void CRedisClient::mget(VecString& keys, CResult& result )
 {
 	Command cmd( "MGET" );
 	VecString::const_iterator it = keys.begin();
-	for ( ; it != keys.end(); it++ )
+	for ( ; it != keys.end(); ++it )
 	{
 		cmd << *it;
 	}
@@ -160,7 +160,7 @@ void CRedisClient::mset( CRedisClient::MapString &value )
 {
 	Command cmd( "MSET" );
 	CRedisClient::MapString::const_iterator it = value.begin();
-	for ( ; it != value.end(); it++ )
+	for ( ; it != value.end(); ++it )
 	{
 		cmd << it->first;
 		cmd << it->second;
@@ -179,7 +179,7 @@ uint8_t CRedisClient::msetnx( CRedisClient::MapString &value )
 {
 	Command cmd( "MSETNX" );
 	CRedisClient::MapString::const_iterator it = value.begin();
-	for ( ; it != value.end(); it++ )
+	for ( ; it != value.end(); ++it )
 	{
 		cmd << it->first;
 		cmd << it->second;
