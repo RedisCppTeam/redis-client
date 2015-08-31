@@ -543,8 +543,15 @@ void brpoplpush( void )
 
 		string value;
 		uint64_t timeout = 1;
-		redis.brpoplpush("key", "key2", timeout, value);
-		cout << value << endl;
+		bool flag=redis.brpoplpush("key", "key2", timeout, value);
+		cout<<flag<<endl;
+		cout<<value<<endl;
+//		CRedisClient::VecString::const_iterator it=value.begin();
+//		CRedisClient::VecString::const_iterator end=value.end();
+//		while(it!=end)
+//		{
+//			cout<<*it<<endl;
+//		}
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -757,10 +764,10 @@ int main( )
 //	ltrim();
 //	lset();
 //	lrange();
-	rpoplpush();
+//	rpoplpush();
 //	blpop();
 //	brpop();
-//	brpoplpush();
+	brpoplpush();
 //	ping();
 //	quit();
 //	echo();
