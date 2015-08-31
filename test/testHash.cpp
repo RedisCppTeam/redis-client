@@ -161,3 +161,10 @@ void TestHash2()
         std::cout << "Poco_exception:" << e.what() << std::endl;
     }
 }
+
+void Hmain( void )
+{
+    TestHash();
+    TestHash2();
+}
+
