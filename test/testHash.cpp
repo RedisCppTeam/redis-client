@@ -34,20 +34,20 @@ void TestHash( void )
         std::cout << "ret: " << ret << std::endl;
         std::cout << "value:" << value << std::endl;
 
-        // //------------------------test hdel------------------------------------------
-        // CRedisClient::VecString fields;
-        // fields.push_back( "name4" );
-        // fields.push_back( "name5" );
+         //------------------------test hdel------------------------------------------
+         CRedisClient::VecString fields;
+         fields.push_back( "name4" );
+         fields.push_back( "name5" );
 
-        // uint64_t delNum = redis.hdel( "member", fields );
-        // std::cout << "delNum: " << delNum << std::endl;
-        // //------------------------test hexists---------------------------------------
-        // string field  = "name4";
-        // bool isExists = redis.hexists( "testHash", field );
-        // if ( isExists )
-        //     std::cout << "testHash key exists field:" << field << std::endl;
-        // else
-        //     std::cout << "testHash key not exists field:" << field << std::endl;
+         uint64_t delNum = redis.hdel( "member", fields );
+         std::cout << "delNum: " << delNum << std::endl;
+         //------------------------test hexists---------------------------------------
+         string field  = "name4";
+         bool isExists = redis.hexists( "testHash", field );
+         if ( isExists )
+             std::cout << "testHash key exists field:" << field << std::endl;
+         else
+             std::cout << "testHash key not exists field:" << field << std::endl;
         //-----------------------test hgetall-------------------------------------------
         //    CRedisClient::MapString allValue;
         //    uint64_t allNum = redis.hgetall( "testHash", allValue );
