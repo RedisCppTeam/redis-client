@@ -757,9 +757,16 @@ public:
 
 	void discard( void );
 
-	bool transactionCmd( const string& cmd , VecString& params );
+    void transactionCmd(const string& cmd );
 
-	void exec( CResult &result );
+    void transactionCmd( const string& cmd , VecString& params );
+
+    /**
+     * @brief exec execute transaction.
+     * @param result [out] the result of transaction.
+     * @return true:transaction excute successful.
+     */
+    bool exec( CResult &result );
 
 	//----------------------------HyperLogLog-------------------------------------------
 
