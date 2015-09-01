@@ -24,6 +24,7 @@
 
 using namespace Poco;
 
+
 typedef enum
 {
 	DEFAULT,	///< -- A default option.
