@@ -49,19 +49,63 @@ void TranSactionMain( void )
         keys.push_back("yuhaiyang2");
         redis.watch( keys );
 
+        //redis.unwatch();
         redis.multi();
         params.push_back("yuhaiyang");
         params.push_back("yuhaiyang2");
         redis.transactionCmd("mget",params);
         getchar();
-        redis.exec( result );
+        if ( !redis.exec( result ) )
+        {
+            DEBUGOUT("transaction exec false","");
+        }else
+        {
+            DEBUGOUT("transaction exec successful","");
+        }
         DEBUGOUT("result", result );
+        //-----------------------UNWATCH-----------------------------------------
+
+        result.clear();
+        params.clear();
+        CRedisClient::VecString ukeys;
+        ukeys.push_back( "yuhaiyang" );
+        ukeys.push_back("yuhaiyang2");
+        redis.watch( ukeys );
+
+        redis.unwatch();
+        redis.multi();
+        params.push_back("yuhaiyang");
+        params.push_back("yuhaiyang2");
+        redis.transactionCmd("mget",params);
+        getchar();
+        if ( !redis.exec( result ) )
+        {
+            DEBUGOUT("transaction exec false","");
+        }else
+        {
+            DEBUGOUT("transaction exec successful","");
+        }
+        DEBUGOUT("result", result );
+        //-----------------------------DISCARD--------------------------------------
+        result.clear();
+        params.clear();
+        redis.multi();
+        params.push_back( "yuhaiyang" );
+        params.push_back( "yuhaiyang2" );
+        redis.transactionCmd( "mget", params );
+        getchar();
+        redis.discard();
+        if ( !redis.exec( result ) )
+        {
+            DEBUGOUT("transaction exec false","");
+        }else
+        {
+            DEBUGOUT("transaction exec successful","");
+        }
 
     }catch ( std::exception& e )
     {
         std::cout << e.what() << std::endl;
     }
-
-
 }
 
