@@ -32,6 +32,15 @@ typedef enum
 	XX				///< -- Only set the key if it already exist.
 } SET_OPTION;
 
+typedef enum
+{
+    SUM=0,
+    MIN,
+    MAX
+
+} SORTEDSET_OPTION;
+
+
 /**
  *@brief CRedisClient redis client
  */
@@ -547,66 +556,197 @@ public:
 			"" , uint64_t count = 0 );
 	//---------------------------SortedSet-------------------------------------------
 
-	uint64_t zadd( const string& key , const MapString& pairs );
 
-	uint64_t zcard( const string& key );
+    /**
+     * @brief zadd Add one or more members to a sorted set, or update its score if it already exists
+     * @param key[in]
+     * @param map[in]
+     * @return:  The number of elements added to the sorted sets, not including elements already existing for which the score was updated.
+     */
+    uint64_t  zadd(const string& key,const MapString& map);
+    /**
+     * @brief zcard Get the number of members in a sorted set
+     * @param key[in]
+     * @return: number of members in the key.
+     */
+    uint64_t zcard(const string& key);
+    /**
+     * @brief zcount Count the members in a sorted set with scores within the given values
+     * @param key[in]
+     * @param min[in]
+     * @param max[in]
+     * @return:  the number of elements in the specified score range.
+     */
+    uint64_t zcount(const string& key,const string& min,const string& max);
+    /**
+     * @brief zincrby Increment the score of a member in a sorted set
+     * @param key[in]
+     * @param increment[in]
+     * @param member[in]
+     * @return: the new score of member (a double precision floating point number).
+     */
+    double zincrby(const string& key,double increment,const string& member);
+    /**
+     * @brief zrange Return a range of members in a sorted set, by index.
+     * @param key [in]
+     * @param start [in]
+     * @param stop [in]
+     * @param reply  [out] list of elements in the specified range (optionally with their scores, in case the WITHSCORES option is given).
+     * @return: size of reply list.
+     */
+    uint64_t zrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
+    uint64_t zrangeWithscore(const string& key,const int64_t start,const int64_t stop,MapString& reply);
+    /**
+     * @brief zrangebyscore  Return a range of members in a sorted set, by score
+     * @param key [in]
+     * @param min [in]
+     * @param max [in]
+     * @param reply [out] list of elements in the specified score range (optionally with their scores, in case the WITHSCORES option is given).
+     * @param offset [in] The optional LIMIT argument can be used to only get a range of the matching elements (similar to SELECT LIMIT offset, count in SQL).
+     * @param count [in]
+     * @return: size of reply list.
+     */
+    uint64_t zrangebyscore(const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
+    uint64_t zrangebyscoreWithscore(const string& key,const string& min,const string& max,MapString& reply,int64_t offset=0,int64_t count=0);
+    /**
+     * @brief zrank  Determine the index of a member in a sorted set
+     * @param key[in]
+     * @param member[in]
+     * @param reply[out]   the rank of member
+     * @return: If member does not exist in the sorted set or key does not exist, return false,else return true.
 
-	uint64_t zcount( const string& key , const string& min , const string& max );
+     */
+    bool zrank(const string& key,const string& member,int64_t& reply);
+    /**
+     * @brief zrem Remove one or more members from a sorted set
+     * @param key[in]
+     * @param members[in]
+     * @return:  The number of members removed from the sorted set, not including non existing members.
+     */
+    uint64_t zrem(const string& key,const VecString& members);
+    /**
+     * @brief zremrangebyrank Remove all members in a sorted set within the given indexes.
+     * @param key[in]
+     * @param start[in]
+     * @param stop[in]
+     * @return: the number of elements removed.
+     */
+    uint64_t zremrangebyrank(const string& key,const int64_t start,const int64_t stop);
+    /**
+     * @brief zremrangebyscore Remove all members in a sorted set within the given scores
+     * @param key[in]
+     * @param min[in]
+     * @param max[in]
+     * @return: the number of elements removed.
+     */
+    uint64_t zremrangebyscore(const string& key,const string& min,const string& max);
+    /**
+     * @brief zrevrange Return a range of members in a sorted set, by index, with scores ordered from high to low.
+     * @param key[in]
+     * @param start[in]
+     * @param stop[in]
+     * @param reply[out] list of elements in the specified range (optionally with their scores).
+     * @return: size of reply list.
+     */
+    uint64_t zrevrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
+    uint64_t zrevrangeWithscore(const string& key,const int64_t start,const int64_t stop,MapString& reply);
+    /**
+     * @brief zrevrangebyscore Return a range of members in a sorted set, by score, with scores ordered from high to low.
+     * @param key[in]
+     * @param max[in]
+     * @param min[in]
+     * @param reply[out]  list of elements in the specified score range (optionally with their scores).
+     * @param offset[in] The optional LIMIT argument can be used to only get a range of the matching elements (similar to SELECT LIMIT offset, count in SQL).
+     * @param count[in]
+     * @return: size of reply list.
+     */
+    uint64_t zrevrangebyscore(const string& key,const string& max,const string& min,VecString& reply,int64_t offset=0,int64_t count=0);
+    uint64_t zrevrangebyscoreWithscore(const string& key,const string& max,const string& min,MapString& reply,int64_t offset=0,int64_t count=0);
+    /**
+     * @brief zrevrank Determine the index of a member in a sorted set, with scores ordered from high to low.
+     * @param key[in]
+     * @param member[in]
+     * @param reply[out]  the rank of member.
+     * @return: f member does not exist in the sorted set or key does not exist, return false,else return true.
+     */
+    bool zrevrank(const string& key,const string& member,int64_t& reply);
+    /**
+     * @brief zscore  Get the score associated with the given member in a sorted set
+     * @param key[in]
+     * @param member[in]
+     * @param reply[out]  the score of member (a double precision floating point number), represented as string.
+     * @return: If member does not exist in the sorted set or key does not exist, return false,else return true.
+     */
+    bool zscore(const string& key,const string& member,string& reply);
 
-	string zincrby( const string& key , float increment , const string& member );
-
-	uint64_t zrange( const string& key , const int64_t start , const int64_t stop ,
-			VecString& reply );
-	uint64_t zrange( const string& key , const int64_t start , const int64_t stop ,
-			MapString& reply );
-
-	uint64_t zrangebyscore( const string& key , const string& min , const string& max ,
-			VecString& reply , int64_t offset = 0 , int64_t count = 0 );
-	uint64_t zrangebyscore( const string& key , const string& min , const string& max ,
-			MapString& reply , int64_t offset = 0 , int64_t count = 0 );
-
-	bool zrank( const string& key , const string& member , int64_t& reply );	//cunzai nil
-
-	uint64_t zrem( const string& key , VecString& members );
-
-	uint64_t zremrangebyrank( const string& key , const int64_t start , const int64_t stop );
-
-	uint64_t zremrangebyscore( const string& key , const string& min , const string& max );
-
-	uint64_t zrevrange( const string& key , const int64_t start , const int64_t stop ,
-			VecString& reply );
-	uint64_t zrevrange( const string& key , const int64_t start , const int64_t stop ,
-			MapString& reply );
-
-	uint64_t zrevrangebyscore( const string& key , const string& max , const string& min ,
-			VecString& reply , int64_t offset = 0 , int64_t count = 0 );
-	uint64_t zrevrangebyscore( const string& key , const string& max , const string& min ,
-			MapString& reply , int64_t offset = 0 , int64_t count = 0 );
-
-	uint64_t zrevrank( const string& key , const string& member );
-
-	string zscore( const string& key , const string& member );
-
-	void addAggregate( Command& cmd , int aggregate );
-	uint64_t zunionstore( const string& destination , const uint64_t numkeys ,
-			const VecString& keys , const VecString& weigets , int aggregate = 0 );
-	uint64_t zunionstore( const string& destination , const uint64_t numkeys ,
-			const VecString& keys , int aggregate = 0 );
-
-	uint64_t zinterstore( const string& destination , const uint64_t numkeys ,
-			const VecString& keys , const VecString& weigets , int aggregate = 0 );
-	uint64_t zinterstore( const string& destination , const uint64_t numkeys ,
-			const VecString& keys , int aggregate = 0 );
-
-	bool zscan( const string& key , int64_t cursor , MapString& reply ,
-			const string& match = "" , uint64_t count = 0 );
-
-	uint64_t zrangebylex( const string& key , const string& min , const string& max ,
-			VecString& reply , int64_t offset = 0 , int64_t count = 0 );
-
-	uint64_t zlexcount( const string& key , const string& min , const string& max );
-
-	uint64_t zremrangebylex( const string& key , const string& min , const string& max );
+    void addAggregate(Command& cmd,SORTEDSET_OPTION  aggregate);
+    /**
+     * @brief zunionstore Add multiple sorted sets and store the resulting sorted set in a new key
+     * @param destination [in] union of numkeys sorted sets given by the specified keys, and stores the result in destination.
+     * @param keys[in]
+     * @param weigets [in] it is possible to specify a multiplication factor for each input sorted set.
+     * @param aggregate[in] it is possible to specify how the results of the union are aggregated.
+     *      SUM:where the score of an element is summed across the inputs where it exists.
+     *      MIN: the resulting set will contain the maximum score of an element across the inputs where it exists.
+     *      MAX: the resulting set will contain the minimum score of an element across the inputs where it exists.
+     * @return:  the number of elements in the resulting sorted set at destination.
+     */
+    uint64_t zunionstore (const string& destination,const VecString& keys,const VecString& weigets,SORTEDSET_OPTION aggregate=SUM);
+    uint64_t zunionstore (const string& destination,const VecString& keys,SORTEDSET_OPTION  aggregate=SUM);
+    /**
+     * @brief zinterstore Intersect multiple sorted sets and store the resulting sorted set in a new key.
+     * @param destination [in] union of numkeys sorted sets given by the specified keys, and stores the result in destination.
+     * @param keys[in]
+     * @param weigets [in] it is possible to specify a multiplication factor for each input sorted set.
+     * @param aggregate[in] it is possible to specify how the results of the union are aggregated.
+     *      SUM:where the score of an element is summed across the inputs where it exists.
+     *      MIN: the resulting set will contain the maximum score of an element across the inputs where it exists.
+     *      MAX: the resulting set will contain the minimum score of an element across the inputs where it exists.
+     * @return:  the number of elements in the resulting sorted set at destination.
+     */
+    uint64_t zinterstore (const string& destination,const VecString& keys,const VecString& weigets,SORTEDSET_OPTION aggregate=SUM);
+    uint64_t zinterstore (const string& destination,const VecString& keys,SORTEDSET_OPTION  aggregate=SUM);
+    /**
+     * @brief zscan Incrementally iterate sorted sets elements and associated scores.
+     * @param key [in]
+     * @param cursor [in] 0: get value from the first. >=1 : get value from the cursor. <0 get value from last time call hscan.
+     * @param reply [out] value returned.
+     * @param match [in] It is possible to only iterate elements matching a given glob-style pattern
+     * @param count	[in] Basically with COUNT the user specified the amount of work that should be done at every call in order to retrieve elements from the collection.
+     * @return true:There are some value you don't scan.  false: you have scaned all value.
+     *
+     * eg: get all key between pair_100 and pair_199
+     *       	redis.zscan( "test", 0, zscanPairs,"pair_1??" );
+     *			while ( redis.zscan( "testHash", -1, zscanPairs ,"pair_1??") );
+     */
+    bool zscan( const string& key, int64_t cursor, MapString& reply, const string& match="", uint64_t count=0 );
+    /**
+     * @brief zrangebylex Return a range of members in a sorted set, by lexicographical range
+     * @param key[in]
+     * @param min[in]
+     * @param max[in]
+     * @param reply[out] list of elements in the specified score range.
+     * @param offset[in]
+     * @param count[in]
+     * @return: size of reply list.
+     */
+    uint64_t zrangebylex (const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
+    /**
+     * @brief zlexcount Count the number of members in a sorted set between a given lexicographical range.
+     * @param key[in]
+     * @param min[in]
+     * @param max[in]
+     * @return: the number of elements in the specified score range.
+     */
+    uint64_t zlexcount (const string& key,const string& min,const string& max);
+    /**
+     * @brief zremrangebylex Remove all members in a sorted set between the given lexicographical range
+     * @param key[in]
+     * @param min[in]
+     * @param max[in]
+     * @return: the number of elements removed.
+     */
+    uint64_t zremrangebylex (const string& key,const string& min,const string& max);
 	//--------------------------transtraction method------------------------------
 
 	void watch( const VecString& keys );
@@ -647,52 +787,144 @@ public:
 
 	//-----------------------------Server---------------------------------------------------
 
-	string bgrewriteaof( );
-
-	string bgsave( );
-
-	string clientGetname( );
-
-	bool clientKill( const string& ip , const uint32_t port );
-
-	void clientList( CResult& result );
-
-	bool clientSetname( const string& connectionName );
-
-	uint64_t configGet( const string& parameter , VecString& reply );
-
-	void configResetstat( );
-
-	bool configRewrite( );
-
-	bool configSet( const string& parameter , const string& value );
-
-	uint64_t dbsize( );
-
-	string debugObject( const string& key );
-
-	void debugSegfault( );
-
-	void flushall( );
-
-	void flushdb( );
-
-	uint64_t info( VecString& reply );
-
-	uint64_t lastsave( );
-
-	void monitor( void* input = NULL , void* output = NULL ,
-			void (*p)( string& str , void* in , void* out )=NULL );
-
-	bool save( );
-
-	string shutdown( );
-
-	void slaveof( const string& host , const string& port );
-
-	void slowlog( const VecString& subcommand , CResult& reply );
-
-	void time( string& currentseconds , string& microseconds );
+    uint64_t stringToVecString(string& str,VecString& vec);
+    /**
+     * @brief bgrewriteaof Instruct Redis to start an Append Only File rewrite process.
+     * @return: Feedback information.
+     */
+    string bgrewriteaof();
+    /**
+     * @brief bgsave    APPEND key value Append a value to a key.
+     * @return: Feedback information.
+     */
+    string bgsave();
+    /**
+     * @brief clientGetname Get the current connection name.
+     * @return: The connection name, or a null bulk reply if no name is set.
+     */
+    string  clientGetname();
+    /**
+     * @brief clientKill Kill a connection of a client.
+     * @param ip[in]
+     * @param port[in]
+     * @return:  if the connection exists and has been closed   return true.else return false.
+     */
+    bool clientKill(const string& ip,const UInt16 port);
+    /**
+     * @brief clientList Get the list of client connections.
+     * @param[in] reply[out] list of client connections.
+     * @return: size of reply list.
+     */
+    uint64_t clientList(VecString & reply);
+    /**
+     * @brief clientSetname Set the current connection name.
+     * @param[in] connectionName
+     * @return: true:success;false:fail.
+     */
+    bool clientSetname (const string& connectionName);
+    /**
+     * @brief configGet Get the value of a configuration parameter.
+     * @param parameter[in]
+     * @param reply[out] command list.
+     * @return: size of reply list.
+     */
+    uint64_t configGet(const string& parameter,VecString& reply);
+    /**
+     * @brief configResetstat Reset the stats returned by INFO.
+     */
+    void configResetstat();
+    /**
+     * @brief configRewrite Rewrite the configuration file with the in memory configuration.
+     * @return: true:success;false:fail.
+     */
+    bool configRewrite();
+    /**
+     * @brief configSet Set a configuration parameter to the given value.
+     * @param parameter[in]
+     * @param value[in]
+     * @return: true:success;false:fail.
+     */
+    bool configSet(const string& parameter,const string& value);
+    /**
+     * @brief dbsize Return the number of keys in the selected database.
+     * @return: the number of keys in the selected database.
+     */
+    uint64_t dbsize();
+    /**
+     * @brief debugObject Get debugging information about a key.
+     * @param key[in]
+     * @return: Feedback information.
+     */
+    string  debugObject(const string& key);
+    /**
+     * @brief debugSegfault Make the server crash.
+     */
+    void debugSegfault();
+    /**
+     * @brief flushall Remove all keys from all databases.
+     */
+    void flushall();
+    /**
+     * @brief flushdb Remove all keys from the current database.
+     */
+    void flushdb();
+    /**
+     * @brief info Get information and statistics about the server.
+     * @param reply[out] as a collection of text lines.
+     * @param section[in]
+     *    server: General information about the Redis server
+     *    clients: Client connections section
+     *    memory: Memory consumption related information
+     *    persistence: RDB and AOF related information
+     *    stats: General statistics
+     *    replication: Master/slave replication information
+     *    cpu: CPU consumption statistics
+     *    commandstats: Redis command statistics
+     *    cluster: Redis Cluster section
+     *    keyspace: Database related statistics
+     *    all: Return all sections
+     *    default: Return only the default set of sections
+     */
+    void info(VecString& reply,const string& section="");
+    /**
+     * @brief lastsave Get the UNIX time stamp of the last successful save to disk.
+     * @return: n UNIX time stamp.
+     */
+    uint64_t lastsave();
+    /**
+     * @brief monitor Listen for all requests received by the server in real time.
+     * @param timeout[in]
+     * @param reply[out] received commands in an infinite flow.
+     */
+    void monitor(uint64_t timeout, string& reply);
+    /**
+     * @brief save Synchronously save the dataset to disk.
+     * @return: true:success;false:fail.
+     */
+    bool save();
+    /**
+     * @brief shutdown Synchronously save the dataset to disk and then shut down the server.
+     * @return On success nothing is returned since the server quits and the connection is closed.
+     */
+    string shutdown();
+    /**
+     * @brief slaveof Make the server a slave of another instance, or promote it as master.
+     * @param host[in]
+     * @param port[in]
+     */
+    void slaveof(const string& host,const UInt16 port);
+    /**
+     * @brief slowlog Manages the Redis slow queries log.
+     * @param subcommand[in]
+     * @param reply[out]: Feedback information.
+     */
+    void slowlog(const VecString&  subcommand ,CResult& reply);
+    /**
+     * @brief time Return the current server time.
+     * @param currentseconds[out]
+     * @param microseconds[out]
+     */
+    void time(string& currentseconds,string& microseconds);
 
 protected:
 	/**

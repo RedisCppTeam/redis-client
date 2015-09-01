@@ -1,6 +1,22 @@
 #include "Command.h"
 #include "CRedisClient.h"
+uint64_t CRedisClient::stringToVecString(string& str, CRedisClient::VecString& vec)
+{
+    uint64_t i=0;
+    uint64_t len=str.length();
+    uint64_t posStart=0;
+    while(i<len)
+    {
+        if (str[i]=='\n')
+        {
+            vec.push_back(str.substr(posStart,i-posStart));
+            posStart=i+1;
+        }
+        ++i;
+    }
+    return vec.size();
 
+}
 string CRedisClient::bgrewriteaof()
 {
     Command cmd( "BGREWRITEAOF" );
@@ -8,6 +24,8 @@ string CRedisClient::bgrewriteaof()
     _getStatus(cmd,str);
     return str;
 }
+
+
 
 string CRedisClient::bgsave()
 {
@@ -25,16 +43,19 @@ string  CRedisClient::clientGetname()
     return str;
 
 }
-bool CRedisClient::clientKill(const string& ip,const uint32_t port)
+bool CRedisClient::clientKill(const string& ip,const UInt16 port)
 {
     Command cmd( "CLIENT" );
     cmd<<"KILL";
-    cmd<<ip<<port;
+    std::stringstream ss;
+    ss << ip<<":"<< port;
+    cmd<<ss.str();
     string status;
     _getStatus( cmd, status );
     return ("OK"==status? true : false );
 
 }
+/*
 void CRedisClient::clientList(CResult& result)
 {
     Command cmd( "CLIENT" );
@@ -43,6 +64,15 @@ void CRedisClient::clientList(CResult& result)
     _sendCommand(cmd);
     _getReply(result);
 
+}
+*/
+uint64_t CRedisClient::clientList(CRedisClient::VecString & reply)
+{
+    Command cmd( "CLIENT" );
+    cmd<<"LIST";
+    string str;
+    _getString(cmd,str);
+    return stringToVecString(str,reply);
 }
 bool CRedisClient::clientSetname (const string& connectionName)
 {
@@ -56,7 +86,7 @@ bool CRedisClient::clientSetname (const string& connectionName)
     return ("OK"==status? true : false );
 
 }
-uint64_t CRedisClient::configGet(const string& parameter,VecString& reply)
+uint64_t CRedisClient::configGet(const string& parameter,CRedisClient::VecString& reply)
 {
     Command cmd( "CONFIG" );
     cmd<<"GET";
@@ -105,6 +135,7 @@ string CRedisClient::debugObject(const string& key)
     string str;
     _getString(cmd,str);
     return str;
+
 }
 void CRedisClient::debugSegfault()
 {
@@ -131,27 +162,16 @@ void CRedisClient::flushdb()
         throw ProtocolErr( "FLUSHDB: data recved is not OK" );
 }
 
-uint64_t CRedisClient::info(VecString& reply)
+void CRedisClient::info(CRedisClient::VecString& reply,const string& section)
 {
     Command cmd( "INFO" );
-    _socket.clearBuffer();
-    _sendCommand(cmd);
-    string line;
-    _socket.readLine(line);
-    int64_t sumLen = _valueFromString<int64_t>( line.substr(1) );
-    int64_t len=0;
-    while(len<sumLen)
-    {
-        _socket.readLine(line);
-        reply.push_back(line);
-        len+=line.length()+2;
-    }
-    return len;
+    string str;
+    if(""!=section)
+        cmd << section;
+    _getString(cmd,str);
+    stringToVecString(str,reply);
+
 }
-
-
-
-
 uint64_t CRedisClient::lastsave()
 {
     Command cmd( "LASTSAVE" );
@@ -161,25 +181,17 @@ uint64_t CRedisClient::lastsave()
 
 }
 
-void CRedisClient::monitor(void* input,void* output,void (*p)(string& str,void* in,void* out))
+void CRedisClient::monitor(uint64_t timeout, string& reply)
 {
-    string reply;
-    Command cmd("MONITOR");
+     Command cmd("MONITOR");
     _socket.clearBuffer();
-    _socket.setReceiveTimeout(0);
+    _socket.setReceiveTimeout(timeout);
     _sendCommand(cmd);
-    if ((input==NULL) &&(p==NULL)&&(output==NULL))
-        while(1)
-        {
-            _socket.readLine(reply);
-            reply=reply.substr(1);
-            std::cout<<reply<<std::endl;
-        }
     while(1)
     {
         _socket.readLine(reply);
         reply=reply.substr(1);
-        p(reply,input,output);
+        //std::cout<<reply<<std::endl;
     }
 
 }
@@ -201,19 +213,22 @@ string CRedisClient::shutdown()
     return status;
 }
 
-void CRedisClient::slaveof(const string& host,const string& port)
+void CRedisClient::slaveof(const string& host,const UInt16 port)
 {
     Command cmd( "SLAVEOF" );
     cmd<<host<<port;
     string status;
     _getStatus( cmd, status );
-    if ( "OK"!=status)
+    std::cout<<status<<std::endl;
+    if (('O'==status[0])&&('K'==status[1]))
+            return;
         throw ProtocolErr( "SLAVEOF: data recved is not OK" );
 }
 
 void CRedisClient::slowlog(const CRedisClient::VecString &subcommand, CResult &reply)
 {
     Command cmd( "SLOWLOG" );
+    _socket.clearBuffer();
     VecString::const_iterator it = subcommand.begin();
     VecString::const_iterator  end=subcommand.end();
     for ( ; it !=end; ++it )

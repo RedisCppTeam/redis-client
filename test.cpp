@@ -13,11 +13,14 @@ void TestString( void );
 void TestPSub( void );
 void Hmain( void );
 void Smain( void );
-
+void TestSortedSet(void);
+void TestServer(void);
 int main()
 {
-    Hmain();
-    Smain();
+    //Hmain();
+    //Smain();
+    //TestSortedSet();
+    TestServer();
     return 0;
 }
 
