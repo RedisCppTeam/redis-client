@@ -3,13 +3,16 @@ a redis client .
 This is a client for redis-server written with cpp.Its socket module depends on poco c++.
 All command are suppored.
 
-ubuntu: 
+##ubuntu: 
 sudo apt-get install libpoconet9 libpocofoundation9
 
 
 
-eg:
-void TestZincrby(){
+##eg:
+### a simple eg
+```cpp
+void TestZincrby()
+{
     CRedisClient redis;
     redis.connect( "127.0.0.1", 6379 );
     cout<<"----------zincrby----------"<<endl;
@@ -17,8 +20,10 @@ void TestZincrby(){
     dbl=redis.zincrby("SortedSet",1.1,"member_45");
     cout<<"redis.zincrby(SortedSet,1,member_45)="<<dbl<<endl;
 }
+```
 
-Transaction:
+### Transaction
+```cpp
 void TranSactionMain( void )
 {
     try
@@ -71,9 +76,8 @@ void TranSactionMain( void )
         std::cout << e.what() << std::endl;
     }
 }
+```
 
-
-
-TODO:
+### TODO:
 I think connection pool is need.
 CRedisSocket could not depend on Poco::Net. 
