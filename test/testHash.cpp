@@ -58,13 +58,13 @@ void TestHash( void )
             {
                 std::cout << it->first << ":" << it->second << std::endl;
             }
-        ------------------------test incrby-------------------------------------------
+        //------------------------test incrby-------------------------------------------
               uint64_t incrybyNum = redis.hincrby( "testHash", "num2", 20 );
               std::cout << "incrybyNum: " << incrybyNum << std::endl;
               //------------------------test incrbyfloat-------------------------------------
               float floatNum = redis.hincrbyfloat( "testHash", "float", 10.1e2 );
               std::cout << "floatNum: " << floatNum << std::endl;
-        ------------------------test hkeys-------------------------------------------
+        //------------------------test hkeys-------------------------------------------
             CRedisClient::VecString hkeysValue;
             uint64_t hkeysNum = redis.hkeys( "testHash", hkeysValue );
             std::cout << "hkeysNum: " << hkeysNum << std::endl;
