@@ -479,12 +479,14 @@ void TestServer( void )
         std::cout << "Poco_exception:" << e.what() << std::endl;
     }
 }
-void whiletest();
-void testeveryKey();
+void testKeyMain();
+void testWithOneRedis();
+void testScriptMain();
 int main()
 {
-//	whiletest();
-	testeveryKey();
+	testKeyMain( );
+//	testWithOneRedis( );
+//	testScriptMain();
 //    CRedisClient redis;
 //    redis.connect( "127.0.0.1", 6379 );
 //    VEC  vec;

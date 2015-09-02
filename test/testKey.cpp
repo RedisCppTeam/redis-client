@@ -331,90 +331,6 @@ void testRestore( const string& strInput )
 
 }
 
-void testevalSha( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	CResult result;
-	string retString;
-	if ( !redis.scriptLoad(retString, "return 'hello moto'") )
-	{
-		cout << "redis.scriptLoad failed:" << endl;
-		return;
-	}
-	cout << "redis.scriptLoad ok:" << retString << endl;
-
-	ret = redis.evalSha(result, retString);
-	if ( ret )
-		cout << "redis.evalSha ok:" << ret << endl;
-
-	else
-		cout << "redis.evalSha failed:" << ret << endl;
-
-	cout << "type:" << CResult::getTypeString(result.getType()) << endl;
-	cout << "return:" << result << endl;
-
-}
-
-void testScriptExists( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	CResult result;
-	string retString;
-	if ( !redis.scriptLoad(retString, "return 'hello moto'") )
-	{
-		cout << "redis.scriptLoad failed:" << endl;
-		return;
-	}
-	cout << "redis.scriptLoad ok:" << retString << endl;
-
-	ret = redis.scriptExists(retString);
-	if ( ret )
-		cout << "script exists ok:" << retString << endl;
-
-	else
-		cout << "script nonexists:" << retString << endl;
-
-	retString += '2';
-	ret = redis.scriptExists(retString);
-	if ( ret )
-		cout << "script exists ok:" << retString << endl;
-
-	else
-		cout << "script nonexists:" << retString << endl;
-
-}
-void testScriptFlush( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	if ( !redis.scriptFlush() )
-	{
-		cout << "scriptFlush failed:" << endl;
-		return;
-	}
-	cout << "scriptFlush ok!" << endl;
-
-}
-
-//redis-cli:>EVAL "while true do end" 0
-void testScriptKill( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	string retStr;
-	if ( !redis.scriptKill() )
-	{
-		cout << "scriptFlush failed:" << endl;
-		return;
-	}
-
-	cout << "scriptFlush ok!" << endl;
-
-}
 void testMigrate( )
 {
 	CRedisClient redis;
@@ -446,7 +362,9 @@ void testMove( )
 
 }
 
-void whiletest( )
+
+//同一个reids进行多项测试
+void testWithOneRedis( )
 {
 	try
 	{
@@ -543,17 +461,15 @@ void whiletest( )
 	cout << "exit whiletest" << endl;
 }
 
-void testeveryKey( )
+
+//逐一测试
+void testKeyMain( )
 {
 	try
 	{
 //		testMove();
 //		testMigrate();
 //		TestDel();
-//		testScriptKill();
-//		testScriptFlush();
-//		testScriptExists();
-//		testevalSha();
 //		string dumped = testDump();
 //		testRestore(dumped);
 //		testScan();
