@@ -1,7 +1,6 @@
 # CRedisClient
-a redis client .
-This is a client for redis-server written with cpp.Its socket module depends on poco c++.
-All command are suppored.
+This is a client written with cpp for redis-server.Its socket module depends on poco c++ library.
+All commands are supported.
 
 ##ubuntu: 
 sudo apt-get install libpoconet9 libpocofoundation9
@@ -79,5 +78,6 @@ void TranSactionMain( void )
 ```
 
 ### TODO:
-I think connection pool is need.
-CRedisSocket could not depend on Poco::Net. 
+I think connection pool is needed.
+CRedisSocket could not depend on Poco::Net.Your pull request will be appreciated.
+Could you finish it?
