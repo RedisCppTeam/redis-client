@@ -14,10 +14,9 @@ void CRedisClient::watch(const CRedisClient::VecString &keys)
 
     string status;
     _getStatus( cmd, status );
-
     if ( "OK" != status )
     {
-        ProtocolErr( "WATCH recv unexpected data: " + status );
+        throw ProtocolErr( "WATCH recv unexpected data: " + status );
     }
 }
 
@@ -29,7 +28,7 @@ void CRedisClient::unwatch()
 
    if ( "OK" != status )
    {
-       ProtocolErr( "UNWATCH recv unexpected data: " + status );
+       throw ProtocolErr( "UNWATCH recv unexpected data: " + status );
    }
  }
 
@@ -42,14 +41,26 @@ void CRedisClient::multi( void )
 
     if ( "OK" != status )
     {
-        ProtocolErr( "MULTI recv unexpected data: " + status );
+        throw ProtocolErr( "MULTI recv unexpected data: " + status );
     }
 }
 
-bool CRedisClient::transactionCmd(const std::string &cmmand,VecString &params)
+void CRedisClient::transactionCmd(const std::string &cmmand )
 {
-    CResult result;
-    _socket.clearBuffer();
+    Command cmd( cmmand );
+
+    string status;
+    _getStatus( cmd, status );
+
+    if ( "QUEUED" != status )
+    {
+        throw ProtocolErr( "TRANSACTION recv unexpected data:" + status );
+    }
+}
+
+
+void CRedisClient::transactionCmd(const std::string &cmmand,  VecString& params )
+{
     Command cmd( cmmand );
 
     VecString::const_iterator it = params.begin();
@@ -60,46 +71,32 @@ bool CRedisClient::transactionCmd(const std::string &cmmand,VecString &params)
         cmd << *it;
     }
 
-    _sendCommand( cmd );
-    _getReply( result );
-   if ( result.getType() != REDIS_REPLY_STATUS || result != "QUEUED" )
-   {
-       return false;
-   }else
-   {
-       return true;
-   }
+    string status;
+    _getStatus( cmd, status );
+
+    if ( "QUEUED" != status )
+    {
+        throw ProtocolErr( "TRANSACTION recv unexpected data:" + status );
+    }
 }
 
-//void CRedisClient::discard( void )
-//{
-//    _socket.clearBuffer();;
-//
-//    Command cmd( "DISCARD" );
-//
-//    _sendCommand( cmd );
-//    if ( _replyStatus( ) == "OK" )
-//    {
-//           return;
-//    }else
-//    {
-//            throw ProtocolErr("DISCARD: data recved is not OK");
-//    }
-//}
-//
-
-void CRedisClient::exec( CResult &result )
+void CRedisClient::discard( void )
 {
-    _socket.clearBuffer();;
+    Command cmd( "DISCARD" );
+    string status;
+    _getStatus( cmd,status );
 
-    Command cmd( "EXEC" );
-
-    _sendCommand( cmd );
-    _getReply( result );
-    if ( result.getType() != REDIS_REPLY_ARRAY )
+    if ( "OK" != status )
     {
-        throw ProtocolErr( "EXEC received uncecepted data" );
+            throw ProtocolErr("DISCARD: data recved is not OK");
     }
+}
+
+
+bool CRedisClient::exec( CResult &result )
+{
+    Command cmd( "EXEC" );
+    return _getArry( cmd, result );
 }
 
 

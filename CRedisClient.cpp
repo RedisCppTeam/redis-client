@@ -191,6 +191,13 @@ uint64_t CRedisClient::_replyMultiBulk(CResult& result, const std::string &line 
 {
     // get the number of CResult received .
    int64_t replyNum = _valueFromString<int64_t>( line.substr(1) );
+   //The concept of Null Array exists as well
+   if ( -1 == replyNum )
+   {
+        result.setType( REDIS_REPLY_NIL );
+        return 0;
+   }
+
    CResult ele;
    for ( int i = 0; i< replyNum; i++ )
    {
@@ -255,6 +262,7 @@ bool CRedisClient::_getStatus(  Command& cmd , string& status )
 
 bool CRedisClient::_getInt(  Command& cmd , int64_t& number )
 {
+    number = 0;
     CResult result;
     _socket.clearBuffer();
     _sendCommand( cmd );

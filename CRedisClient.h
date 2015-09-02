@@ -456,20 +456,15 @@ public:
 
 	uint64_t hgetall( const string& key , MapString& pairs );
 
-	void hincrby( const string& key , const string& field , uint64_t increment ,
-			CResult& result );
+    int64_t hincrby( const string& key , const string& field , int64_t increment );
 
-	uint64_t hincrby( const string& key , const string& field , uint64_t increment );
-
-	float hincrbyfloat( const string& key , const string& field , float increment );
+    double hincrbyfloat( const string& key , const string& field , float increment );
 
 	uint64_t hkeys( const string& key , VecString& values );
 
 	uint64_t hlen( const string& key );
 
-	void hmget( const string& key , const VecString& fields , CResult& result );
-
-	void hmset( const string& key , const MapString& pairs , CResult& result );
+    void hmget(const string &key, const CRedisClient::VecString &fields, CResult &result);
 
 	void hmset( const string& key , const MapString& pairs );
 
@@ -546,7 +541,7 @@ public:
 	 */
 	uint64_t srandmember( const string& key , int count , VecString& members );
 
-	uint64_t srem( const string& key , VecString& members );
+    uint64_t srem( const string& key , const VecString& members );
 
 	uint64_t sunion( const VecString& keys , VecString& members );
 
@@ -757,9 +752,16 @@ public:
 
 	void discard( void );
 
-	bool transactionCmd( const string& cmd , VecString& params );
+    void transactionCmd(const string& cmd );
 
-	void exec( CResult &result );
+    void transactionCmd( const string& cmd , VecString& params );
+
+    /**
+     * @brief exec execute transaction.
+     * @param result [out] the result of transaction.
+     * @return true:transaction excute successful.
+     */
+    bool exec( CResult &result );
 
 	//----------------------------HyperLogLog-------------------------------------------
 
