@@ -106,9 +106,67 @@ public:
 	void reconnect( );
 
 	void closeConnect( );
-	//---------------------------------common----------------------------------------
+	//---------------------------------connection----------------------------------------
 
-	bool ping( void );
+	/**
+	 * @brief 使用客户端向 Redis 服务器发送一个 PING ，如果服务器运作正常的话，会返回一个 PONG
+	 * @param value [out]返回信息 成功为pong
+	 * @return 成功返回true，失败抛异常
+	 */
+	bool ping( string &value );
+
+	/**
+	 * @brief 请求服务器关闭与当前客户端的连接。
+	 * @return 成功返回true，失败抛异常
+	 */
+	bool quit( );
+
+	/**
+	 * @brief 打印一个特定的信息 message ，测试时使用
+	 * @param message [in]打印信息
+	 * @param value [out]
+	 * @return 成功返回true，失败抛异常
+	 */
+	bool echo( const string &message , string &value );
+
+	/**
+	 * @brief 如果开启了密码保护的话，在每次连接 Redis 服务器之后，就要使用 AUTH 命令解锁，解锁之后才能使用其他 Redis 命令
+	 * @param password[in]认证密码
+	 * @return 密码匹配时返回true,失败抛异常
+	 */
+	bool auth( const string &password );
+
+	/**
+	 * @brief 切换到指定的数据库，数据库索引号 index 用数字值指定，以 0 作为起始索引值。
+	 * @param index [in]数据库索引号
+	 * @return 成功返回true，失败抛异常
+	 */
+	bool select( uint64_t index );
+
+	//---------------------------------hyperloglog----------------------------------------
+
+	/**
+	 * @brief 将任意数量的元素添加到指定的 HyperLogLog 里面
+	 * @param key[in] hyperlog名
+	 * @param element[in] 要添加的元素列表
+	 * @return 整数回复：如果HyperLogLog的内部储存被修改了。那么返回1，否则返回 0
+	 */
+	uint64_t pfadd( const string &key , const VecString &element );
+
+	/**
+	 * @brief 当 PFCOUNT 命令作用于单个键时，返回储存在给定键的HyperLogLog的近似基数，当PFCOUNT命令作用于多个键时，返回所有给定 HyperLogLog 的并集的近似基数
+	 * @param key[in] list结构，里面每个元素都是hyperlog类型的key
+	 * @return 整数回复：给定HyperLogLog 包含的唯一元素的近似数量
+	 */
+	uint64_t pfcount( const VecString &key );
+
+	/**
+	 * @brief 将多个 HyperLogLog 合并（merge）为一个 HyperLogLog ， 合并后的 HyperLogLog 的基数接近于所有输入 HyperLogLog 的可见集合（observed set）的并集。
+	 * @param destKey[in] 合并到这个目标结构
+	 * @param srcKey[in]	list结构，里面每个元素都是hyperlog类型的key
+	 * @return 成功返回true，失败抛异常
+	 */
+	bool pfmerge( const string &destKey , const VecString &srcKey );
 
 	//-----------------------------------key---------------------------------------------
 
@@ -417,19 +475,159 @@ public:
 
 	//------------------------------list method--------------------------------------
 
-	void lpush( const string& key , const VecString& value , CResult &result );
-
-	int64_t lpush( const string& key , const VecString& value );
+	/**
+	 * @brief insert a value into a list top
+	 * @param key[in]  name of list
+	 * @param value[out] to insert data
+	 * @return length of list
+	 */
+	uint64_t lpush( const string& key , const VecString& value );
 
 	/**
-	 * @brief lpop
-	 * @param key
-	 * @param value
-	 * @return true: successful. false: key is not exit.
+	 * @brief insert a value into a list tail
+	 * @param key[in]  name of list
+	 * @param value[out] to insert data
+	 * @return length of list
 	 */
-	void lpop( const std::string &key , CResult &result );
+	uint64_t rpush( const string& key , const VecString& value );
 
-	bool lpop( const std::string &key , string &value );
+	/**
+	 * @brief 将值 value 插入到列表 key 的表尾，当且仅当 key 存在并且是一个列表。和 RPUSH 命令相反，当 key 不存在时， RPUSHX 命令什么也不做。
+	 * @param key[in]  list name
+	 * @param value[out] to insert data
+	 * @return length of list,if failed then return 0
+	 */
+	uint64_t rpushx( const string& key , const string& value );
+
+	/**
+	 * @brief 将值 value 插入到列表 key 的表头，当且仅当 key 存在并且是一个列表。和 LPUSH 命令相反，当 key 不存在时， LPUSHX 命令什么也不做。
+	 * @param key[in] name of list
+	 * @param value[out] to insert data
+	 * @return length of list,if failed then return 0
+	 */
+	uint64_t lpushx( const string& key , const string& value );
+
+	/**
+	 * @brief remove a data from a list top
+	 * @param key[in] name of list
+	 * @param value[out] to remove data,if key is not found then value is ""
+	 * @return if value is not "" then true else false
+	 */
+	bool lpop( const string &key , string &value );
+
+	/**
+	 * @brief remove a data from a list tail
+	 * @param key[in] name of list
+	 * @param value[out] to remove data,if key is not found then value is ""
+	 * @return if value is not "" then true else false
+	 */
+	bool rpop( const string &key , string &value );
+
+	/**
+	 * @brief 返回列表 key 中，下标为 index 的元素
+	 * @param key[in] name of list
+	 * @param index[in] index of list
+	 * @param value[out] an element of index of list,if key is not found then value is ""
+	 * @return if value is not "" then true else false
+	 */
+	bool lindex( const string &key , uint64_t index , string &value );
+
+	/**
+	 * @brief return length of a list
+	 * @param key[in] name of list
+	 * @return length of list if list is exists,else 0
+	 */
+	uint64_t llen( const string& key );
+
+	/**
+	 * @brief 将值 value 插入到列表 key 当中，位于值 pivot 之前或之后
+	 * @param key[in] name of list
+	 * @param token[in] before or after
+	 * @param value[in] a data to be inserted
+	 * @return 如果命令执行成功，返回插入操作完成之后，列表的长度。
+	 * @如果没有找到 pivot ，返回 -1 。
+	 * @如果 key 不存在或为空列表，返回 0 。
+	 */
+	uint64_t linsert( const string& key , const string &token , const string &pivot ,
+			const string &value );
+
+	/**
+	 * @brief 根据参数 count 的值，移除列表中与参数 value 相等的元素。
+	 * @param key[in] name of list
+	 * @param count[in] 移除元素个数，正数代表从前往后，负数则相反
+	 * @param value[in] remove some data that equal to value
+	 * @return 被移除元素的数量。因为不存在的 key 被视作空表(empty list)，所以当 key 不存在时， LREM 命令总是返回 0
+	 */
+	uint64_t lrem( const string &key , uint64_t &count , const string &value );
+
+	/**
+	 * @brief 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
+	 * @param key[in] name of list
+	 * @param start[in] start position
+	 * @param stop[in] stop position
+	 * @return true if successful，else false
+	 */
+	bool ltrim( const string &key , uint64_t &start , uint64_t &stop );
+
+	/**
+	 * @brief 将列表 key 下标为 index 的元素的值设置为 value 。
+	 * @param key[in] name of list
+	 * @param index[in] index of list
+	 * @param value[in] a data to be set
+	 * @return true if successful ,else false
+	 */
+	bool lset( const string &key , uint64_t &index , const string &value );
+
+	/**
+	 * @brief 将列表 source 中的最后一个元素(尾元素)弹出，并返回给客户端。将 source 弹出的元素插入到列表 destination ，作为 destination 列表的的头元素。
+	 * @param source[in] 原列表名
+	 * @param dest[in]   目标列表
+	 * @param value[out]  a pop data from source to dest
+	 * @return true if successful ,else false.
+	 */
+	bool rpoplpush( string &source , string &dest , string &value );
+
+	/**
+	 * @brief 返回列表 key 中指定区间内的元素，区间以偏移量 start 和 stop 指定。
+	 * @param key[in] name of list
+	 * @param start[in] start position
+	 * @param stop[in]	stop position
+	 * @param value[out]	返回区间内的元素列表
+	 * @return	列表的长度
+	 */
+	uint64_t lrange( const string &key , int64_t &start , int64_t &stop , VecString &value );
+
+	/**
+	 * @brief lpop的阻塞版本，当给定列表内没有元素弹出的时候，将阻塞，直到等待超时或发现可弹出元素为止。
+	 * @param 当给定多个 key 参数时，按参数 key 的先后顺序依次检查各个列表，弹出第一个非空列表的头元素
+	 * @param key[in] name of list
+	 * @param timeout[in] 超时时间
+	 * @param value[out]弹出的元素，map类型，包含列表名和元素值
+	 * @return 没元素弹出返回false，否则返回true
+	 */
+	bool blpop( const VecString &key , uint64_t &timeout , MapString &value );
+
+	/**
+	 * @brief rpop的阻塞版本，当给定列表内没有元素弹出的时候，将阻塞，直到等待超时或发现可弹出元素为止。
+	 * @param 当给定多个 key 参数时，按参数 key 的先后顺序依次检查各个列表，弹出第一个非空列表的尾部元素。
+	 * @param key[in] name of list
+	 * @param timeout[in] 超时时间
+	 * @param value[out]弹出的元素，map类型，包含列表名和元素值
+	 * @return 没元素弹出返回false，否则返回true
+	 */
+	bool brpop( const VecString &key , uint64_t &timeout , MapString &value );
+
+	/**
+	 * @brief BRPOPLPUSH 是 RPOPLPUSH 的阻塞版本，当给定列表 source 不为空时， BRPOPLPUSH 的表现和 RPOPLPUSH 一样。
+	 *当列表 source 为空时， BRPOPLPUSH 命令将阻塞连接，直到等待超时，或有另一个客户端对 source 执行 LPUSH 或 RPUSH 命令为止
+	 * @param source[in]原始列表
+	 * @param dest[in]目标列表
+	 * @param timeout[in]超时时间
+	 * @param value[out]弹出元素
+	 * @return 没元素弹出返回false，否则返回true
+	 */
+	bool brpoplpush( const string &source , const string &dest , uint64_t &timeout ,
+			string &value );
 
 	//------------------------------hash method-----------------------------------
 	/**
