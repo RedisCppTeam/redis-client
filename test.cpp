@@ -17,7 +17,8 @@ void TestSortedSet(void);
 void TestServer(void);
 void TranSactionMain( void );
 void Lmain( void );
-
+void Pmain(void);
+void Cmain(void);
 
 
 int main()
@@ -27,6 +28,9 @@ int main()
     //TestSortedSet();
     //TestServer();
     TranSactionMain();
+    Lmain();
+    Pmain();
+    Cmain();
     return 0;
 }
 
