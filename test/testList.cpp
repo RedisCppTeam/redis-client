@@ -703,7 +703,7 @@ void TestPfmerge( void )
 	}
 }
 
-int main( )
+void Lmain( void )
 {
 	TestLpush();
 	TestRpush();
@@ -730,6 +730,6 @@ int main( )
 	TestPfadd();
 	TestPfcount();
 	TestPfmerge();
-	return 0;
+    return;
 }
 
