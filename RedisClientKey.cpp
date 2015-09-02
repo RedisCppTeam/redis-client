@@ -57,10 +57,10 @@ bool CRedisClient::expireAt( const string& key , const uint64_t& timestamp )
 	return num;
 }
 
-bool CRedisClient::pExpireAt( const string& key , const uint64_t& timestamp )
+bool CRedisClient::pExpireAt( const string& key , const uint64_t& msec_timestamp )
 {
 	Command cmd("PEXPIREAT");
-	cmd << key << timestamp;
+	cmd << key << msec_timestamp;
 	int64_t num = 0;
 	_getInt(cmd, num);
 	return num;
@@ -120,11 +120,11 @@ bool CRedisClient::move( const string& key , const int& dstDBIndex )
 	return num;
 }
 
-string CRedisClient::object( const EobjSubCommand& subcommand , const string& key )
+bool CRedisClient::object( const EobjSubCommand& subcommand , const string& key , string& retStr )
 {
 	Command cmd("OBJECT");
 	int64_t num = 0;
-	string retStr;
+//	string retStr;
 	std::stringstream ss;
 	switch ( subcommand )
 	{
@@ -133,7 +133,8 @@ string CRedisClient::object( const EobjSubCommand& subcommand , const string& ke
 		if ( _getInt(cmd, num) )
 		{
 			ss << num;
-			return ss.str();
+			retStr = ss.str();
+			return true;
 		}
 		break;
 
@@ -142,7 +143,8 @@ string CRedisClient::object( const EobjSubCommand& subcommand , const string& ke
 		if ( _getInt(cmd, num) )
 		{
 			ss << num;
-			return ss.str();
+			retStr = ss.str();
+			return true;
 		}
 		break;
 
@@ -151,24 +153,23 @@ string CRedisClient::object( const EobjSubCommand& subcommand , const string& ke
 
 		if ( _getString(cmd, retStr) )
 		{
-			return retStr;
+			return true;
 		}
 		break;
 
 	}
 
-	return REDIS_NIL;
+	return false;
 }
 
-string CRedisClient::randomKey( )
+bool CRedisClient::randomKey( string& retKey )
 {
 	Command cmd("RANDOMKEY");
-	string retKey;
 
 	if ( _getString(cmd, retKey) )
-		return retKey;
-	else
-		return REDIS_NIL;
+		return true;
+
+	return false;
 }
 
 bool CRedisClient::rename( const string& key , const string& newKey )
@@ -288,7 +289,7 @@ bool CRedisClient::restore( const string& key , const string& buf , const int& t
 	return _getStatus(cmd, status);
 }
 
-bool CRedisClient::migrate(  const string& key ,const string& host , const uint16_t& port ,
+bool CRedisClient::migrate( const string& key , const string& host , const uint16_t& port ,
 		const uint16_t& db , const uint16_t& timeout )
 {
 	CResult result;
@@ -303,7 +304,7 @@ bool CRedisClient::migrate(  const string& key ,const string& host , const uint1
 	if ( REDIS_REPLY_STATUS == type )
 	{
 		//"+NOKEY" may returned
-		if (  result.compare(0,2,"OK")==0 || result.compare(0,2,"ok")==0 )
+		if ( result.compare(0, 2, "OK") == 0 || result.compare(0, 2, "ok") == 0 )
 			return true;
 	}
 

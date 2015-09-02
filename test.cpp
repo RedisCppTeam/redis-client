@@ -13,22 +13,38 @@ void TestString( void );
 void TestPSub( void );
 void Hmain( void );
 void Smain( void );
-void TestSortedSet(void);
-void TestServer(void);
+void TestSortedSet( void );
+void TestServer( void );
 void TranSactionMain( void );
 void Lmain( void );
+void testKeyMain( );
+void testWithOneRedis( );
+void testScriptMain( );
 
-
-
-int main()
+int main( )
 {
-    //Hmain();
-    //Smain();
-    //TestSortedSet();
-    //TestServer();
-    TranSactionMain();
-    return 0;
+	testKeyMain();
+//	testWithOneRedis();
+//	testScriptMain();
+//	CRedisClient redis;
+//	redis.connect("127.0.0.1", 6379);
+//	VEC vec;
+//	testReadN();
+//	TestHash();
+//	TestHash2();
+//	TestList();
+//	TestKey();
+//	TestString();
+//	TestSet();
+//	TestPSub();
+//	TestSortedSet();
+//	TestPSub();
+//
+//	Hmain();
+//	Smain();
+//	TestSortedSet();
+//	TestServer();
+//	TranSactionMain();
+//	return 0;
 }
-
-
 

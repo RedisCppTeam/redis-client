@@ -20,7 +20,7 @@
 
 #include "CResult.h"
 
-#define REDIS_NIL "nil"
+//#define REDIS_NIL "nil"
 
 using namespace Poco;
 
@@ -182,11 +182,14 @@ public:
 	bool exists( const string& key );
 
 	/**
+	 * @brief Use unix timestamp as argument unit to set "time to live", similar to expire,
+	 * EXPIREAT has the same effect and semantic as EXPIRE, but instead of specifying the number of seconds
+	 * representing the TTL (time to live), it takes an absolute Unix timestamp (seconds since January 1, 1970).
 	 * @brief 作用和 EXPIRE 类似，都用于为 key 设置生存时间。
 	 * 不同在于 EXPIREAT 命令接受的时间参数是 UNIX 时间戳(unix timestamp)。
 	 * @param keys [in] name of key
 	 * @param timestamp [in] the key will be destroy after this timestamp
-	 * @return true for success,当 key 不存在或没办法设置生存时间，返回 false
+	 * @return true for success,false returned when no such key or execute fail.
 	 * Example:
 	 * redis> SET cache www.google.com
 	 * OK
@@ -198,15 +201,17 @@ public:
 	bool expireAt( const string& key , const uint64_t& timestamp );
 
 	/**
-	 * @brief 作用和 EXPIREAT 类似，都用于为 key 设置生存时间,以毫秒为单位。
+	 * @brief Use millisecond unix timestamp as argument unit to set "time to live", similar to expireAt.
+	 * @brief 作用和 expireAt 类似，都用于为 key 设置生存时间,以毫秒为时间戳单位。
 	 * 不同在于 pEXPIREAT 命令接受的时间参数是 UNIX 时间戳(unix timestamp)毫秒为单位。
 	 * @param keys [in] name of key
 	 * @param timestamp [in] the key will be destroy after this timestamp
-	 * @return true for success,当 key 不存在或没办法设置生存时间，返回 false
+	 * @return true for success,false returned when no such key or execute fail.
 	 */
-	bool pExpireAt( const string& key , const uint64_t& timestamp );
+	bool pExpireAt( const string& key , const uint64_t& msec_timestamp );
 
 	/**
+	 * @brief Use second  as argument unit to set "time to live"
 	 * @brief 以秒为单位设定,更新生存时间
 	 * @param keys [in] name of key
 	 * @param seconds [in] the key will be destroy after this second
@@ -215,6 +220,7 @@ public:
 	bool expire( const string& key , const uint64_t& seconds );
 
 	/**
+	 * @brief Use millisecond  as argument unit to set "time to live"
 	 * @brief 以毫秒为单位设定,更新生存时间
 	 * @param keys [in] name of key
 	 * @param msec [in] the key will be destroy after this millisecond
@@ -223,6 +229,7 @@ public:
 	bool pExpire( const string& key , const uint64_t& msec );
 
 	/**
+	 * @brief get "time to live"  by the second.
 	 * @brief 以秒为单位取得key的剩余生存周期
 	 * @param keys [in] The name of key
 	 * @return The number of sec before destroyed,-2 no such key,-1 key persist(alive for ever),
@@ -230,6 +237,7 @@ public:
 	int64_t ttl( const string& key );
 
 	/**
+	 * @brief get "time to live"  by the second.
 	 * @brief 以毫秒为单位取得key的剩余生存周期
 	 * @param keys [in] The name of key
 	 * @return The number of msec before destroyed,-2 no such key,-1 key persist(alive for ever),
@@ -237,7 +245,10 @@ public:
 	int64_t pttl( const string& key );
 
 	/**
-	 * @brief 移除 key 的生存时间，让 key 重新成为一个『持久的』(persistent) key
+	 * @brief Remove the existing timeout on key, turning the key from volatile (a key with an expire set)
+	 * to persistent (a key that will never expire as no timeout is associated).
+	 *  移除 key 的生存时间，让 key 重新成为一个『持久的』(persistent) key
+	 * @brief Remove the key's alive time, so that the key  become persistent
 	 * @param key [in] the key
 	 * @return The true for success,fail for key isn't exists or the key is persist already.
 	 */
@@ -256,46 +267,48 @@ public:
 		REFCOUNT = 0, ENCODING, IDLETIME
 	};
 	/**
-	 * @brief 命令允许从内部察看给定 key 的 Redis 对象
-	 * @param key [in] the key
-	 * @param subcommand [in]  子命令
+	 * @brief Command allows you to view a Redis object from an internal key
+	 * @brief 命令允许从内部察看给定key的Redis对象。
+	 * @param key [in] Name of the key
+	 * @param subcommand [in]  The subcommand
 	 * 		REFCOUNT <key> 返回给定 key 引用所储存的值的次数。此命令主要用于除错。
 	 * 		ENCODING <key> 返回给定 key 锁储存的值所使用的内部表示(representation)。
 	 *		IDLETIME <key> 返回给定 key 自储存以来的空闲时间(idle， 没有被读取也没有被写入)，以秒为单位。
-	 * @return "nil" for no such key, other string for response from redis-server,int type will be convert to string
+	 * @param retStr [out] returned value
+	 * @return false for failed or no such key, other string for response from redis-server,int type will be convert to string
 	 * @warning Throw ArgmentErr exception when input argument error.
 	 */
-	string object( const EobjSubCommand& subcommand , const string& key );
+	bool object( const EobjSubCommand& subcommand , const string& key,string& retStr );
 
 	/**
-	 * @brief 从当前数据库中随机返回(不删除)一个 key 。
-	 * @param  n/a
-	 * @return "nil" for DB is empty, a random key was return;
+	 * @brief Randomly return (not deleted)a key from current database。
+	 * @param  retKey [out]  returned key name
+	 * @return false for  DB is empty or failed,true for success and a random key was return from retKey;
 	 */
-	string randomKey( );
+	bool randomKey( string& retKey );
 
 	/**
 	 * @brief rename key as newkey
 	 * @param  key [in] old key name
 	 * @param  newKey [in] new key name
-	 * @return true for success,false for failed;
+	 * @return true for success,false for command failed;
 	 * @warning throwing exception of 'ReplyErr' if no such key
 	 */
 	bool rename( const string& key , const string& newKey );
 
 	/**
-	 * @brief 当newKey不存在时,将key改名为newkey
+	 * @brief Renames key to newkey if newkey does not yet exist. It returns an error under the same conditions as RENAME
 	 * @param  key [in] old key name
 	 * @param  newKey [in] new key name
 	 * @return true for success,false for  newkey exists already or rename failed;
-	 * @warning throwing exception of 'ReplyErr' if no such key
+	 * @warning throwing exception of 'ReplyErr' if no such key or key==newkey
 	 */
 	bool renameNx( const string& key , const string& newKey );
 
 	/**
-	 * @brief 返回键值排序的结果。
-	 * @param flag   [in] 0 小到大排序, 1 从大到小排序
-	 * @param  key [in] key name
+	 * @brief get values after sort
+	 * @param flag   [in] false sort in order,true sort in reverse order
+	 * @param  key [in] the name of key
 	 * @param  retVec [out] returned values arry
 	 * @return true for success,false for  key is empty or nonexistent;
 	 * @warning throwing exception of 'ReplyErr', if /key type isn't list nor set/one of the values isn't digital
@@ -303,23 +316,25 @@ public:
 	bool sort( const string& key , VecString& values , const bool& desc = false );
 
 	/**
-	 * @brief 返回 key 所储存的值的类型
+	 * @brief get value type of key
 	 * @param  key [in] key name
-	 * @param type [out] key 所储存的值的类型
-	 * 	none (key不存在)
+	 * @param type [out] type of the value
+	 * 	none (key inexistent)
 	 * 	string (字符串)
 	 * 	list (列表)
 	 * 	set (集合)
 	 * 	zset (有序集)
 	 * 	hash (哈希表)
 	 *
-	 * @return true for success,false for failed
+	 * @return true for command execute success,false for failed
 	 * @warning throwing exception of 'ReplyErr',
 	 */
 	bool type( const string& key , string& type );
 
 	/**
-	 * @brief 将 key 原子性地从当前redis-server移动到时目标redis-server指定的数据库上
+	 * @brief Atomically transfer a key from a source Redis instance to a destination Redis instance.
+	 *  On success the key is deleted from the original instance and is guaranteed to exist in the target instance.
+	 *  将 key 原子性地从当前redis-server移动到时目标redis-server指定的数据库上
 	 * @param  key [in] key name
 	 * @param  host [in] host of server
 	 * @param  port [in] port of server
@@ -332,19 +347,24 @@ public:
 			const uint16_t& db = 0 , const uint16_t& timeout = 3 );
 
 	/**
-	 * @brief 基于游标的迭代器（cursor based iterator）： SCAN 命令每次被调用之后， 都会向用户返回一个新的游标， 用户在下次迭代时需要使用这个新游标作为 SCAN 命令的游标参数， 以此来延续之前的迭代过程。
-	 * @param values [out] 得到的键名
-	 * @param index [in] 迭代开始的位置，第一次为0
-	 * @param pattern [in] 键名匹配限制
-	 * @param count [in] 每次迭代出来的元素个数
-	 * @return >0 下次迭代开始的位置，为0时完成本次遍历，<0失败
-	 * @warning 不保证每次执行都返回某个给定数量的元素。
+	 * @brief iterates the set of keys in the currently selected Redis database
+	 * cursor based iterator： SCAN  return a new iterator cursor after invoked， next SCAN  continue with this cursor
+	 *  to travel all keys in redis server。
+	 * @param values [out] returned values
+	 * @param index [in] cursor of iterator,0 for first call
+	 * @param pattern [in] a pattern for keys
+	 * @param count [in] count of values every invoked,每次迭代出来的元素个数
+	 * @return >0 iterating incomplete,0  iterating meet end,<0 invoke falied;>0 下次迭代开始的位置，为0时完成本次遍历，<0失败
+	 * @warning returned values count is uncertain,
+	 * 不保证每次执行都返回某个给定数量的元素。
 	 */
-	int scan( VecString& values , const int& index , const string& pattern = "" ,
+	int scan( VecString& values , const int& cursor , const string& pattern = "" ,
 			const int& count = 10 );
 
 	/**
-	 * @brief 序列化给定 key ，并返回被序列化的值，使用 RESTORE 命令可以将这个值反序列化为 Redis 键
+	 * @brief Serialize the value stored at key in a Redis-specific format and return it to the user.
+	 * The returned value can be synthesized back into a Redis key using the RESTORE command
+	 * 序列化给定 key ，并返回被序列化的值，使用 RESTORE 命令可以将这个值反序列化为 Redis 键
 	 * @param key [in] the key
 	 * @param retStr [out] return server response data
 	 * @return true for success,false for failed(no such key)
@@ -353,7 +373,8 @@ public:
 	bool dump( const string& key , string& retStr );
 
 	/**
-	 * @brief 序列化给定 key ，并返回被序列化的值，使用 RESTORE 命令可以将这个值反序列化为 Redis 键
+	 * @brief Create a key associated with a value that is obtained by deserializing the provided serialized value (obtained via DUMP).
+	 * 序列化给定 key ，并返回被序列化的值，使用 RESTORE 命令可以将这个值反序列化为 Redis 键
 	 * @param key [in] the key
 	 * @param buf [in] return server response data
 	 * @param ttl [in] time to alive for this key
@@ -363,10 +384,15 @@ public:
 	bool restore( const string& key , const string& buf , const int& ttl = 0 );
 	//-----------------------------script method--------------------------------------
 	/**
-	 * @brief 通过内置的 Lua 解释器，对 Lua 脚本进行求值。
-	 * @param script [in] 一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
-	 * @param keysVec [in] 表示在脚本中所用到的那些 Redis 键(key)，这些键名参数可以在 Lua 中通过全局变量 KEYS 数组，用 1 为基址的形式访问( KEYS[1] ， KEYS[2] ，以此类推)。
-	 * @param argsVec [in] 附加参数 arg [arg ...] ，可以在 Lua 中通过全局变量 ARGV 数组访问，访问的形式和 KEYS 变量类似( ARGV[1] 、 ARGV[2] ，诸如此类)。
+	 * @brief used to evaluate scripts using the Lua interpreter built into Redis
+	 * 通过内置的 Lua 解释器，对 Lua 脚本进行求值。
+	 * @param script [in] Lua 5.1 script. The script does not need to define a Lua function (and should not).
+	 *  It is just a Lua program that will run in the context of the Redis server.
+	 * 一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
+	 * @param keysVec [in] keys for script accessed by scipt like KEYS[n],
+	 * 表示在脚本中所用到的那些 Redis 键(key)，这些键名参数可以在 Lua 中通过全局变量 KEYS 数组，用 1 为基址的形式访问( KEYS[1] ， KEYS[2] ，以此类推)。
+	 * @param argsVec [in] args for script accessed by scipt like ARGV[n],
+	 * 附加参数 arg [arg ...] ，可以在 Lua 中通过全局变量 ARGV 数组访问，访问的形式和 KEYS 变量类似( ARGV[1] 、 ARGV[2] ，诸如此类)。
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
@@ -374,10 +400,16 @@ public:
 			const VecString& argsVec = VecString() );
 
 	/**
-	 * @brief 对缓存在服务器中的脚本进行求值
-	 * @param script [in] 一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
-	 * @param keysVec [in] 表示在脚本中所用到的那些 Redis 键(key)，这些键名参数可以在 Lua 中通过全局变量 KEYS 数组，用 1 为基址的形式访问( KEYS[1] ， KEYS[2] ，以此类推)。
-	 * @param argsVec [in] 附加参数 arg [arg ...] ，可以在 Lua 中通过全局变量 ARGV 数组访问，访问的形式和 KEYS 变量类似( ARGV[1] 、 ARGV[2] ，诸如此类)。
+	 * @brief Evaluates a script cached on the server side by its SHA1 digest. Scripts are cached on the server side
+	 *  using the SCRIPT LOAD command. The command is otherwise identical to EVAL.
+	 * 对缓存在服务器中的脚本进行求值
+	 * @param script [in] Lua 5.1 script. The script does not need to define a Lua function (and should not).
+	 *  It is just a Lua program that will run in the context of the Redis server.
+	 *  一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
+	 * @param keysVec [in] keys for script accessed by scipt like KEYS[n],
+	 * 表示在脚本中所用到的那些 Redis 键(key)，这些键名参数可以在 Lua 中通过全局变量 KEYS 数组，用 1 为基址的形式访问( KEYS[1] ， KEYS[2] ，以此类推)。
+	 * @param argsVec [in] args for script accessed by scipt like ARGV[n],
+	 * 附加参数 arg [arg ...] ，可以在 Lua 中通过全局变量 ARGV 数组访问，访问的形式和 KEYS 变量类似( ARGV[1] 、 ARGV[2] ，诸如此类)。
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
@@ -385,24 +417,30 @@ public:
 			VecString() , const VecString& argsVec = VecString() );
 
 	/**
-	 * @brief 将脚本 script 添加到脚本缓存中，但并不立即执行这个脚本
-	 * @param script [in] 一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
-	 * @param values [out] 返回脚本的序列号(校验和)
+	 * @brief Load a script into the scripts cache, without executing it. After the specified command is loaded into the script cache
+	 * it will be callable using EVALSHA with the correct SHA1 digest of the script, exactly like after the first successful invocation of EVAL
+	 * 将脚本 script 添加到脚本缓存中，但并不立即执行这个脚本
+	 * @param script [in]  Lua 5.1 script
+	 * 一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
+	 * @param values [out] returned script SHA1 digest
+	 * 返回脚本的序列号(校验和)
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
 	bool scriptLoad( string& values , const string& script );
 
 	/**
-	 * @brief 表示校验和所指定的脚本是否已经被保存在缓存当中
-	 * @param script [in] 脚本的序列号(校验和)
+	 * @brief Returns information about the existence of the scripts in the script cache
+	 * 表示校验和所指定的脚本是否已经被保存在缓存当中
+	 * @param script [in] script SHA1 digest
+	 * 脚本的序列号(校验和)
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
 	bool scriptExists( const string& script );
 
 	/**
-	 * @brief 清除所有 Lua 脚本缓存。
+	 * @brief Flush the Lua scripts cache.
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */

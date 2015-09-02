@@ -49,6 +49,7 @@ void TestDel( void )
 		std::cout << "Poco_exception:" << e.what() << std::endl;
 	}
 }
+
 void TestKeys( void )
 {
 	try
@@ -138,19 +139,41 @@ void testobj( void )
 		redis.connect("127.0.0.1", 6379);
 		//REFCOUNT = 0, ENCODING, IDLETIME
 		string mykey = "myhx";
-		string ret;
+		string retStr;
+		bool ret;
 
-		ret = redis.object(CRedisClient::REFCOUNT, mykey);
-		cout << "redis.object REFCOUNT:" << ret << endl;
+		ret = redis.object(CRedisClient::REFCOUNT, mykey, retStr);
+		if ( !ret )
+		{
+			cout << "redis.object REFCOUNT: failed!" << endl;
+			return;
+		}
 
-		ret = redis.object(CRedisClient::ENCODING, mykey);
+		cout << "redis.object REFCOUNT:" << retStr << endl;
+
+		ret = redis.object(CRedisClient::ENCODING, mykey, retStr);
+		if ( !ret )
+		{
+			cout << "redis.object ENCODING: failed!" << endl;
+			return;
+		}
 		cout << "redis.object ENCODING:" << ret << endl;
 
-		ret = redis.object(CRedisClient::IDLETIME, mykey);
+		ret = redis.object(CRedisClient::IDLETIME, mykey, retStr);
+		if ( !ret )
+		{
+			cout << "redis.object IDLETIME: failed!" << endl;
+			return;
+		}
 		cout << "redis.object IDLETIME:" << ret << endl;
 
-		ret = redis.randomKey();
-		cout << "randomKey:" << ret << endl;
+		ret = redis.randomKey(retStr);
+		if ( !ret )
+		{
+			cout << "redis.randomKey  failed!" << endl;
+			return;
+		}
+		cout << "randomKey:" << retStr << endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -162,25 +185,26 @@ void testobj( void )
 
 void testRename( void )
 {
+	cout << "****************** string::rename ******************" << endl;
 	try
 	{
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 		bool ret;
 
-		ret = redis.rename("mys", "myu");
+//		ret = redis.rename("mys", "myu");
+//		if ( ret )
+//			cout << "redis.rename ok:" << ret << endl;
+//
+//		else
+//			cout << "redis.rename failed:" << ret << endl;
+
+		ret = redis.renameNx("mykey", "youkey");
 		if ( ret )
-			cout << "redis.rename ok:" << ret << endl;
+			cout << "redis.renamenx ok:" << ret << endl;
 
 		else
-			cout << "redis.rename failed:" << ret << endl;
-
-		ret = redis.renameNx("myu", "mys");
-		if ( ret )
-			cout << "redis.nx ok:" << ret << endl;
-
-		else
-			cout << "redis.nx failed:" << ret << endl;
+			cout << "redis.renamenx failed:" << ret << endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -307,90 +331,6 @@ void testRestore( const string& strInput )
 
 }
 
-void testevalSha( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	CResult result;
-	string retString;
-	if ( !redis.scriptLoad(retString, "return 'hello moto'") )
-	{
-		cout << "redis.scriptLoad failed:" << endl;
-		return;
-	}
-	cout << "redis.scriptLoad ok:" << retString << endl;
-
-	ret = redis.evalSha(result, retString);
-	if ( ret )
-		cout << "redis.evalSha ok:" << ret << endl;
-
-	else
-		cout << "redis.evalSha failed:" << ret << endl;
-
-	cout << "type:" << CResult::getTypeString(result.getType()) << endl;
-	cout << "return:" << result << endl;
-
-}
-
-void testScriptExists( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	CResult result;
-	string retString;
-	if ( !redis.scriptLoad(retString, "return 'hello moto'") )
-	{
-		cout << "redis.scriptLoad failed:" << endl;
-		return;
-	}
-	cout << "redis.scriptLoad ok:" << retString << endl;
-
-	ret = redis.scriptExists(retString);
-	if ( ret )
-		cout << "script exists ok:" << retString << endl;
-
-	else
-		cout << "script nonexists:" << retString << endl;
-
-	retString += '2';
-	ret = redis.scriptExists(retString);
-	if ( ret )
-		cout << "script exists ok:" << retString << endl;
-
-	else
-		cout << "script nonexists:" << retString << endl;
-
-}
-void testScriptFlush( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	if ( !redis.scriptFlush() )
-	{
-		cout << "scriptFlush failed:" << endl;
-		return;
-	}
-	cout << "scriptFlush ok!" << endl;
-
-}
-
-//redis-cli:>EVAL "while true do end" 0
-void testScriptKill( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	string retStr;
-	if ( !redis.scriptKill() )
-	{
-		cout << "scriptFlush failed:" << endl;
-		return;
-	}
-
-	cout << "scriptFlush ok!" << endl;
-
-}
 void testMigrate( )
 {
 	CRedisClient redis;
@@ -422,36 +362,133 @@ void testMove( )
 
 }
 
-int kmain( )
+
+//同一个reids进行多项测试
+void testWithOneRedis( )
+{
+	try
+	{
+		CRedisClient redis;
+		bool retb;
+		int64_t reti;
+		string retStr, type, mykey("keystanley");
+		CRedisClient::VecString keysVec;
+		redis.connect("127.0.0.1", 6379);
+
+		//------------create a key------
+		cout << endl << "----------create a key-----------------" << endl;
+
+		redis.set(mykey, "testval");
+
+		//-----------exists--------
+		cout << endl << "----------exists-----------------" << endl;
+
+		retb = redis.exists(mykey);
+		cout << endl << mykey << " exists=" << ( retb ? "true" : "false" ) << endl;
+
+		//---------------keys-------------
+		cout << endl << "----------keys-----------------" << endl;
+
+		string pattern = "k*";
+		reti = redis.keys(pattern, keysVec);
+		for ( reti--; reti >= 0 ; reti-- )
+		{
+			cout << keysVec[reti] << endl;
+		}
+
+		//----------type-----------------
+		cout << endl << "----------type-----------------" << endl;
+		retb = redis.type(mykey, type);
+		if ( retb )
+			cout << "redis.type ok:" << retb << endl;
+
+		else
+			cout << "redis.type failed:" << retb << endl;
+
+		cout << "type:" << type << endl;
+
+		//----------move-----------------
+		cout << endl << "---------to move-----------------" << endl;
+//		getchar();
+		int dstDB = 1;
+		if ( !redis.move(mykey, dstDB) )
+		{
+			cout << "move failed:" << endl;
+			return;
+		}
+		cout << "move ok!" << endl;
+
+		//----------object-----------------
+		cout << endl << "----------object-----------------" << endl;
+		keysVec.clear();
+		keysVec.push_back("1kk");
+		mykey = "stanlist";
+//		redis.lpush(mykey, keysVec);
+		retb = redis.object(CRedisClient::REFCOUNT, mykey, retStr);
+		if ( !retb )
+		{
+			cout << "redis.object REFCOUNT: failed!" << endl;
+			return;
+		}
+
+		cout << "redis.object REFCOUNT:" << retStr << endl;
+
+		retb = redis.object(CRedisClient::ENCODING, mykey, retStr);
+		if ( !retb )
+		{
+			cout << "redis.object ENCODING: failed!" << endl;
+			return;
+		}
+		cout << "redis.object ENCODING:" << retStr << endl;
+
+		retb = redis.object(CRedisClient::IDLETIME, mykey, retStr);
+		if ( !retb )
+		{
+			cout << "redis.object IDLETIME: failed!" << endl;
+			return;
+		}
+		cout << "redis.object IDLETIME:" << retStr << endl;
+
+	} catch( RdException& e )
+	{
+		std::cout << endl << "Redis exception !!!!:" << e.what() << std::endl;
+		return;
+	} catch( Poco::Exception& e )
+	{
+		std::cout << "Poco_exception:" << e.what() << std::endl;
+	}
+
+	cout << "exit whiletest" << endl;
+}
+
+
+//逐一测试
+void testKeyMain( )
 {
 	try
 	{
 //		testMove();
 //		testMigrate();
 //		TestDel();
-//		testScriptKill();
-//		testScriptFlush();
-//		testScriptExists();
-//		testevalSha();
 //		string dumped = testDump();
 //		testRestore(dumped);
 //		testScan();
 //		testType();
 //		testSort();
-//		testRename();
+		testRename();
 //		testobj();
 //		testTTL();
 //		TestKeys();
 	} catch( RdException& e )
 	{
 		std::cout << endl << "Redis exception !!!!:" << e.what() << std::endl;
-		return -1;
+		return ;
 	} catch( Poco::Exception& e )
 	{
 		std::cout << "Poco_exception:" << e.what() << std::endl;
 	}
 
 	cout << "exit main" << endl;
-	return 1;
+	return ;
 }
 
