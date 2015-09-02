@@ -106,8 +106,9 @@ public:
 	void reconnect( );
 
 	void closeConnect( );
-	//---------------------------------connection----------------------------------------
 
+
+	//---------------------------------connection----------------------------------------
 	/**
 	 * @brief 使用客户端向 Redis 服务器发送一个 PING ，如果服务器运作正常的话，会返回一个 PONG
 	 * @param value [out]返回信息 成功为pong
@@ -143,8 +144,8 @@ public:
 	 */
 	bool select( uint64_t index );
 
-	//---------------------------------hyperloglog----------------------------------------
 
+    //---------------------------------Hyperloglog----------------------------------------
 	/**
 	 * @brief 将任意数量的元素添加到指定的 HyperLogLog 里面
 	 * @param key[in] hyperlog名
@@ -168,8 +169,8 @@ public:
 	 */
 	bool pfmerge( const string &destKey , const VecString &srcKey );
 
-	//-----------------------------------key---------------------------------------------
 
+	//-----------------------------------key---------------------------------------------
 	/**
 	 * @brief keys get all keys matching pattern.
 	 * @param pattern [in] The conditions of the matching.
@@ -361,6 +362,9 @@ public:
 	 * @warning Throw ReplyErr exception when the key already exists
 	 */
 	bool restore( const string& key , const string& buf , const int& ttl = 0 );
+
+
+
 	//-----------------------------script method--------------------------------------
 	/**
 	 * @brief 通过内置的 Lua 解释器，对 Lua 脚本进行求值。
@@ -414,6 +418,8 @@ public:
 	 * @warning Throw ReplyErr exception when No scripts in executing or the script is writing database.
 	 */
 	bool scriptKill( void );
+
+
 	//-----------------------------string method--------------------------------------
 	uint64_t append( const string& key , const string& value );
 
@@ -474,7 +480,6 @@ public:
 	uint64_t strlen( const string& key );
 
 	//------------------------------list method--------------------------------------
-
 	/**
 	 * @brief insert a value into a list top
 	 * @param key[in]  name of list
@@ -686,7 +691,7 @@ public:
 	bool hscan( const string& key , int64_t cursor , MapString& values , const string& match =
 			"" , uint64_t count = 0 );
 
-	//---------------------------Set---------------------------------------------------
+    //---------------------------Set----------------------------------
 	uint64_t sadd( const string& key , const VecString& members );
 
 	uint64_t scard( const string& key );
@@ -748,8 +753,6 @@ public:
 	bool sscan( const string& key , int64_t cursor , VecString& values , const string& match =
 			"" , uint64_t count = 0 );
 	//---------------------------SortedSet-------------------------------------------
-
-
     /**
      * @brief zadd Add one or more members to a sorted set, or update its score if it already exists
      * @param key[in]
@@ -961,8 +964,6 @@ public:
      */
     bool exec( CResult &result );
 
-	//----------------------------HyperLogLog-------------------------------------------
-
 	//----------------------------pub/sub--------------------------------------------------
 
 	void psubscribe( VecString& pattern , CResult& result );
@@ -981,12 +982,7 @@ public:
 
 	void unsubscribe( CResult& result, const VecString& channel = VecString() );
 
-	//-----------------------------Script-----------------------------------------------------
-
-	//-----------------------------connection----------------------------------------------
-
 	//-----------------------------Server---------------------------------------------------
-
     uint64_t stringToVecString(string& str,VecString& vec);
     /**
      * @brief bgrewriteaof Instruct Redis to start an Append Only File rewrite process.
