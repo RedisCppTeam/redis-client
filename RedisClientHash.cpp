@@ -72,7 +72,7 @@ uint64_t CRedisClient::hgetall(const string &key, CRedisClient::MapString &pairs
 }
 
 
-uint64_t CRedisClient::hincrby(const string &key, const string &field, uint64_t increment)
+int64_t CRedisClient::hincrby(const string &key, const string &field, int64_t increment)
 {
     Command cmd( "HINCRBY" );
     cmd << key << field << increment;
@@ -83,13 +83,13 @@ uint64_t CRedisClient::hincrby(const string &key, const string &field, uint64_t 
 }
 
 
-float CRedisClient::hincrbyfloat(const string &key, const string &field, float increment)
+double CRedisClient::hincrbyfloat(const string &key, const string &field, float increment)
 {
     Command cmd( "HINCRBYFLOAT" );
     cmd << key << field << increment;
     string value;
     _getString( cmd , value );
-    return _valueFromString<float>(  value );
+    return _valueFromString<double>(  value );
 }
 
 
@@ -99,8 +99,7 @@ uint64_t CRedisClient::hkeys(const string &key, CRedisClient::VecString &values)
     Command cmd( "HKEYS" );
     cmd << key;
 
-    _getArry( cmd, values );
-    return values.size();
+    return ( _getArry( cmd, values ) );
 }
 
 
@@ -127,24 +126,6 @@ void CRedisClient::hmget(const string &key, const CRedisClient::VecString &field
     }
 
     _getArry( cmd , result );
-}
-
-void CRedisClient::hmset(const string &key, const CRedisClient::MapString &pairs, CResult &result)
-{
-    _socket.clearBuffer();;
-    Command cmd( "HMSET" );
-    cmd << key;
-    MapString::const_iterator it = pairs.begin();
-    MapString::const_iterator end = pairs.end();
-
-    for ( ; it !=end ; ++it )
-    {
-        cmd << it->first;
-        cmd << it->second;
-    }
-
-    _sendCommand( cmd );
-    _getReply( result );
 }
 
 void CRedisClient::hmset(const string &key, const CRedisClient::MapString &pairs)

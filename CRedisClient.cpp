@@ -262,6 +262,7 @@ bool CRedisClient::_getStatus(  Command& cmd , string& status )
 
 bool CRedisClient::_getInt(  Command& cmd , int64_t& number )
 {
+    number = 0;
     CResult result;
     _socket.clearBuffer();
     _sendCommand( cmd );
