@@ -17,9 +17,12 @@ void TestSortedSet( void );
 void TestServer( void );
 void TranSactionMain( void );
 void Lmain( void );
+
 void testKeyMain( );
 void testWithOneRedis( );
 void testScriptMain( );
+void Pmain(void);
+void Cmain(void);
 
 int main( )
 {
@@ -45,6 +48,8 @@ int main( )
 //	TestSortedSet();
 //	TestServer();
 //	TranSactionMain();
-//	return 0;
+//	Lmain();
+//	Pmain();
+//	Cmain();
+	return 0;
 }
-
