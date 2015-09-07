@@ -57,10 +57,10 @@ bool CRedisClient::expireAt( const string& key , const uint64_t& timestamp )
 	return num;
 }
 
-bool CRedisClient::pExpireAt( const string& key , const uint64_t& msec_timestamp )
+bool CRedisClient::pExpireAt( const string& key , const uint64_t& msecTimestamp )
 {
 	Command cmd("PEXPIREAT");
-	cmd << key << msec_timestamp;
+	cmd << key << msecTimestamp;
 	int64_t num = 0;
 	_getInt(cmd, num);
 	return num;

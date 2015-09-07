@@ -20,7 +20,6 @@
 
 #include "CResult.h"
 
-//#define REDIS_NIL "nil"
 
 using namespace Poco;
 
@@ -208,7 +207,7 @@ public:
 	 * @param timestamp [in] the key will be destroy after this timestamp
 	 * @return true for success,false returned when no such key or execute fail.
 	 */
-	bool pExpireAt( const string& key , const uint64_t& msec_timestamp );
+	bool pExpireAt( const string& key , const uint64_t& msecTimestamp );
 
 	/**
 	 * @brief Use second  as argument unit to set "time to live"
