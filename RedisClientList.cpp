@@ -102,7 +102,7 @@ uint64_t CRedisClient::llen( const string& key )
 	return num;
 }
 
-uint64_t CRedisClient::linsert( const string& key , const string &token , const string &pivot ,
+int64_t CRedisClient::linsert( const string& key , const string &token , const string &pivot ,
 		const string &value )
 {
 	Command cmd("LINSERT");
