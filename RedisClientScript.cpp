@@ -14,11 +14,10 @@
 #include "Command.h"
 #include "CRedisClient.h"
 
-bool CRedisClient::eval( CResult& values , const string& script , const VecString& keysVec ,
+void CRedisClient::eval( CResult& result , const string& script , const VecString& keysVec ,
 		const VecString& argsVec )
 {
 	Command cmd("EVAL");
-	string status;
 	int len = keysVec.size();
 
 	cmd << script << len;
@@ -32,25 +31,17 @@ bool CRedisClient::eval( CResult& values , const string& script , const VecStrin
 	{
 		cmd << argsVec[i];
 	}
-
-	_socket.clearBuffer();
-	_sendCommand(cmd);
-	if ( _getReply(values) )
-	{
-		return true;
-	}
-	return false;
+    _getArry( cmd, result );
 }
 
-bool CRedisClient::evalSha( CResult& values , const string& sha , const VecString& keysVec ,
+void CRedisClient::evalSha( CResult& result , const string& sha , const VecString& keysVec ,
 		const VecString& argsVec )
 {
 	Command cmd("EVALSHA");
-	string status;
-	int len = keysVec.size();
 
+    int len = keysVec.size();
 	cmd << sha << len;
-	for ( int i = 0 ; i < len ; i++ )
+    for ( int i = 0 ; i < len ; i++ )
 	{
 		cmd << keysVec[i];
 	}
@@ -61,59 +52,43 @@ bool CRedisClient::evalSha( CResult& values , const string& sha , const VecStrin
 		cmd << argsVec[i];
 	}
 
-	_socket.clearBuffer();
-	_sendCommand(cmd);
-	if ( _getReply(values) )
-	{
-		return true;
-	}
-	return false;
+    _getResult( cmd, result );
 }
 
-bool CRedisClient::scriptLoad( string& values , const string& script )
+void CRedisClient::scriptLoad(const string& script , string& values )
 {
 	Command cmd("SCRIPT");
 
 	cmd << "LOAD" << script;
-	return _getString(cmd, values);
+    _getString(cmd, values);
 }
-bool CRedisClient::scriptExists( const string& script )
+
+uint64_t CRedisClient::scriptExists( const string& script , VecString& result )
 {
 	Command cmd("SCRIPT");
 	cmd << "EXISTS" << script;
 
-	CResult rst;
-	_getArry(cmd, rst);
-	CResult::ListCResult lst = rst.getArry();
-	CResult::ListCResult::const_iterator it = lst.begin();
-	return it->getInt();
+    uint64_t num = 0;
+    _getArry( cmd, result, num );
+    return num;
 }
 
-bool CRedisClient::scriptFlush( void )
+void CRedisClient::scriptFlush( void )
 {
 	Command cmd("SCRIPT");
 	string status;
 	cmd << "FLUSH";
-
-	if ( _getStatus(cmd, status) )
-	{
-		if ( status.find("OK") < 10 || status.find("ok") < 10 )
-		{
-			return true;
-		}
-	}
-	return false;
+    _getStatus(cmd, status);
+    if ( "OK"!=status)
+        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
 }
-bool CRedisClient::scriptKill()
+
+void CRedisClient::scriptKill()
 {
 	Command cmd("SCRIPT");
 	cmd << "KILL";
-
-	string retStr;
-	if ( _getStatus(cmd, retStr) )
-	{
-
-		return true;
-	}
-	return false;
+    string status;
+    _getStatus( cmd, status );
+    if ( "OK"!=status)
+        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
 }

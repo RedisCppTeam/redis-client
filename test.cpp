@@ -8,6 +8,7 @@
  *
  * 修订说明:初始版本
  */
+#include "CRedisClient.h"
 
 void TestString( void );
 void TestPSub( void );
@@ -24,14 +25,13 @@ void Cmain(void);
 int main()
 {
     //Hmain();
-    //Smain();
+   // Smain();
     //TestSortedSet();
     //TestServer();
-    TranSactionMain();
+    //TranSactionMain();
     Lmain();
-    Pmain();
-    Cmain();
-    return 0;
+    //Pmain();
+    //Cmain();
 }
 
 

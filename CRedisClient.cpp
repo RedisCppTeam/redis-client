@@ -130,7 +130,7 @@ void CRedisClient::_sendCommand( const string &cmd )
     return ;
 }
 
-bool CRedisClient::_getReply( CResult &result )
+void CRedisClient::_getReply( CResult &result )
 {
     result.clear();
     std::string line;
@@ -162,7 +162,7 @@ bool CRedisClient::_getReply( CResult &result )
         throw ProtocolErr( "unknow type" );
         break;
     }
-    return true;
+    return;
 }
 
 
@@ -233,6 +233,13 @@ void CRedisClient::_getStringMapFromArry(const CResult::ListCResult &arry, CRedi
 }
 
 
+
+void CRedisClient::_getResult( Command& cmd, CResult& result )
+{
+    _socket.clearBuffer();
+    _sendCommand( cmd );
+    _getReply( result );
+}
 
 bool CRedisClient::_getStatus(  Command& cmd , string& status )
 {
@@ -334,7 +341,7 @@ bool CRedisClient::_getArry(Command &cmd, CResult &result)
 }
 
 
-uint64_t CRedisClient::_getArry(Command &cmd, VecString &values )
+bool CRedisClient::_getArry(Command &cmd, VecString &values , uint64_t &num)
 {
     _socket.clearBuffer();
     _sendCommand( cmd );
@@ -343,6 +350,10 @@ uint64_t CRedisClient::_getArry(Command &cmd, VecString &values )
 
     ReplyType type = result.getType();
 
+    if ( REDIS_REPLY_NIL == type )
+    {
+        return false;
+    }
     if ( REDIS_REPLY_ERROR == type )
     {
         throw ReplyErr( result.getErrorString() );
@@ -352,12 +363,14 @@ uint64_t CRedisClient::_getArry(Command &cmd, VecString &values )
        throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
     }
 
+    num = result.getArry().size();
     _getStringVecFromArry( result.getArry(), values );
-    return values.size();
+    return true;
 }
 
-uint64_t CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
+bool CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs , uint64_t &num)
 {
+    num = 0;
     _socket.clearBuffer();
     _sendCommand( cmd );
     CResult result;
@@ -365,6 +378,11 @@ uint64_t CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
 
     ReplyType type = result.getType();
 
+
+    if ( REDIS_REPLY_NIL == type )
+    {
+        return false;
+    }
     if ( REDIS_REPLY_ERROR == type )
     {
         throw ReplyErr( result.getErrorString() );
@@ -374,6 +392,7 @@ uint64_t CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs )
        throw ProtocolErr( cmd.getCommand() + ": data recved is not arry" );
     }
 
+    num = result.getArry().size();
     _getStringMapFromArry( result.getArry(), pairs );
-    return pairs.size();
+    return true;
 }

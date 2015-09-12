@@ -25,7 +25,7 @@ void TestLpush( void )
 
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "key2";
 
 		CRedisClient::VecString value;
 		value.push_back("a");
@@ -52,9 +52,9 @@ void TestRpush( void )
 		string mykey = "key";
 
 		CRedisClient::VecString value;
-		value.push_back("e");
-		value.push_back("g");
-		value.push_back("j");
+    //	value.push_back("e");
+    //	value.push_back("g");
+    //	value.push_back("j");
 		int count = redis.rpush(mykey, value);
 		std::cout << count << std::endl;
 	} catch( RdException& e )
@@ -73,7 +73,7 @@ void TestLpop( void )
 
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "kedsay";
 
 		std::string value;
 		bool flag = redis.lpop(mykey, value);
@@ -223,10 +223,9 @@ void TestLrem( void )
 		redis.connect("127.0.0.1", 6379);
 		string mykey = "key";
 
-		uint64_t num = 3;
-		int64_t count = redis.lrem(mykey, num, "hello");
+        int64_t num = 3;
+        redis.lrem(mykey, num, "hello");
 //		int64_t count=redis.linsert(mykey,"after","b","world");
-		std::cout << count << std::endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -246,8 +245,7 @@ void TestLtrim( void )
 
 		uint64_t start = 1;
 		uint64_t stop = 2;
-		bool flag = redis.ltrim(mykey, start, stop);
-		std::cout << flag << std::endl;
+        redis.ltrim(mykey, start, stop);
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -266,8 +264,7 @@ void TestLset( void )
 		string mykey = "key";
 
 		uint64_t index = 1;
-		bool flag = redis.lset(mykey, index, "haha");
-		std::cout << flag << std::endl;
+        redis.lset(mykey, index, "haha");
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -399,25 +396,30 @@ void TestBlpop( void )
 		key2Value.push_back("2");
 		key2Value.push_back("3");
 
-		redis.rpush(key, keyValue);
-		redis.rpush(key2, key2Value);
+    //	redis.rpush(key, keyValue);
+    //	redis.rpush(key2, key2Value);
 
 		CRedisClient::VecString keys;
 		keys.push_back("key");
 		keys.push_back("key2");
 
 		CRedisClient::MapString value;
-		uint64_t timeout = 0;
-		redis.blpop(keys, timeout, value);
+        uint64_t timeout = 2;
 
-		CRedisClient::MapString::const_iterator it = value.begin();
-		CRedisClient::MapString::const_iterator end = value.end();
-		while ( it != end )
-		{
-			cout << it->first << endl;
-			cout << it->second << endl;
-			++it;
-		}
+        if ( !redis.blpop(keys, timeout, value) )
+        {
+            std::cout << "blpop failed" << std::endl;
+        }else
+        {
+            CRedisClient::MapString::const_iterator it = value.begin();
+            CRedisClient::MapString::const_iterator end = value.end();
+            while ( it != end )
+            {
+                cout << it->first << endl;
+                cout << it->second << endl;
+                ++it;
+            }
+        }
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -446,8 +448,8 @@ void TestBrpop( void )
 		key2Value.push_back("2");
 		key2Value.push_back("3");
 
-//		redis.rpush(key, keyValue);
-//		redis.rpush(key2, key2Value);
+        redis.rpush(key, keyValue);
+        redis.rpush(key2, key2Value);
 
 		CRedisClient::VecString keys;
 		keys.push_back("key");
@@ -455,8 +457,11 @@ void TestBrpop( void )
 
 		CRedisClient::MapString value;
 		uint64_t timeout = 3;
-		bool flag=redis.brpop(keys, timeout, value);
-		cout<<flag<<endl;
+        if ( !redis.brpop(keys, timeout, value) )
+        {
+            std::cout << "brpop falied" << std::endl;
+            return;
+        }
 
 		CRedisClient::MapString::const_iterator it = value.begin();
 		CRedisClient::MapString::const_iterator end = value.end();
@@ -518,23 +523,23 @@ void TestBrpoplpush( void )
 
 void Lmain( void )
 {
-	TestLpush();
-	TestRpush();
-	TestLpop();
-	TestRpop();
-	TestLindex();
-	TestLlen();
-	TestLpushx();
-	TestRpushx();
-	TestLinsert();
-	TestLrem();
-	TestLtrim();
-	TestLset();
-	TestLrange();
-	TestRpoplpush();
-	TestBlpop();
-	TestBrpop();
-	TestBrpoplpush();
+ //   TestLpush();
+ //   TestRpush();
+    TestLpop();
+//	TestRpop();
+//	TestLindex();
+//	TestLlen();
+//	TestLpushx();
+//	TestRpushx();
+//	TestLinsert();
+//	TestLrem();
+//	TestLtrim();
+//	TestLset();
+//	TestLrange();
+//	TestRpoplpush();
+//  TestBlpop();
+//  TestBrpop();
+//	TestBrpoplpush();
     return;
 }
 

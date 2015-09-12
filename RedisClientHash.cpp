@@ -67,8 +67,9 @@ uint64_t CRedisClient::hgetall(const string &key, CRedisClient::MapString &pairs
     Command cmd( "HGETALL" );
     cmd << key;
 
-    _getArry( cmd, pairs );
-    return pairs.size();
+    uint64_t num = 0;
+    _getArry( cmd, pairs, num );
+    return num;
 }
 
 
@@ -99,7 +100,9 @@ uint64_t CRedisClient::hkeys(const string &key, CRedisClient::VecString &values)
     Command cmd( "HKEYS" );
     cmd << key;
 
-    return ( _getArry( cmd, values ) );
+    uint64_t num = 0;
+    _getArry( cmd, values, num );
+    return num;
 }
 
 
@@ -114,7 +117,6 @@ uint64_t CRedisClient::hlen(const string &key)
 
 void CRedisClient::hmget(const string &key, const CRedisClient::VecString &fields, CResult &result)
 {
-    _socket.clearBuffer();
     Command cmd( "HMGET" );
     cmd << key;
 
@@ -158,9 +160,11 @@ bool CRedisClient::hsetnx(const string &key, const string &field, const string &
 uint64_t CRedisClient::hvals(const string &key, CRedisClient::VecString &values)
 {
     Command cmd( "HVALS" );
-    cmd << key ;
-    _getArry( cmd, values );
-    return values.size();
+    cmd << key;
+
+    uint64_t num;
+    _getArry( cmd, values, num );
+    return num;
 }
 
 

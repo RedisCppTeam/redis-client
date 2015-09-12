@@ -43,7 +43,9 @@ uint64_t CRedisClient::sdiff(const CRedisClient::VecString &keys, CRedisClient::
         cmd << *it;
     }
 
-    return ( _getArry( cmd, values ) );
+    uint64_t num = 0;
+    _getArry( cmd, values , num);
+    return num;
 }
 
 
@@ -73,7 +75,9 @@ uint64_t CRedisClient::sinter(const CRedisClient::VecString &keys, VecString &va
         cmd << *it;
     }
 
-    return ( _getArry( cmd, values ) );
+    uint64_t num = 0;
+    _getArry( cmd, values, num );
+    return num;
 }
 
 uint64_t CRedisClient::sinterstore( const string& destKey ,const CRedisClient::VecString &keys )
@@ -106,7 +110,10 @@ uint64_t CRedisClient::smembers( const string &key, CRedisClient::VecString &mem
 {
     Command cmd( "SMEMBERS" );
     cmd << key;
-    return ( _getArry( cmd, members ) );
+
+    uint64_t num = 0;
+    _getArry( cmd, members,num );
+    return num;
 }
 
 bool CRedisClient::smove(const string &source, const string &dest, const string &member)
@@ -139,7 +146,9 @@ uint64_t CRedisClient::srandmember(const string &key, int count, CRedisClient::V
     Command cmd( "SRANDMEMBER" );
     cmd << key << count ;
 
-    return ( _getArry( cmd, members ) );
+    uint64_t num = 0;
+    _getArry( cmd, members, num );
+    return num;
 }
 
 uint64_t CRedisClient::srem(const string &key,const CRedisClient::VecString &members)
@@ -169,7 +178,9 @@ uint64_t CRedisClient::sunion(const CRedisClient::VecString &keys , VecString &m
         cmd << *it;
     }
 
-    return ( _getArry( cmd, members ) );
+    uint64_t num = 0;
+    _getArry( cmd, members, num );
+    return num;
 }
 
 uint64_t CRedisClient::sunionstroe(const string &dest, const CRedisClient::VecString &keys)

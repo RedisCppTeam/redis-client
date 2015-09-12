@@ -17,8 +17,9 @@ int64_t CRedisClient::keys( const std::string &pattern , VecString &values )
 	Command cmd("KEYS");
 	cmd << pattern;
 
-	_getArry(cmd, values);
-	return values.size();
+    uint64_t num;
+    _getArry(cmd, values,num );
+    return num;
 }
 
 int64_t CRedisClient::del( CRedisClient::VecString &keys )
@@ -193,7 +194,7 @@ bool CRedisClient::renameNx( const string& key , const string& newKey )
 	return false;
 }
 
-bool CRedisClient::sort( const string& key , VecString& values , const bool& desc )
+void CRedisClient::sort(const string& key , VecString& values , bool desc )
 {
 	Command cmd("SORT");
 	cmd << key;
@@ -201,11 +202,8 @@ bool CRedisClient::sort( const string& key , VecString& values , const bool& des
 	if ( desc )
 		cmd << "DESC";
 
-	if ( _getArry(cmd, values) )
-	{
-		return values.size();
-	}
-	return false;
+    uint64_t num = 0;
+    _getArry(cmd, values, num);
 }
 
 bool CRedisClient::type( const string& key , string& type )

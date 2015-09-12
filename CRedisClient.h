@@ -301,7 +301,7 @@ public:
 	 * @return true for success,false for  key is empty or nonexistent;
 	 * @warning throwing exception of 'ReplyErr', if /key type isn't list nor set/one of the values isn't digital
 	 */
-	bool sort( const string& key , VecString& values , const bool& desc = false );
+    void sort( const string& key , VecString& values ,bool desc = false );
 
 	/**
 	 * @brief 返回 key 所储存的值的类型
@@ -371,11 +371,11 @@ public:
 	 * @param script [in] 一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
 	 * @param keysVec [in] 表示在脚本中所用到的那些 Redis 键(key)，这些键名参数可以在 Lua 中通过全局变量 KEYS 数组，用 1 为基址的形式访问( KEYS[1] ， KEYS[2] ，以此类推)。
 	 * @param argsVec [in] 附加参数 arg [arg ...] ，可以在 Lua 中通过全局变量 ARGV 数组访问，访问的形式和 KEYS 变量类似( ARGV[1] 、 ARGV[2] ，诸如此类)。
-	 * @return true for success,false for failed
+     * @return None
 	 * @warning Throw ReplyErr exception
 	 */
-	bool eval( CResult& values , const string& script , const VecString& keysVec = VecString() ,
-			const VecString& argsVec = VecString() );
+     void eval(CResult& result , const string& script , const VecString& keysVec = VecString() ,
+            const VecString& argsVec = VecString() );
 
 	/**
 	 * @brief 对缓存在服务器中的脚本进行求值
@@ -385,8 +385,8 @@ public:
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
-	bool evalSha( CResult& values , const string& script , const VecString& keysVec =
-			VecString() , const VecString& argsVec = VecString() );
+    void evalSha(CResult& result , const string& script , const VecString& keysVec =
+            VecString() , const VecString& argsVec = VecString() );
 
 	/**
 	 * @brief 将脚本 script 添加到脚本缓存中，但并不立即执行这个脚本
@@ -395,7 +395,7 @@ public:
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
-	bool scriptLoad( string& values , const string& script );
+    void scriptLoad( const string& script, string& values );
 
 	/**
 	 * @brief 表示校验和所指定的脚本是否已经被保存在缓存当中
@@ -403,21 +403,21 @@ public:
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
-	bool scriptExists( const string& script );
+    uint64_t scriptExists(const string& script , VecString &result);
 
 	/**
 	 * @brief 清除所有 Lua 脚本缓存。
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
-	bool scriptFlush( void );
+    void scriptFlush( void );
 
 	/**
 	 * @brief kill  scripts currently executing
 	 * @return true for success,false for failed(command failed)
 	 * @warning Throw ReplyErr exception when No scripts in executing or the script is writing database.
 	 */
-	bool scriptKill( void );
+    void scriptKill( void );
 
 
 	//-----------------------------string method--------------------------------------
@@ -553,7 +553,7 @@ public:
 	 * @如果没有找到 pivot ，返回 -1 。
 	 * @如果 key 不存在或为空列表，返回 0 。
 	 */
-	uint64_t linsert( const string& key , const string &token , const string &pivot ,
+    int64_t linsert( const string& key , const string &token , const string &pivot ,
 			const string &value );
 
 	/**
@@ -563,32 +563,32 @@ public:
 	 * @param value[in] remove some data that equal to value
 	 * @return 被移除元素的数量。因为不存在的 key 被视作空表(empty list)，所以当 key 不存在时， LREM 命令总是返回 0
 	 */
-	uint64_t lrem( const string &key , uint64_t &count , const string &value );
+    uint64_t lrem( const string &key , int64_t &count , const string &value );
 
 	/**
 	 * @brief 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
 	 * @param key[in] name of list
 	 * @param start[in] start position
 	 * @param stop[in] stop position
-	 * @return true if successful，else false
-	 */
-	bool ltrim( const string &key , uint64_t &start , uint64_t &stop );
+     * @return return None
+     */
+    void ltrim( const string &key , uint64_t &start , uint64_t &stop );
 
 	/**
 	 * @brief 将列表 key 下标为 index 的元素的值设置为 value 。
 	 * @param key[in] name of list
 	 * @param index[in] index of list
 	 * @param value[in] a data to be set
-	 * @return true if successful ,else false
+     * @return None
 	 */
-	bool lset( const string &key , uint64_t &index , const string &value );
+    void lset( const string &key , uint64_t &index , const string &value );
 
 	/**
 	 * @brief 将列表 source 中的最后一个元素(尾元素)弹出，并返回给客户端。将 source 弹出的元素插入到列表 destination ，作为 destination 列表的的头元素。
 	 * @param source[in] 原列表名
 	 * @param dest[in]   目标列表
 	 * @param value[out]  a pop data from source to dest
-	 * @return true if successful ,else false.
+     * @return true successful ,false: source is not exists .
 	 */
 	bool rpoplpush( string &source , string &dest , string &value );
 
@@ -972,7 +972,7 @@ public:
 
 	uint64_t psubchannels( VecString& value, const VecString& pattern = VecString() );
 
-	uint64_t psubnumsub( CRedisClient::MapString& value, const VecString& channel = VecString() );
+    uint64_t psubnumsub( CRedisClient::MapString& value,const VecString& channel = VecString() );
 
 	uint64_t psubnumpat( );
 
@@ -983,7 +983,6 @@ public:
 	void unsubscribe( CResult& result, const VecString& channel = VecString() );
 
 	//-----------------------------Server---------------------------------------------------
-    uint64_t stringToVecString(string& str,VecString& vec);
     /**
      * @brief bgrewriteaof Instruct Redis to start an Append Only File rewrite process.
      * @return: Feedback information.
@@ -996,16 +995,17 @@ public:
     string bgsave();
     /**
      * @brief clientGetname Get the current connection name.
-     * @return: The connection name, or a null bulk reply if no name is set.
+     * @param: clientName [out] client name.
+     * @return: true:client name is existent ,false:client name is inexistent .
      */
-    string  clientGetname();
+   bool   clientGetname(string& clientName);
     /**
      * @brief clientKill Kill a connection of a client.
      * @param ip[in]
      * @param port[in]
      * @return:  if the connection exists and has been closed   return true.else return false.
      */
-    bool clientKill(const string& ip,const UInt16 port);
+    void clientKill(const string& ip,const UInt16 port);
     /**
      * @brief clientList Get the list of client connections.
      * @param[in] reply[out] list of client connections.
@@ -1015,9 +1015,9 @@ public:
     /**
      * @brief clientSetname Set the current connection name.
      * @param[in] connectionName
-     * @return: true:success;false:fail.
+     * @return: None
      */
-    bool clientSetname (const string& connectionName);
+    void clientSetname (const string& connectionName);
     /**
      * @brief configGet Get the value of a configuration parameter.
      * @param parameter[in]
@@ -1031,16 +1031,16 @@ public:
     void configResetstat();
     /**
      * @brief configRewrite Rewrite the configuration file with the in memory configuration.
-     * @return: true:success;false:fail.
+     * @return: None
      */
-    bool configRewrite();
+    void configRewrite();
     /**
      * @brief configSet Set a configuration parameter to the given value.
      * @param parameter[in]
      * @param value[in]
-     * @return: true:success;false:fail.
+     * @return: None
      */
-    bool configSet(const string& parameter,const string& value);
+    void configSet(const string& parameter,const string& value);
     /**
      * @brief dbsize Return the number of keys in the selected database.
      * @return: the number of keys in the selected database.
@@ -1092,17 +1092,20 @@ public:
      * @param timeout[in]
      * @param reply[out] received commands in an infinite flow.
      */
-    void monitor(uint64_t timeout, string& reply);
+    void monitorStart( void );
     /**
      * @brief save Synchronously save the dataset to disk.
      * @return: true:success;false:fail.
      */
-    bool save();
+
+    bool monitorRead( string& value, uint64_t timeout );
+    void monitorStop(void);
+    void save();
     /**
      * @brief shutdown Synchronously save the dataset to disk and then shut down the server.
-     * @return On success nothing is returned since the server quits and the connection is closed.
+     * @return true: successful, false: status is information about fail reason
      */
-    string shutdown();
+    bool shutdown(std::string &status);
     /**
      * @brief slaveof Make the server a slave of another instance, or promote it as master.
      * @param host[in]
@@ -1129,7 +1132,7 @@ protected:
 	 */
 	void _sendCommand( const string& cmd );
 
-	bool _getReply( CResult& result );
+    void _getReply( CResult& result );
 
 	/**
 	 * @brief _replyBulk
@@ -1155,7 +1158,7 @@ protected:
 		return value;
 	}
 
-	void _getStringVecFromArry( const CResult::ListCResult& arry , VecString& values );
+    void _getStringVecFromArry( const CResult::ListCResult& arry , VecString& values );
 
 	void _getStringMapFromArry( const CResult::ListCResult& arry , MapString& pairs );
 
@@ -1170,6 +1173,8 @@ protected:
 	 */
 	void _set( const string& key , const string& value , CResult& result ,
 			const string& suffix = "" , long time = 0 , const string suffix2 = "" );
+
+    void _getResult(Command &cmd, CResult &result);
 
 	/**
 	 * @brief _getStatus
@@ -1187,9 +1192,10 @@ protected:
 	 * @return
 	 */
 	bool _getArry( Command& cmd , CResult& result );
-	uint64_t _getArry( Command &cmd , VecString& values );
-	uint64_t _getArry( Command &cmd , MapString& pairs );
+    bool _getArry( Command &cmd , VecString& values, uint64_t& num );
+    bool _getArry(Command &cmd , MapString& pairs, uint64_t &num  );
 
+    uint64_t stringToVecString(string& str,VecString& vec);
 private:
 	DISALLOW_COPY_AND_ASSIGN( CRedisClient );
 

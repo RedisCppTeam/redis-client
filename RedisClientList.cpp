@@ -113,7 +113,7 @@ int64_t CRedisClient::linsert( const string& key , const string &token , const s
 	return num;
 }
 
-uint64_t CRedisClient::lrem( const string &key , uint64_t &count , const string &value )
+uint64_t CRedisClient::lrem(const string &key , int64_t &count , const string &value )
 {
 	Command cmd("LREM");
 	cmd << key << count << value;
@@ -123,22 +123,22 @@ uint64_t CRedisClient::lrem( const string &key , uint64_t &count , const string 
 	return num;
 }
 
-bool CRedisClient::ltrim( const string &key , uint64_t &start , uint64_t &stop )
+void CRedisClient::ltrim( const string &key , uint64_t &start , uint64_t &stop )
 {
 	Command cmd("LTRIM");
 	cmd << key << start << stop;
 
 	string status;
-	return _getStatus(cmd, status);
+    _getStatus(cmd, status);
 }
 
-bool CRedisClient::lset( const string &key , uint64_t &index , const string &value )
+void CRedisClient::lset( const string &key , uint64_t &index , const string &value )
 {
 	Command cmd("LSET");
 	cmd << key << index << value;
 
 	string status;
-	return _getStatus(cmd, status);
+    _getStatus(cmd, status);
 }
 
 bool CRedisClient::rpoplpush( string &source , string &dest , string &value )
@@ -155,8 +155,9 @@ uint64_t CRedisClient::lrange( const string &key , int64_t &start , int64_t &sto
 	Command cmd("LRANGE");
 	cmd << key << start << stop;
 
-	_getArry(cmd, value);
-	return value.size();
+    uint64_t num = 0;
+    _getArry(cmd, value, num);
+    return num;
 }
 
 bool CRedisClient::blpop( const CRedisClient::VecString &key , uint64_t &timeout ,
@@ -171,7 +172,8 @@ bool CRedisClient::blpop( const CRedisClient::VecString &key , uint64_t &timeout
 	}
 	cmd << timeout;
 
-	return _getArry(cmd, value);
+    uint64_t num = 0;
+    return ( _getArry(cmd, value,num) );
 }
 
 bool CRedisClient::brpop( const CRedisClient::VecString &key , uint64_t &timeout ,
@@ -186,7 +188,8 @@ bool CRedisClient::brpop( const CRedisClient::VecString &key , uint64_t &timeout
 	}
 	cmd << timeout;
 
-	return _getArry(cmd, value);
+    uint64_t num = 0;
+    return _getArry(cmd, value,num);
 }
 
 bool CRedisClient::brpoplpush( const string &source , const string &dest , uint64_t &timeout ,
@@ -194,26 +197,8 @@ bool CRedisClient::brpoplpush( const string &source , const string &dest , uint6
 {
 	value.clear();
 	Command cmd("BRPOPLPUSH");
-	cmd << source << dest << timeout;
-	_sendCommand(cmd);
+    cmd << source << dest << timeout;
 
-	CResult result;
-	bool flag = _getReply(result);
-	if ( result.getType() == REDIS_REPLY_STRING )
-	{
-		value = result.getString();
-	}
-	else
-	{
-		int size = result.size();
-		if ( 0 == size )
-		{
-			flag = false;
-		}
-	}
-
-	return flag;
+    return (_getString( cmd, value ));
 }
-
-
 

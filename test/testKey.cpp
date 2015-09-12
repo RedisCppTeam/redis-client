@@ -190,17 +190,11 @@ void testSort( void )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	bool ret;
 	CRedisClient::VecString values;
 
-	ret = redis.sort("today_cost", values);
-	if ( ret )
-		cout << "redis.sort ok:" << ret << endl;
+    redis.sort("today_cost", values);
 
-	else
-		cout << "redis.sort failed:" << ret << endl;
-
-	for ( int i = values.size() - 1 ; i >= 0 ; i-- )
+    for ( int i = values.size() - 1 ; i >= 0 ; i-- )
 	{
 		cout << i << ":" << values[i] << endl;
 	}
@@ -311,69 +305,38 @@ void testevalSha( )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	bool ret;
 	CResult result;
 	string retString;
-	if ( !redis.scriptLoad(retString, "return 'hello moto'") )
-	{
-		cout << "redis.scriptLoad failed:" << endl;
-		return;
-	}
-	cout << "redis.scriptLoad ok:" << retString << endl;
+    redis.scriptLoad("return 'hello moto'",retString );
+    cout << "redis.scriptLoad ok:" << retString << endl;
 
-	ret = redis.evalSha(result, retString);
-	if ( ret )
-		cout << "redis.evalSha ok:" << ret << endl;
-
-	else
-		cout << "redis.evalSha failed:" << ret << endl;
-
+    redis.evalSha(result, retString);
 	cout << "type:" << CResult::getTypeString(result.getType()) << endl;
 	cout << "return:" << result << endl;
-
 }
 
 void testScriptExists( )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	CResult result;
 	string retString;
-	if ( !redis.scriptLoad(retString, "return 'hello moto'") )
-	{
-		cout << "redis.scriptLoad failed:" << endl;
-		return;
-	}
+    redis.scriptLoad( "return 'hello moto'",retString );
 	cout << "redis.scriptLoad ok:" << retString << endl;
 
-	ret = redis.scriptExists(retString);
-	if ( ret )
-		cout << "script exists ok:" << retString << endl;
+    CRedisClient::VecString result;
+    redis.scriptExists(retString,result);
+    cout << "script exists ok:" << retString << endl;
 
-	else
-		cout << "script nonexists:" << retString << endl;
-
-	retString += '2';
-	ret = redis.scriptExists(retString);
-	if ( ret )
-		cout << "script exists ok:" << retString << endl;
-
-	else
-		cout << "script nonexists:" << retString << endl;
-
+    result.clear();
+    retString += '2';
+    redis.scriptExists(retString,result);
 }
 void testScriptFlush( )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	if ( !redis.scriptFlush() )
-	{
-		cout << "scriptFlush failed:" << endl;
-		return;
-	}
+    redis.scriptFlush();
 	cout << "scriptFlush ok!" << endl;
-
 }
 
 //redis-cli:>EVAL "while true do end" 0
@@ -381,13 +344,7 @@ void testScriptKill( )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	string retStr;
-	if ( !redis.scriptKill() )
-	{
-		cout << "scriptFlush failed:" << endl;
-		return;
-	}
-
+    redis.scriptKill();
 	cout << "scriptFlush ok!" << endl;
 
 }

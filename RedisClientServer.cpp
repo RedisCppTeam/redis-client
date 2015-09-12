@@ -1,5 +1,7 @@
 #include "Command.h"
 #include "CRedisClient.h"
+#include "RdException.hpp"
+
 uint64_t CRedisClient::stringToVecString(string& str, CRedisClient::VecString& vec)
 {
     uint64_t i=0;
@@ -15,8 +17,8 @@ uint64_t CRedisClient::stringToVecString(string& str, CRedisClient::VecString& v
         ++i;
     }
     return vec.size();
-
 }
+
 string CRedisClient::bgrewriteaof()
 {
     Command cmd( "BGREWRITEAOF" );
@@ -25,8 +27,6 @@ string CRedisClient::bgrewriteaof()
     return str;
 }
 
-
-
 string CRedisClient::bgsave()
 {
     Command cmd( "BGSAVE" );
@@ -34,16 +34,15 @@ string CRedisClient::bgsave()
     _getStatus(cmd,str);
     return str;
 }
-string  CRedisClient::clientGetname()
+bool  CRedisClient::clientGetname(string& clientName)
 {
     Command cmd( "CLIENT" );
     cmd<<"GETNAME";
-    string str;
-    _getString(cmd,str);
-    return str;
+    return _getString(cmd,clientName);
 
 }
-bool CRedisClient::clientKill(const string& ip,const UInt16 port)
+
+void CRedisClient::clientKill(const string& ip,const UInt16 port)
 {
     Command cmd( "CLIENT" );
     cmd<<"KILL";
@@ -51,9 +50,9 @@ bool CRedisClient::clientKill(const string& ip,const UInt16 port)
     ss << ip<<":"<< port;
     cmd<<ss.str();
     string status;
-    _getStatus( cmd, status );
-    return ("OK"==status? true : false );
-
+     _getStatus(cmd,status);
+    if ( "OK"!=status)
+        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
 }
 /*
 void CRedisClient::clientList(CResult& result)
@@ -66,6 +65,7 @@ void CRedisClient::clientList(CResult& result)
 
 }
 */
+
 uint64_t CRedisClient::clientList(CRedisClient::VecString & reply)
 {
     Command cmd( "CLIENT" );
@@ -74,7 +74,8 @@ uint64_t CRedisClient::clientList(CRedisClient::VecString & reply)
     _getString(cmd,str);
     return stringToVecString(str,reply);
 }
-bool CRedisClient::clientSetname (const string& connectionName)
+
+void CRedisClient::clientSetname(const string& connectionName)
 {
     Command cmd( "CLIENT" );
     cmd<<"SETNAME";
@@ -83,16 +84,21 @@ bool CRedisClient::clientSetname (const string& connectionName)
     string status;
 
     _getStatus( cmd, status );
-    return ("OK"==status? true : false );
-
+    if ( "OK"!=status)
+        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
 }
+
 uint64_t CRedisClient::configGet(const string& parameter,CRedisClient::VecString& reply)
 {
     Command cmd( "CONFIG" );
     cmd<<"GET";
     cmd<<parameter;
-    return   _getArry(cmd,reply);
+
+    uint64_t num = 0;
+    _getArry(cmd,reply, num );
+    return num;
 }
+
 void CRedisClient::configResetstat()
 {
     Command cmd( "CONFIG" );
@@ -102,49 +108,55 @@ void CRedisClient::configResetstat()
     if ( "OK"!=status)
         throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
 }
-bool CRedisClient::configRewrite()
+
+void CRedisClient::configRewrite()
 {
     Command cmd( "CONFIG" );
     cmd<<"REWRITE";
     string status;
     _getStatus( cmd, status );
-    return ("OK"==status? true : false );
+    if ( "OK"!=status)
+        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
 }
-bool CRedisClient::configSet(const string& parameter,const string& value)
+
+void CRedisClient::configSet(const string& parameter,const string& value)
 {
     Command cmd( "CONFIG" );
     cmd<<"SET";
     cmd<<parameter<<value;
     string status;
     _getStatus( cmd, status );
-    return ("OK"==status? true : false );
+    if ( "OK"!=status)
+        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
 }
+
+
 uint64_t CRedisClient::dbsize()
 {
     Command cmd( "DBSIZE" );
     int64_t num;
     _getInt(cmd,num);
     return num;
-
 }
+
 string CRedisClient::debugObject(const string& key)
 {
     Command cmd( "DEBUG" );
     cmd<<"OBJECT";
     cmd<<key;
     string str;
-    _getString(cmd,str);
+    _getStatus(cmd,str);
     return str;
-
 }
+
 void CRedisClient::debugSegfault()
 {
     Command cmd( "DEBUG" );
     cmd<<"SEGFAULT";
     _socket.clearBuffer();
     _sendCommand(cmd);
-
 }
+
 void CRedisClient::flushall()
 {
     Command cmd( "FLUSHALL" );
@@ -153,6 +165,7 @@ void CRedisClient::flushall()
     if ( "OK"!=status)
         throw ProtocolErr( "FLUSHALL: data recved is not OK" );
 }
+
 void CRedisClient::flushdb()
 {
     Command cmd( "FLUSHDB" );
@@ -170,47 +183,68 @@ void CRedisClient::info(CRedisClient::VecString& reply,const string& section)
         cmd << section;
     _getString(cmd,str);
     stringToVecString(str,reply);
-
 }
+
+
 uint64_t CRedisClient::lastsave()
 {
     Command cmd( "LASTSAVE" );
     int64_t num;
     _getInt(cmd,num);
     return num;
-
 }
 
-void CRedisClient::monitor(uint64_t timeout, string& reply)
+void CRedisClient::monitorStart( void )
 {
      Command cmd("MONITOR");
     _socket.clearBuffer();
-    _socket.setReceiveTimeout(timeout);
     _sendCommand(cmd);
-    while(1)
-    {
-        _socket.readLine(reply);
-        reply=reply.substr(1);
-        //std::cout<<reply<<std::endl;
-    }
+}
+bool CRedisClient::monitorRead(std::string &value, uint64_t timeout )
+{
+    _socket.setReceiveTimeout( timeout );
 
+    try{
+        _socket.readLine( value );
+        return true;
+    }
+    catch( ... )
+    {
+        sleep(1);
+        return false;
+    }
 }
 
-bool CRedisClient::save()
+void CRedisClient::monitorStop( void )
+{
+    string info;
+    shutdown( info );
+    sleep(1);
+    reconnect();
+}
+
+
+void CRedisClient::save()
 {
     Command cmd( "SAVE" );
     string status;
     _getStatus( cmd, status );
-    return ("OK"==status? true : false );
-
+    if ( "OK"!=status)
+        throw ProtocolErr( "SAVE: data recved is not OK" );
 }
 
-string CRedisClient::shutdown()
+bool CRedisClient::shutdown( string& status )
 {
     Command cmd( "SHUTDOWN" );
-    string status;
-    _getStatus( cmd, status );
-    return status;
+    try
+    {
+        _getStatus( cmd, status );
+        return false;
+    }catch( RdException&e )
+    {
+        e.what();
+        return true;
+    }
 }
 
 void CRedisClient::slaveof(const string& host,const UInt16 port)
@@ -220,9 +254,8 @@ void CRedisClient::slaveof(const string& host,const UInt16 port)
     string status;
     _getStatus( cmd, status );
     std::cout<<status<<std::endl;
-    if (('O'==status[0])&&('K'==status[1]))
-            return;
-        throw ProtocolErr( "SLAVEOF: data recved is not OK" );
+    if ( "OK"!=status)
+        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
 void CRedisClient::slowlog(const CRedisClient::VecString &subcommand, CResult &reply)
