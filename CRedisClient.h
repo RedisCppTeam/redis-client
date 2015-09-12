@@ -579,32 +579,33 @@ public:
     void ltrim(const string &key , int64_t start , int64_t stop );
 
 	/**
-	 * @brief 将列表 key 下标为 index 的元素的值设置为 value 。
+     * @brief   "Set ``position`` of list ``key`` to ``value``"
 	 * @param key[in] name of list
 	 * @param index[in] index of list
 	 * @param value[in] a data to be set
      * @return None
 	 */
-    void lset( const string &key , uint64_t &index , const string &value );
+    void lset(const string &key , uint64_t index , const string &value );
 
 	/**
-	 * @brief 将列表 source 中的最后一个元素(尾元素)弹出，并返回给客户端。将 source 弹出的元素插入到列表 destination ，作为 destination 列表的的头元素。
+     * @brief    	RPOP a value off of the ``src`` list and atomically LPUSH it
+                        on to the ``dst`` list.  Returns the value.
 	 * @param source[in] 原列表名
 	 * @param dest[in]   目标列表
 	 * @param value[out]  a pop data from source to dest
      * @return true successful ,false: source is not exists .
 	 */
-	bool rpoplpush( string &source , string &dest , string &value );
+    bool rpoplpush( const string &source , const string &dest , string &value );
 
 	/**
-	 * @brief 返回列表 key 中指定区间内的元素，区间以偏移量 start 和 stop 指定。
+     * @brief Return a slice of the list ``key`` between position ``start`` and ``end``。
 	 * @param key[in] name of list
-	 * @param start[in] start position
-	 * @param stop[in]	stop position
-	 * @param value[out]	返回区间内的元素列表
-	 * @return	列表的长度
+     * @param start[in] start position. The first ele is 0, The last ele is -1,The last but not one is -2 ...
+     * @param stop[in]	stop position. The first ele is 0, The last ele is -1,The last but not one is -2 ...
+     * @param value[out]	the slice
+     * @return the length of the slice
 	 */
-	uint64_t lrange( const string &key , int64_t &start , int64_t &stop , VecString &value );
+    uint64_t lrange(const string &key , int64_t start , int64_t stop , VecString &value );
 
 	/**
 	 * @brief lpop的阻塞版本，当给定列表内没有元素弹出的时候，将阻塞，直到等待超时或发现可弹出元素为止。
@@ -635,7 +636,7 @@ public:
 	 * @param value[out]弹出元素
 	 * @return 没元素弹出返回false，否则返回true
 	 */
-	bool brpoplpush( const string &source , const string &dest , uint64_t &timeout ,
+    bool brpoplpush( const string &source , const string &dest , uint64_t timeout ,
 			string &value );
 
 	//------------------------------hash method-----------------------------------

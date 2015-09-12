@@ -269,10 +269,9 @@ void TestLset( void )
 	{
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "testList";
 
-		uint64_t index = 1;
-        redis.lset(mykey, index, "haha");
+        redis.lset(mykey, 10, "haha");
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -288,12 +287,9 @@ void TestLrange( void )
 	{
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
 
-		CRedisClient::VecString value;
-		int64_t start = 0;
-		int64_t stop = 33;
-		uint64_t count = redis.lrange(mykey, start, stop, value);
+        CRedisClient::VecString value;
+        uint64_t count = redis.lrange("testList", 1, -2, value);
 		std::cout << count << std::endl;
 		CRedisClient::VecString::const_iterator it = value.begin();
 		CRedisClient::VecString::const_iterator end = value.end();
@@ -318,65 +314,10 @@ void TestRpoplpush( )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-		string source = "source";
-		string dest = "dest";
-//		CRedisClient::VecString srcValue;
-//		srcValue.push_back("a");
-//		srcValue.push_back("b");
-//		srcValue.push_back("c");
-//		CRedisClient::VecString destValue;
-//		destValue.push_back("1");
-//		destValue.push_back("2");
-//		destValue.push_back("3");
-//
-//		redis.rpush(source, srcValue);
-//		redis.rpush(dest, destValue);
-//		srcValue.clear();
-//		destValue.clear();
-//
-//		cout << "before test rpoplpush......" << endl;
-//		cout << "old source.............." << endl;
-//		int64_t start = 0;
-//		int64_t stop = 2;
-//		redis.lrange(source, start, stop, srcValue);
-//		for ( CRedisClient::VecString::const_iterator it = srcValue.begin() ; it != srcValue.end() ;
-//				it++ )
-//		{
-//			cout << *it << endl;
-//		}
-//		redis.lrange(dest, start, stop, destValue);
-//		cout << "old dest.........." << endl;
-//		for ( CRedisClient::VecString::const_iterator it = destValue.begin() ;
-//				it != destValue.end() ; it++ )
-//		{
-//			cout << *it << endl;
-//		}
-//		srcValue.clear();
-//		destValue.clear();
-//
-//		cout << "after test rpoplpush........" << endl;
-		string value;
-		bool flag = redis.rpoplpush(source, dest, value);
+        string value;
+        bool flag = redis.rpoplpush("source", "dest", value);
 		cout << flag << endl;
-		cout << "value====================" << value << endl;
-
-//		int64_t start_new = 0;
-//		int64_t stop_new = 20;
-//		redis.lrange(source, start_new, stop_new, srcValue);
-//		redis.lrange(dest, start_new, stop_new, destValue);
-//		cout << "new source................" << endl;
-//		for ( CRedisClient::VecString::const_iterator it = srcValue.begin() ; it != srcValue.end() ;
-//				it++ )
-//		{
-//			cout << *it << endl;
-//		}
-//		cout << "new dest..................." << endl;
-//		for ( CRedisClient::VecString::const_iterator it = destValue.begin() ;
-//				it != destValue.end() ; it++ )
-//		{
-//			cout << *it << endl;
-//		}
-
+        cout << "value:" << value << endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -495,31 +436,10 @@ void TestBrpoplpush( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-		string key = "key";
-		string key2 = "key2";
-//		CRedisClient::VecString keyValue;
-//		keyValue.push_back("a");
-//		keyValue.push_back("b");
-//		keyValue.push_back("c");
-//		CRedisClient::VecString key2Value;
-//		key2Value.push_back("1");
-//		key2Value.push_back("2");
-//		key2Value.push_back("3");
-//
-//		redis.rpush(key, keyValue);
-//		redis.rpush(key2, key2Value);
-
 		string value;
-		uint64_t timeout = 1;
-		bool flag=redis.brpoplpush("key", "key2", timeout, value);
+        bool flag=redis.brpoplpush("source", "dest", 1, value);
 		cout<<flag<<endl;
 		cout<<value<<endl;
-//		CRedisClient::VecString::const_iterator it=value.begin();
-//		CRedisClient::VecString::const_iterator end=value.end();
-//		while(it!=end)
-//		{
-//			cout<<*it<<endl;
-//		}
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -541,13 +461,13 @@ void Lmain( void )
 //	TestRpushx();
 //  TestLinsert();
 //  TestLrem();
-    TestLtrim();
-//	TestLset();
-//	TestLrange();
-//	TestRpoplpush();
+//  TestLtrim();
+//  TestLset();
+//  TestLrange();
+//  TestRpoplpush();
 //  TestBlpop();
 //  TestBrpop();
-//	TestBrpoplpush();
+//  TestBrpoplpush();
     return;
 }
 

@@ -132,7 +132,7 @@ void CRedisClient::ltrim( const string &key , int64_t start , int64_t stop )
     _getStatus(cmd, status);
 }
 
-void CRedisClient::lset( const string &key , uint64_t &index , const string &value )
+void CRedisClient::lset( const string &key , uint64_t index , const string &value )
 {
 	Command cmd("LSET");
 	cmd << key << index << value;
@@ -141,7 +141,7 @@ void CRedisClient::lset( const string &key , uint64_t &index , const string &val
     _getStatus(cmd, status);
 }
 
-bool CRedisClient::rpoplpush( string &source , string &dest , string &value )
+bool CRedisClient::rpoplpush( const string &source , const string &dest , string &value )
 {
 	Command cmd("RPOPLPUSH");
 	cmd << source << dest;
@@ -149,7 +149,7 @@ bool CRedisClient::rpoplpush( string &source , string &dest , string &value )
 	return _getString(cmd, value);
 }
 
-uint64_t CRedisClient::lrange( const string &key , int64_t &start , int64_t &stop ,
+uint64_t CRedisClient::lrange( const string &key , int64_t start , int64_t stop ,
 		CRedisClient::VecString &value )
 {
 	Command cmd("LRANGE");
@@ -192,8 +192,8 @@ bool CRedisClient::brpop( const CRedisClient::VecString &key , uint64_t &timeout
     return _getArry(cmd, value,num);
 }
 
-bool CRedisClient::brpoplpush( const string &source , const string &dest , uint64_t &timeout ,
-		string &value )
+bool CRedisClient::brpoplpush(const string &source , const string &dest , uint64_t timeout ,
+        string &value )
 {
 	value.clear();
 	Command cmd("BRPOPLPUSH");
