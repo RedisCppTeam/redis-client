@@ -102,18 +102,18 @@ uint64_t CRedisClient::llen( const string& key )
 	return num;
 }
 
-int64_t CRedisClient::linsert( const string& key , const string &token , const string &pivot ,
+int64_t CRedisClient::linsert( const string& key , const string &where , const string &pivot ,
 		const string &value )
 {
 	Command cmd("LINSERT");
-	cmd << key << token << pivot << value;
+    cmd << key << where << pivot << value;
 
 	int64_t num = 0;
 	_getInt(cmd, num);
 	return num;
 }
 
-uint64_t CRedisClient::lrem(const string &key , int64_t &count , const string &value )
+uint64_t CRedisClient::lrem(const string &key  , const string &value ,int64_t count )
 {
 	Command cmd("LREM");
 	cmd << key << count << value;
@@ -123,7 +123,7 @@ uint64_t CRedisClient::lrem(const string &key , int64_t &count , const string &v
 	return num;
 }
 
-void CRedisClient::ltrim( const string &key , uint64_t &start , uint64_t &stop )
+void CRedisClient::ltrim( const string &key , int64_t start , int64_t stop )
 {
 	Command cmd("LTRIM");
 	cmd << key << start << stop;

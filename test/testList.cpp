@@ -70,16 +70,21 @@ void TestLpop( void )
 {
 	try
 	{
-
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-        string mykey = "kedsay";
+        string mykey = "key";
 
 		std::string value;
-		bool flag = redis.lpop(mykey, value);
-		std::cout << flag << std::endl;
-		std::cout << value << std::endl;
-	} catch( RdException& e )
+        if ( !redis.lpop(mykey, value) )
+        {
+            std::cout << "lpop failed!" << std::endl;
+        }else
+        {
+            std::cout << "lpop successful!" << std::endl;
+            std::cout << value << std::endl;
+        }
+
+    } catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -92,16 +97,20 @@ void TestRpop( void )
 {
 	try
 	{
-
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 		string mykey = "key";
 
 		std::string value;
-		bool flag = redis.rpop(mykey, value);
-		std::cout << flag << std::endl;
-		std::cout << value << std::endl;
-	} catch( RdException& e )
+        if ( !redis.rpop(mykey, value) )
+        {
+            std::cout << "rpop failed!!" << std::endl;
+        }else
+        {
+            std::cout << "rpop successful!!" << std::endl;
+            std::cout << value << std::endl;
+        }
+    } catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -117,12 +126,17 @@ void TestLindex( void )
 
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "testList";
 
-		std::string value;
-		bool flag = redis.lindex(mykey, 2, value);
-		std::cout << flag << std::endl;
-		std::cout << value << std::endl;
+        std::string value;
+
+        if ( !redis.lindex(mykey, 3, value) )
+        {
+            std::cout << "lindex failed!!" << std::endl;
+        }else
+        {
+            std::cout << value << std::endl;
+        }
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -139,7 +153,7 @@ void TestLlen( void )
 
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "testHash";
 
 		std::string value;
 		int64_t count = redis.llen(mykey);
@@ -160,7 +174,7 @@ void TestLpushx( void )
 
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "testList";
 		string value = "x";
 
 		int64_t count = redis.lpushx(mykey, value);
@@ -180,7 +194,7 @@ void TestRpushx( void )
 	{
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "testHash";
 		string value = "y";
 
 		int64_t count = redis.rpushx(mykey, value);
@@ -198,13 +212,11 @@ void TestLinsert( void )
 {
 	try
 	{
-
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "testHash";
 
-		int64_t count = redis.linsert(mykey, "before", "b", "hello");
-//		int64_t count=redis.linsert(mykey,"after","b","world");
+        int64_t count = redis.linsert(mykey, "before", "yuhaiyangdsa", "hello");
 		std::cout << count << std::endl;
 	} catch( RdException& e )
 	{
@@ -221,11 +233,9 @@ void TestLrem( void )
 	{
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
 
-        int64_t num = 3;
-        redis.lrem(mykey, num, "hello");
-//		int64_t count=redis.linsert(mykey,"after","b","world");
+        uint64_t num = redis.lrem("testList","yuhaiyang", 1);
+        std::cout << "num: " << num << std::endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -241,11 +251,9 @@ void TestLtrim( void )
 	{
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-		string mykey = "key";
+        string mykey = "testList";
 
-		uint64_t start = 1;
-		uint64_t stop = 2;
-        redis.ltrim(mykey, start, stop);
+        redis.ltrim(mykey, 0, -2);
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -523,17 +531,17 @@ void TestBrpoplpush( void )
 
 void Lmain( void )
 {
- //   TestLpush();
- //   TestRpush();
-    TestLpop();
-//	TestRpop();
-//	TestLindex();
-//	TestLlen();
-//	TestLpushx();
+ // TestLpush();
+ // TestRpush();
+ // TestLpop();
+//  TestRpop();
+ // TestLindex();
+ // TestLlen();
+ // TestLpushx();
 //	TestRpushx();
-//	TestLinsert();
-//	TestLrem();
-//	TestLtrim();
+//  TestLinsert();
+//  TestLrem();
+    TestLtrim();
 //	TestLset();
 //	TestLrange();
 //	TestRpoplpush();

@@ -547,32 +547,36 @@ public:
 	/**
 	 * @brief 将值 value 插入到列表 key 当中，位于值 pivot 之前或之后
 	 * @param key[in] name of list
-	 * @param token[in] before or after
+     * @param where[in] before / after
 	 * @param value[in] a data to be inserted
 	 * @return 如果命令执行成功，返回插入操作完成之后，列表的长度。
 	 * @如果没有找到 pivot ，返回 -1 。
 	 * @如果 key 不存在或为空列表，返回 0 。
 	 */
-    int64_t linsert( const string& key , const string &token , const string &pivot ,
+    int64_t linsert( const string& key , const string &where , const string &pivot ,
 			const string &value );
 
 	/**
 	 * @brief 根据参数 count 的值，移除列表中与参数 value 相等的元素。
 	 * @param key[in] name of list
-	 * @param count[in] 移除元素个数，正数代表从前往后，负数则相反
+     * @param count[in]
+     *  The ``num`` argument influences the operation in the following ways:
+            num > 0: Remove elements equal to value moving from head to tail.
+            num < 0: Remove elements equal to value moving from tail to head.
+            num = 0: Remove all elements equal to value.
 	 * @param value[in] remove some data that equal to value
 	 * @return 被移除元素的数量。因为不存在的 key 被视作空表(empty list)，所以当 key 不存在时， LREM 命令总是返回 0
 	 */
-    uint64_t lrem( const string &key , int64_t &count , const string &value );
+    uint64_t lrem(const string &key , const string &value , int64_t count=0 );
 
 	/**
-	 * @brief 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
+     * @brief  Trim the list ``key``, removing all values not within the slice between ``start`` and ``end`。
 	 * @param key[in] name of list
-	 * @param start[in] start position
-	 * @param stop[in] stop position
+     * @param start[in] start position.The first ele is 0, The last ele is -1,The last but not one is -2 ...
+     * @param stop[in] stop position. The first ele is 0, The last ele is -1,The last but not one is -2 ...
      * @return return None
      */
-    void ltrim( const string &key , uint64_t &start , uint64_t &stop );
+    void ltrim(const string &key , int64_t start , int64_t stop );
 
 	/**
 	 * @brief 将列表 key 下标为 index 的元素的值设置为 value 。
