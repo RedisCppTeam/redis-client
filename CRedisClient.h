@@ -247,10 +247,10 @@ public:
 	/**
 	 * @brief move key from current DB to dstDBIndex
 	 * @param key [in] the key
-	 * @param dstDBIndex [in]  destination DB inex
+     * @param dstDb [in]  destination DB inex
 	 * @return true for success,fals for failed if no such key or both DB have this key already.
 	 */
-	bool move( const string& key , const int& dstDBIndex );
+    bool move(const string& key , int dstDb );
 
 	enum EobjSubCommand
 	{
@@ -326,23 +326,26 @@ public:
 	 * @param  port [in] port of server
 	 * @param  db [in] db No
 	 * @param  timeout [in] timeout
-	 * @return true for success,false for failed
+     * @param  mode[in] COPY / REPLACE
+     * @return true for success,false for failed
 	 * @warning throwing exception of 'ReplyErr',
 	 */
-	bool migrate( const string& key , const string& host , const uint16_t& port = 6379 ,
-			const uint16_t& db = 0 , const uint16_t& timeout = 3 );
+    void migrate(const string& key , const string& host , uint16_t port = 6379 ,
+            uint16_t db = 0 , uint16_t timeout = 3 , const std::string &mode = "COPY");
 
-	/**
-	 * @brief 基于游标的迭代器（cursor based iterator）： SCAN 命令每次被调用之后， 都会向用户返回一个新的游标， 用户在下次迭代时需要使用这个新游标作为 SCAN 命令的游标参数， 以此来延续之前的迭代过程。
-	 * @param values [out] 得到的键名
-	 * @param index [in] 迭代开始的位置，第一次为0
-	 * @param pattern [in] 键名匹配限制
-	 * @param count [in] 每次迭代出来的元素个数
-	 * @return >0 下次迭代开始的位置，为0时完成本次遍历，<0失败
-	 * @warning 不保证每次执行都返回某个给定数量的元素。
+    /**
+     * @brief scan
+     * @param cursor [in] 0: get value from the first. >=1 : get value from the cursor. <0 get value from last time call hscan.
+     * @param values [out] value returned.
+     * @param match [in] It is possible to only iterate elements matching a given glob-style pattern
+     * @param count	[in] Basically with COUNT the user specified the amount of work that should be done at every call in order to retrieve elements from the collection.
+     * @return true:There are some value you don't scan.  false: you have scaned all value.
+     *	eg:
+     * 			redis.scan( 0, values, "key_??" );
+                while( redis.scan( -1, values,"key_??" ) );
 	 */
-	int scan( VecString& values , const int& index , const string& pattern = "" ,
-			const int& count = 10 );
+     bool scan(int64_t cursor, VecString &values, const std::string &match="",
+            uint64_t count = 10 );
 
 	/**
 	 * @brief 序列化给定 key ，并返回被序列化的值，使用 RESTORE 命令可以将这个值反序列化为 Redis 键
@@ -361,7 +364,7 @@ public:
 	 * @return true for success,false for failed(no such key)
 	 * @warning Throw ReplyErr exception when the key already exists
 	 */
-	bool restore( const string& key , const string& buf , const int& ttl = 0 );
+    bool restore( const string& key , const string& buf , const int ttl = 0 );
 
 
 

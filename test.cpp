@@ -20,17 +20,20 @@ void TranSactionMain( void );
 void Lmain( void );
 void Pmain(void);
 void Cmain(void);
-
+void Kmain( void );
+void TestString( void );
 
 int main()
 {
+    //TestString();
     //Hmain();
-   // Smain();
+    //Smain();
     //TestSortedSet();
     //TestServer();
     //TranSactionMain();
     //Lmain();
     //Pmain();
     //Cmain();
+    Kmain();
 }
 
