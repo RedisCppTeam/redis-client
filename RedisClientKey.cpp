@@ -121,64 +121,39 @@ bool CRedisClient::move( const string& key ,int dstDb )
     return num;
 }
 
-string CRedisClient::object( const EobjSubCommand& subcommand , const string& key )
+void CRedisClient::object(const EobjSubCommand& subcommand , const string& key , CResult &result)
 {
-	Command cmd("OBJECT");
-	int64_t num = 0;
-	string retStr;
-	std::stringstream ss;
-	switch ( subcommand )
+    Command cmd("OBJECT");
+
+    switch ( subcommand )
 	{
 	case REFCOUNT :
-		cmd << "REFCOUNT" << key;
-		if ( _getInt(cmd, num) )
-		{
-			ss << num;
-			return ss.str();
-		}
-		break;
-
-	case IDLETIME :
-		cmd << "IDLETIME" << key;
-		if ( _getInt(cmd, num) )
-		{
-			ss << num;
-			return ss.str();
-		}
-		break;
-
-	case ENCODING :
-		cmd << "ENCODING" << key;
-
-		if ( _getString(cmd, retStr) )
-		{
-			return retStr;
-		}
-		break;
-
-	}
-
-	return REDIS_NIL;
+        cmd << "REFCOUNT" << key; break;
+        case IDLETIME :
+        cmd << "IDLETIME" << key;	break;
+        case ENCODING :
+        cmd << "ENCODING" << key;	break;
+    }
+    _getResult( cmd, result );
 }
 
-string CRedisClient::randomKey( )
+bool CRedisClient::randomKey( string& key )
 {
 	Command cmd("RANDOMKEY");
-	string retKey;
 
-	if ( _getString(cmd, retKey) )
-		return retKey;
-	else
-		return REDIS_NIL;
+    if ( _getString(cmd, key) )
+        return true;
+    else
+        return false;
 }
 
-bool CRedisClient::rename( const string& key , const string& newKey )
+void CRedisClient::rename( const string& key , const string& newKey )
 {
 	Command cmd("RENAME");
 	string status;
 	cmd << key << newKey;
 
-	return _getStatus(cmd, status);
+    _getStatus(cmd, status);
 }
 
 bool CRedisClient::renameNx( const string& key , const string& newKey )
@@ -194,24 +169,105 @@ bool CRedisClient::renameNx( const string& key , const string& newKey )
 	return false;
 }
 
-void CRedisClient::sort(const string& key , VecString& values , bool desc )
+void CRedisClient::sort(const string& key ,CResult& result ,int64_t offset, int64_t count,
+                        const string& by,const VecString&get ,bool desc,bool alpha )
 {
 	Command cmd("SORT");
 	cmd << key;
 
+    if ( by != "" )
+    {
+        cmd << "BY" << by;
+    }
+    if (  offset >=0 )
+    {
+        cmd << "LIMIT" << offset << count;
+    }
+    if ( !get.empty() )
+    {
+        VecString::const_iterator it = get.begin();
+        VecString::const_iterator end = get.end();
+        for( ; it != end; ++it )
+        {
+            cmd << "GET" << *it;
+        }
+    }
 	if ( desc )
 		cmd << "DESC";
+    if ( alpha )
+        cmd << "ALPHA";
 
-    uint64_t num = 0;
-    _getArry(cmd, values, num);
+    _getResult( cmd, result );
+    return ;
 }
 
-bool CRedisClient::type( const string& key , string& type )
+uint64_t CRedisClient::sort(const string& key , const string& storeKey, int64_t offset, int64_t count,
+                        const string& by, const VecString&get , bool desc, bool alpha )
+{
+    Command cmd("SORT");
+    cmd << key;
+
+    if ( by != "" )
+    {
+        cmd << "BY" << by;
+    }
+    if (  offset >=0 && count >=0 )
+    {
+        cmd << "LIMIT" << offset << count;
+    }
+    if ( !get.empty() )
+    {
+        VecString::const_iterator it = get.begin();
+        VecString::const_iterator end = get.end();
+        for( ; it != end; ++it )
+        {
+            cmd << "GET" << *it;
+        }
+    }
+    if ( desc )
+        cmd << "DESC";
+    if ( alpha )
+        cmd << "ALPHA";
+    if ( !storeKey.empty() )
+    {
+        cmd << "STORE" << storeKey;
+    }
+
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
+}
+
+REDIS_DATA_TYPE CRedisClient::type( const string& key )
 {
 	Command cmd("TYPE");
 	cmd << key;
 
-	return _getStatus(cmd, type);
+    string type;
+     _getStatus(cmd, type);
+
+     if( "none" == type )
+     {
+         return NONE;
+     }else if ( "string" == type )
+     {
+         return STRING;
+     }else if ( "list" == type )
+     {
+         return LIST;
+     }else if ( "set" == type )
+     {
+         return SET;
+     }else if ( "zset" == type )
+     {
+         return ZSET;
+     }else if ( "hash" == type )
+     {
+         return HASH;
+     }else
+     {
+         throw ProtocolErr("TYPE:" "type string is unexpection!");
+     }
 }
 
 bool CRedisClient::scan( int64_t cursor,VecString &values, const string &match, uint64_t count )

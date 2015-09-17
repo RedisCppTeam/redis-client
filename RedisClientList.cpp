@@ -83,7 +83,7 @@ bool CRedisClient::rpop( const string &key , std::string &value )
 	return _getString(cmd, value);
 }
 
-bool CRedisClient::lindex( const string &key , const uint64_t index , std::string &value )
+bool CRedisClient::lindex( const string &key ,int64_t index , std::string &value )
 {
 	Command cmd("LINDEX");
 	cmd << key;
@@ -102,11 +102,19 @@ uint64_t CRedisClient::llen( const string& key )
 	return num;
 }
 
-int64_t CRedisClient::linsert( const string& key , const string &where , const string &pivot ,
-		const string &value )
+int64_t CRedisClient::linsert(const string& key , WHERE where , const string &pivot ,
+        const string &value )
 {
+    string realWhere;
 	Command cmd("LINSERT");
-    cmd << key << where << pivot << value;
+    if ( where == BEFORE )
+    {
+        realWhere = "before";
+    }else
+    {
+        realWhere = "after";
+    }
+    cmd << key << realWhere << pivot << value;
 
 	int64_t num = 0;
 	_getInt(cmd, num);

@@ -74,7 +74,7 @@ void TestKeys( void )
 		cout << "exists:" << ( retb ? "true" : "false" ) << endl;
 
 		//-----------keys--------
-		string pattern = "k*";
+        string pattern = "kdsadsadsa";
 		int ret = redis.keys(pattern, keys);
 		for ( ret--; ret >= 0 ; ret-- )
 		{
@@ -94,13 +94,13 @@ void testTTL( void )
 	try
 	{
 		CRedisClient redis;
-		CRedisClient::VecString keys;
 		redis.connect("127.0.0.1", 6379);
 		bool retb;
 		string mykey = "myk";
 		int ttl = 2;
 
 		//-----------exists--------
+        redis.set( "myk", "test" );
 		retb = redis.expire(mykey, 5);
 		cout << "expire:" << ( retb ? "true" : "false" ) << endl;
 		ttl = redis.ttl(mykey);
@@ -144,23 +144,23 @@ void testobj( void )
 	try
 	{
 		CRedisClient redis;
-		CRedisClient::VecString keys;
 		redis.connect("127.0.0.1", 6379);
-		//REFCOUNT = 0, ENCODING, IDLETIME
-		string mykey = "myhx";
-		string ret;
 
-		ret = redis.object(CRedisClient::REFCOUNT, mykey);
-		cout << "redis.object REFCOUNT:" << ret << endl;
+        CResult result;
+        redis.object(CRedisClient::REFCOUNT, "testKey",result );
+        std::cout << "RECOUNT:" << result << std::endl;
 
-		ret = redis.object(CRedisClient::ENCODING, mykey);
-		cout << "redis.object ENCODING:" << ret << endl;
+        redis.object(CRedisClient::ENCODING, "testKey", result );
+        std::cout << "ENCODING:" << result << std::endl;
 
-		ret = redis.object(CRedisClient::IDLETIME, mykey);
-		cout << "redis.object IDLETIME:" << ret << endl;
+        redis.object(CRedisClient::IDLETIME, "testKey", result );
+        std::cout << "IDLETIME:" << result << std::endl;
 
-		ret = redis.randomKey();
-		cout << "randomKey:" << ret << endl;
+        redis.select( 12 );
+        bool ret;
+        string akey;
+        ret = redis.randomKey( akey );
+        cout << "ret:" << ret << "randomKey:" << akey << endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -178,19 +178,14 @@ void testRename( void )
 		redis.connect("127.0.0.1", 6379);
 		bool ret;
 
-		ret = redis.rename("mys", "myu");
-		if ( ret )
-			cout << "redis.rename ok:" << ret << endl;
+     //   redis.rename("mys", "myu1");
+     //   cout << "redis.rename ok:" << endl;
 
-		else
-			cout << "redis.rename failed:" << ret << endl;
-
-		ret = redis.renameNx("myu", "mys");
-		if ( ret )
-			cout << "redis.nx ok:" << ret << endl;
-
-		else
-			cout << "redis.nx failed:" << ret << endl;
+        ret = redis.renameNx("myu", "mys");
+        if ( ret )
+            cout << "redis.nx ok:" << ret << endl;
+        else
+            cout << "redis.nx failed:" << ret << endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -200,39 +195,30 @@ void testSort( void )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	CRedisClient::VecString values;
+    CResult values;
 
-    redis.sort("today_cost", values);
+    CRedisClient::VecString get;
+    get.push_back( "#" );
+    get.push_back("user_info_*->name");
 
-    for ( int i = values.size() - 1 ; i >= 0 ; i-- )
-	{
-		cout << i << ":" << values[i] << endl;
-	}
+    redis.sort("uid", values,0,-1,"user_info_*->level",get,true,true );
+
+    std::cout << values << std::endl;
+
+    //with store
+    redis.sort("uid","tmp", 0, -1,"user_info_*->level",get,true );
 }
 void testType( void )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	string type;
 
-	ret = redis.type("today_cost", type);
-	if ( ret )
-		cout << "redis.type ok:" << ret << endl;
+    REDIS_DATA_TYPE type = redis.type("testHash");
 
-	else
-		cout << "redis.type failed:" << ret << endl;
+    cout << "redis.type ok:" << type << endl;
 
-	cout << "type:" << type << endl;
-
-	ret = redis.type("ki", type);
-	if ( ret )
-		cout << "redis.type ok:" << ret << endl;
-
-	else
-		cout << "redis.type failed:" << ret << endl;
-
-	cout << "type:" << type << endl;
+   type = redis.type("ki");
+    cout << "redis.type ok:" << type << endl;
 }
 
 void testScan( void )
@@ -315,13 +301,13 @@ void Kmain( void )
 //        string dumped;
 //        testDump( dumped );
 //        testRestore(dumped);
-        testScan();
-//		testType();
-//		testSort();
-//		testRename();
-//		testobj();
-//		testTTL();
-//		TestKeys();
+//        testScan();
+//        testType();
+//       testSort();
+//      testRename();
+        testobj();
+      //  testTTL();
+        TestKeys();
 	} catch( RdException& e )
 	{
 		std::cout << endl << "Redis exception !!!!:" << e.what() << std::endl;

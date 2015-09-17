@@ -214,9 +214,9 @@ void TestLinsert( void )
 	{
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
-        string mykey = "testHash";
+        string mykey = "testList";
 
-        int64_t count = redis.linsert(mykey, "before", "yuhaiyangdsa", "hello");
+        int64_t count = redis.linsert(mykey, BEFORE, "zhongwei", "hello");
 		std::cout << count << std::endl;
 	} catch( RdException& e )
 	{
@@ -459,7 +459,7 @@ void Lmain( void )
  // TestLlen();
  // TestLpushx();
 //	TestRpushx();
-//  TestLinsert();
+  TestLinsert();
 //  TestLrem();
 //  TestLtrim();
 //  TestLset();

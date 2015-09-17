@@ -20,8 +20,6 @@
 
 #include "CResult.h"
 
-#define REDIS_NIL "nil"
-
 using namespace Poco;
 
 
@@ -40,6 +38,22 @@ typedef enum
 
 } SORTEDSET_OPTION;
 
+typedef enum
+{
+    NONE = 0,
+    STRING,
+    LIST,
+    SET,
+    ZSET,
+    HASH
+} REDIS_DATA_TYPE;
+
+
+typedef enum
+{
+    BEFORE= 0,
+    AFTER
+} WHERE;
 
 /**
  *@brief CRedisClient redis client
@@ -114,13 +128,13 @@ public:
 	 * @param value [out]返回信息 成功为pong
 	 * @return 成功返回true，失败抛异常
 	 */
-	bool ping( string &value );
+    bool ping( string &value );
 
 	/**
 	 * @brief 请求服务器关闭与当前客户端的连接。
 	 * @return 成功返回true，失败抛异常
 	 */
-	bool quit( );
+    void quit( );
 
 	/**
 	 * @brief 打印一个特定的信息 message ，测试时使用
@@ -128,21 +142,21 @@ public:
 	 * @param value [out]
 	 * @return 成功返回true，失败抛异常
 	 */
-	bool echo( const string &message , string &value );
+    void echo( const string &message , string &value );
 
 	/**
 	 * @brief 如果开启了密码保护的话，在每次连接 Redis 服务器之后，就要使用 AUTH 命令解锁，解锁之后才能使用其他 Redis 命令
 	 * @param password[in]认证密码
 	 * @return 密码匹配时返回true,失败抛异常
 	 */
-	bool auth( const string &password );
+    void auth( const string &password );
 
 	/**
 	 * @brief 切换到指定的数据库，数据库索引号 index 用数字值指定，以 0 作为起始索引值。
 	 * @param index [in]数据库索引号
 	 * @return 成功返回true，失败抛异常
 	 */
-	bool select( uint64_t index );
+    void select( uint64_t index );
 
 
     //---------------------------------Hyperloglog----------------------------------------
@@ -262,27 +276,28 @@ public:
 	 * @param subcommand [in]  子命令
 	 * 		REFCOUNT <key> 返回给定 key 引用所储存的值的次数。此命令主要用于除错。
 	 * 		ENCODING <key> 返回给定 key 锁储存的值所使用的内部表示(representation)。
-	 *		IDLETIME <key> 返回给定 key 自储存以来的空闲时间(idle， 没有被读取也没有被写入)，以秒为单位。
-	 * @return "nil" for no such key, other string for response from redis-server,int type will be convert to string
-	 * @warning Throw ArgmentErr exception when input argument error.
+     *		IDLETIME <key> 返回给定 key 自储存以来的空闲时间(idle， 没有被读取也没有被写入)，以秒为单位。
+     * @param result [out] Return empty object when key is not exists.
+     * @return None
+     * @warning Throw ArgmentErr exception when input argument error.
 	 */
-	string object( const EobjSubCommand& subcommand , const string& key );
+    void object( const EobjSubCommand& subcommand , const string& key,CResult& result );
 
 	/**
 	 * @brief 从当前数据库中随机返回(不删除)一个 key 。
-	 * @param  n/a
-	 * @return "nil" for DB is empty, a random key was return;
-	 */
-	string randomKey( );
+     * @param  key [out] a random key
+     * @return true: successful. false: db is empty.
+    */
+    bool randomKey( string& key );
 
 	/**
 	 * @brief rename key as newkey
 	 * @param  key [in] old key name
 	 * @param  newKey [in] new key name
-	 * @return true for success,false for failed;
+     * @return None
 	 * @warning throwing exception of 'ReplyErr' if no such key
 	 */
-	bool rename( const string& key , const string& newKey );
+    void rename( const string& key , const string& newKey );
 
 	/**
 	 * @brief 当newKey不存在时,将key改名为newkey
@@ -293,16 +308,12 @@ public:
 	 */
 	bool renameNx( const string& key , const string& newKey );
 
-	/**
-	 * @brief 返回键值排序的结果。
-	 * @param flag   [in] 0 小到大排序, 1 从大到小排序
-	 * @param  key [in] key name
-	 * @param  retVec [out] returned values arry
-	 * @return true for success,false for  key is empty or nonexistent;
-	 * @warning throwing exception of 'ReplyErr', if /key type isn't list nor set/one of the values isn't digital
-	 */
-    void sort( const string& key , VecString& values ,bool desc = false );
 
+    void sort(const string& key , CResult &result , int64_t offset=-1, int64_t count=-1,
+                            const string& by="", const VecString& get=VecString() , bool desc=false, bool alpha=false );
+
+    uint64_t sort(const string& key , const string& storeKey, int64_t offset=-1, int64_t count=-1,
+                            const string& by="", const VecString& get=VecString() , bool desc=false, bool alpha=false );
 	/**
 	 * @brief 返回 key 所储存的值的类型
 	 * @param  key [in] key name
@@ -314,10 +325,10 @@ public:
 	 * 	zset (有序集)
 	 * 	hash (哈希表)
 	 *
-	 * @return true for success,false for failed
+     * @return None
 	 * @warning throwing exception of 'ReplyErr',
 	 */
-	bool type( const string& key , string& type );
+    REDIS_DATA_TYPE type( const string& key );
 
 	/**
 	 * @brief 将 key 原子性地从当前redis-server移动到时目标redis-server指定的数据库上
@@ -327,7 +338,7 @@ public:
 	 * @param  db [in] db No
 	 * @param  timeout [in] timeout
      * @param  mode[in] COPY / REPLACE
-     * @return true for success,false for failed
+     * @return None
 	 * @warning throwing exception of 'ReplyErr',
 	 */
     void migrate(const string& key , const string& host , uint16_t port = 6379 ,
@@ -538,7 +549,7 @@ public:
 	 * @param value[out] an element of index of list,if key is not found then value is ""
 	 * @return if value is not "" then true else false
 	 */
-	bool lindex( const string &key , uint64_t index , string &value );
+    bool lindex(const string &key , int64_t index , string &value );
 
 	/**
 	 * @brief return length of a list
@@ -556,7 +567,7 @@ public:
 	 * @如果没有找到 pivot ，返回 -1 。
 	 * @如果 key 不存在或为空列表，返回 0 。
 	 */
-    int64_t linsert( const string& key , const string &where , const string &pivot ,
+    int64_t linsert( const string& key ,WHERE where , const string &pivot ,
 			const string &value );
 
 	/**

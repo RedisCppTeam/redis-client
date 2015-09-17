@@ -26,10 +26,8 @@ void TestPing( void )
 		redis.connect("127.0.0.1", 6379);
 
 		string value;
-		bool flag = redis.ping(value);
-		cout << flag << endl;
-		cout << value << endl;
-	} catch( RdException& e )
+        redis.ping(value);
+    } catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -45,8 +43,7 @@ void TestQuit( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-		bool flag = redis.quit();
-		cout << flag << endl;
+        redis.quit();
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -64,9 +61,7 @@ void TestEcho( void )
 		redis.connect("127.0.0.1", 6379);
 
 		string value;
-		bool flag = redis.echo("hello world", value);
-		cout << flag << endl;
-		cout << value << endl;
+        redis.echo("hello world", value);
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -83,9 +78,7 @@ void TestAuth( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-		string value;
-		bool flag = redis.auth("1234");
-		cout << flag << endl;
+        redis.auth("1234");
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -102,10 +95,8 @@ void TestSelect( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-		string value;
-		bool flag = redis.select(1);
-		cout << flag << endl;
-	} catch( RdException& e )
+        redis.select(1);
+    } catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )

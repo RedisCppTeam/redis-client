@@ -17,38 +17,45 @@
 
 bool CRedisClient::ping( string &value )
 {
-	Command cmd("PING");
-	return _getStatus(cmd, value);
+    try
+    {
+        Command cmd("PING");
+        _getStatus(cmd, value);
+        return true;
+    }catch( ... )
+    {
+        return false;
+    }
 }
 
-bool CRedisClient::quit( )
+void CRedisClient::quit( )
 {
 	Command cmd("QUIT");
 	string value;
-	return _getStatus(cmd, value);
+    _getStatus(cmd, value);
 }
 
-bool CRedisClient::echo( const string &message , string &value )
+void CRedisClient::echo( const string &message , string &value )
 {
 	Command cmd("ECHO");
 	cmd << message;
-	return _getString(cmd, value);
+    _getString(cmd, value);
 }
 
-bool CRedisClient::auth( const string &password )
+void CRedisClient::auth( const string &password )
 {
 	Command cmd("AUTH");
 	cmd << password;
 	string value;
-	return _getStatus(cmd, value);
+    _getStatus(cmd, value);
 }
 
-bool CRedisClient::select( uint64_t index )
+void CRedisClient::select( uint64_t index )
 {
 	Command cmd("SELECT");
 	cmd << index;
 	string value;
-	return _getStatus(cmd, value);
+    _getStatus(cmd, value);
 }
 
 

@@ -31,7 +31,7 @@ void CRedisClient::eval( CResult& result , const string& script , const VecStrin
 	{
 		cmd << argsVec[i];
 	}
-    _getArry( cmd, result );
+    _getResult( cmd, result );
 }
 
 void CRedisClient::evalSha( CResult& result , const string& sha , const VecString& keysVec ,
