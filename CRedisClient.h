@@ -64,6 +64,7 @@ public:
 
 	typedef std::vector<std::string> VecString;
 	typedef std::map<string , string> MapString;
+    typedef std::vector<bool> VecBool;
 
 	CRedisClient( );
 	~CRedisClient( );
@@ -388,8 +389,9 @@ public:
      * @return None
 	 * @warning Throw ReplyErr exception
 	 */
-     void eval(CResult& result , const string& script , const VecString& keysVec = VecString() ,
-            const VecString& argsVec = VecString() );
+     void eval( const string& script , const VecString& keysVec, const VecString& argsVec, CResult& result );
+     void eval( const string& script, CResult& result );
+     void eval( const string& script, const VecString& keysVec,CResult& result );
 
 	/**
 	 * @brief 对缓存在服务器中的脚本进行求值
@@ -399,25 +401,29 @@ public:
 	 * @return true for success,false for failed
 	 * @warning Throw ReplyErr exception
 	 */
-    void evalSha(CResult& result , const string& script , const VecString& keysVec =
-            VecString() , const VecString& argsVec = VecString() );
+    void evalSha( const string& script , const VecString& keysVec, const VecString& argsVec,CResult& result );
 
-	/**
+    void evalSha( const string& script, CResult& result );
+
+    void evalSha( const string& script, const VecString& keys, CResult& result );
+
+    /**
 	 * @brief 将脚本 script 添加到脚本缓存中，但并不立即执行这个脚本
 	 * @param script [in] 一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
 	 * @param values [out] 返回脚本的序列号(校验和)
-	 * @return true for success,false for failed
-	 * @warning Throw ReplyErr exception
+     * @return None
+     * @warning Throw ReplyErr exception
 	 */
     void scriptLoad( const string& script, string& values );
 
 	/**
 	 * @brief 表示校验和所指定的脚本是否已经被保存在缓存当中
 	 * @param script [in] 脚本的序列号(校验和)
-	 * @return true for success,false for failed
+     * @param result [out]
+     * @return None
 	 * @warning Throw ReplyErr exception
 	 */
-    uint64_t scriptExists(const string& script , VecString &result);
+    void scriptExists(const VecString &script , VecBool &result);
 
 	/**
 	 * @brief 清除所有 Lua 脚本缓存。

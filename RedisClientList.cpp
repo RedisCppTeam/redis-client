@@ -145,7 +145,7 @@ void CRedisClient::ltrim( const string &key , int64_t start , int64_t stop )
     _getStatus(cmd, status);
 }
 
-void CRedisClient::lset( const string &key , uint64_t index , const string &value )
+void CRedisClient::lset( const string &key ,int64_t index , const string &value )
 {
 	Command cmd("LSET");
 	cmd << key << index << value;

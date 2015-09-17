@@ -14,45 +14,81 @@
 #include "Command.h"
 #include "CRedisClient.h"
 
-void CRedisClient::eval( CResult& result , const string& script , const VecString& keysVec ,
-		const VecString& argsVec )
+void CRedisClient::eval(const string& script , const VecString& keysVec ,
+        const VecString& argsVec , CResult& result )
 {
 	Command cmd("EVAL");
-	int len = keysVec.size();
+    cmd << script << keysVec.size();
 
-	cmd << script << len;
-	for ( int i = 0 ; i < len ; i++ )
+    VecString::const_iterator it = keysVec.begin();
+    VecString::const_iterator end = keysVec.end();
+
+    for (  ; it != end; ++it )
 	{
-		cmd << keysVec[i];
+        cmd << *it;
 	}
 
-	len = argsVec.size();
-	for ( int i = 0 ; i < len ; i++ )
-	{
-		cmd << argsVec[i];
-	}
+    it = argsVec.begin();
+    end = argsVec.end();
+
+    for( ; it != end; ++it )
+    {
+        cmd << *it;
+    }
+
     _getResult( cmd, result );
 }
 
-void CRedisClient::evalSha( CResult& result , const string& sha , const VecString& keysVec ,
-		const VecString& argsVec )
+void CRedisClient::eval(const std::string &script, CResult &result)
+{
+    VecString keysVec;
+    VecString argsVec;
+    eval( script,keysVec,argsVec,result );
+}
+
+void CRedisClient::eval(const std::string &script, const CRedisClient::VecString &keysVec, CResult &result)
+{
+    VecString argsVec;
+    eval( script,keysVec,argsVec,result );
+}
+
+void CRedisClient::evalSha(const string& sha , const VecString& keysVec ,
+        const VecString& argsVec , CResult& result )
 {
 	Command cmd("EVALSHA");
 
-    int len = keysVec.size();
-	cmd << sha << len;
-    for ( int i = 0 ; i < len ; i++ )
-	{
-		cmd << keysVec[i];
-	}
+    cmd << sha << keysVec.size();
 
-	len = argsVec.size();
-	for ( int i = 0 ; i < len ; i++ )
+    VecString::const_iterator it = keysVec.begin();
+    VecString::const_iterator end = keysVec.end();
+
+    for ( ; it != end; ++it )
 	{
-		cmd << argsVec[i];
+        cmd << *it;
+    }
+
+    it = argsVec.begin();
+    it = argsVec.end();
+
+    for ( ; it != end; ++it )
+	{
+        cmd << *it;
 	}
 
     _getResult( cmd, result );
+}
+
+void CRedisClient::evalSha(const std::string &script, CResult &result)
+{
+    VecString keysVec;
+    VecString argsVec;
+    evalSha( script, keysVec, argsVec, result );
+}
+
+void CRedisClient::evalSha(const std::string &script,const VecString& keys,CResult &result)
+{
+    VecString argsVec;
+    evalSha( script, keys, argsVec, result );
 }
 
 void CRedisClient::scriptLoad(const string& script , string& values )
@@ -63,14 +99,31 @@ void CRedisClient::scriptLoad(const string& script , string& values )
     _getString(cmd, values);
 }
 
-uint64_t CRedisClient::scriptExists( const string& script , VecString& result )
+void CRedisClient::scriptExists( const VecString& script , VecBool& result )
 {
 	Command cmd("SCRIPT");
-	cmd << "EXISTS" << script;
+    cmd << "EXISTS";
 
-    uint64_t num = 0;
-    _getArry( cmd, result, num );
-    return num;
+    VecString::const_iterator sit = script.begin();
+    VecString::const_iterator send = script.end();
+
+    for ( ; sit != send; ++sit )
+    {
+        cmd << *sit;
+    }
+
+    CResult res;
+    _getArry( cmd, res );
+
+    CResult::ListCResult::const_iterator it = res.getArry().begin();
+    CResult::ListCResult::const_iterator end = res.getArry().end();
+
+    for (  ; it != end; ++it )
+    {
+        result.push_back( it->getInt()) ;
+    }
+
+    return;
 }
 
 void CRedisClient::scriptFlush( void )

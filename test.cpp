@@ -22,9 +22,11 @@ void Pmain(void);
 void Cmain(void);
 void Kmain( void );
 void TestString( void );
+void testScript( void );
 
 int main()
 {
+    testScript();
     //TestString();
     //Hmain();
     //Smain();
@@ -33,7 +35,7 @@ int main()
     //TranSactionMain();
     //Lmain();
     //Pmain();
-    Cmain();
+   // Cmain();
     //Kmain();
 }
 
