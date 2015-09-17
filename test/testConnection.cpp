@@ -107,11 +107,11 @@ void TestSelect( void )
 
 void Cmain( void )
 {
-	TestPing();
+//	TestPing();
 	TestQuit();
-	TestEcho();
-	TestAuth();
-	TestSelect();
+//	TestEcho();
+//	TestAuth();
+//	TestSelect();
     return;
 }
 
