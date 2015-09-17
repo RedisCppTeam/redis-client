@@ -547,7 +547,7 @@ public:
 	 * @param key[in] name of list
 	 * @param index[in] index of list
 	 * @param value[out] an element of index of list,if key is not found then value is ""
-	 * @return if value is not "" then true else false
+     * @return true: get value successful. false: key is not exitsts or when index is out of range.
 	 */
     bool lindex(const string &key , int64_t index , string &value );
 
@@ -581,7 +581,15 @@ public:
 	 * @param value[in] remove some data that equal to value
 	 * @return 被移除元素的数量。因为不存在的 key 被视作空表(empty list)，所以当 key 不存在时， LREM 命令总是返回 0
 	 */
-    uint64_t lrem(const string &key , const string &value , int64_t count=0 );
+    uint64_t lrem(const string &key ,int64_t count, const string &value  );
+
+    /**
+     * @brief lrem remove all key which value equal to value.
+     * @param key	[in]
+     * @param value	[in]
+     * @return The number of removed keys.
+     */
+    uint64_t lrem(const string &key , const string &value );
 
 	/**
      * @brief  Trim the list ``key``, removing all values not within the slice between ``start`` and ``end`。
@@ -599,7 +607,7 @@ public:
 	 * @param value[in] a data to be set
      * @return None
 	 */
-    void lset(const string &key , uint64_t index , const string &value );
+    void lset(const string &key , int64_t index , const string &value );
 
 	/**
      * @brief    	RPOP a value off of the ``src`` list and atomically LPUSH it

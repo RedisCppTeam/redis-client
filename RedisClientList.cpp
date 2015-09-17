@@ -121,7 +121,7 @@ int64_t CRedisClient::linsert(const string& key , WHERE where , const string &pi
 	return num;
 }
 
-uint64_t CRedisClient::lrem(const string &key  , const string &value ,int64_t count )
+uint64_t CRedisClient::lrem(const string &key  , int64_t count , const string &value )
 {
 	Command cmd("LREM");
 	cmd << key << count << value;
@@ -129,6 +129,11 @@ uint64_t CRedisClient::lrem(const string &key  , const string &value ,int64_t co
 	int64_t num = 0;
 	_getInt(cmd, num);
 	return num;
+}
+
+uint64_t CRedisClient::lrem(const string &key  , const string &value )
+{
+    return ( lrem( key, 0, value ) );
 }
 
 void CRedisClient::ltrim( const string &key , int64_t start , int64_t stop )

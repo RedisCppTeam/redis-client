@@ -234,7 +234,7 @@ void TestLrem( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-        uint64_t num = redis.lrem("testList","yuhaiyang", 1);
+        uint64_t num = redis.lrem("testList","yuhaiyang");
         std::cout << "num: " << num << std::endl;
 	} catch( RdException& e )
 	{
