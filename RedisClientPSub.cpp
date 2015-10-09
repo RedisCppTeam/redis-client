@@ -58,12 +58,12 @@
 		}
 	}
 
-	return _getArry( cmd, value );
+    uint64_t num = 0;
+    _getArry( cmd, value, num );
+    return num;
  }
 
-
-
- uint64_t CRedisClient::psubnumsub( CRedisClient::MapString& value, const VecString& channel )
+ uint64_t CRedisClient::psubnumsub(CRedisClient::MapString& value ,  const VecString& channel )
  {
 	Command cmd( "PUBSUB" );
 	cmd << "NUMSUB";
@@ -76,10 +76,10 @@
 		}
 	}
 
-	return _getArry( cmd, value );
+    uint64_t num = 0;
+     _getArry( cmd, value,num );
+     return num;
  }
-
-
 
  uint64_t CRedisClient::psubnumpat()
  {
@@ -89,8 +89,6 @@
 	_getInt( cmd, num );
 	return num;
  }
-
-
 
 
  void CRedisClient::punsubscribe( CResult& result, const VecString& pattern )
@@ -112,9 +110,6 @@
  }
 
 
-
-
-
  void CRedisClient::subscribe( VecString& channel, CResult& result )
  {
 	Command cmd( "SUBSCRIBE" );
@@ -134,8 +129,6 @@
  }
 
 
-
-
  void CRedisClient::unsubscribe( CResult& result, const VecString& channel )
  {
 	_socket.clearBuffer();
@@ -151,9 +144,8 @@
 	}
 	_sendCommand( cmd );
 
-	_getReply( result );
+    _getResult( cmd, result );
  }
-
 
 
 

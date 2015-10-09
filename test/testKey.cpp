@@ -18,6 +18,26 @@
 
 using namespace std;
 
+void AddManyKey( void )
+{
+    CRedisClient redis;
+    redis.connect( "127.0.0.1", 6379 );
+
+    string key;
+    std::stringstream ss;
+    for ( int i = 0; i < 1000; i++ )
+     {
+         key = "key_";
+         ss.str("");
+
+         ss << i;
+         key += ss.str();
+         redis.set( key, "ok" );
+     }
+}
+
+
+
 void TestDel( void )
 {
 	try
@@ -25,22 +45,12 @@ void TestDel( void )
 		CRedisClient redis;
 		CRedisClient::VecString keys;
 		redis.connect("127.0.0.1", 6379);
-		string val = "{\"a\":\"ok\"\r\n}";
-		string mykey = "special";
-
-		//-----------get--------
-		if ( redis.get(mykey, val) )
-			std::cout << "my val:" << val << std::endl;
-		else
-			std::cout << "get failed:" << val << std::endl;
-
-		//-----------del--------
+        //-----------del--------
 		keys.clear();
-		keys.push_back("k1");
-		keys.push_back("k2");
-		uint64_t num = redis.del(keys);
+        keys.push_back("k1");
+        keys.push_back("k2");
+        uint64_t num = redis.del( keys );
 		std::cout << "del num:" << num << std::endl;
-
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -64,7 +74,7 @@ void TestKeys( void )
 		cout << "exists:" << ( retb ? "true" : "false" ) << endl;
 
 		//-----------keys--------
-		string pattern = "k*";
+        string pattern = "kdsadsadsa";
 		int ret = redis.keys(pattern, keys);
 		for ( ret--; ret >= 0 ; ret-- )
 		{
@@ -84,13 +94,13 @@ void testTTL( void )
 	try
 	{
 		CRedisClient redis;
-		CRedisClient::VecString keys;
 		redis.connect("127.0.0.1", 6379);
 		bool retb;
 		string mykey = "myk";
 		int ttl = 2;
 
 		//-----------exists--------
+        redis.set( "myk", "test" );
 		retb = redis.expire(mykey, 5);
 		cout << "expire:" << ( retb ? "true" : "false" ) << endl;
 		ttl = redis.ttl(mykey);
@@ -134,23 +144,23 @@ void testobj( void )
 	try
 	{
 		CRedisClient redis;
-		CRedisClient::VecString keys;
 		redis.connect("127.0.0.1", 6379);
-		//REFCOUNT = 0, ENCODING, IDLETIME
-		string mykey = "myhx";
-		string ret;
 
-		ret = redis.object(CRedisClient::REFCOUNT, mykey);
-		cout << "redis.object REFCOUNT:" << ret << endl;
+        CResult result;
+        redis.object(CRedisClient::REFCOUNT, "testKey",result );
+        std::cout << "RECOUNT:" << result << std::endl;
 
-		ret = redis.object(CRedisClient::ENCODING, mykey);
-		cout << "redis.object ENCODING:" << ret << endl;
+        redis.object(CRedisClient::ENCODING, "testKey", result );
+        std::cout << "ENCODING:" << result << std::endl;
 
-		ret = redis.object(CRedisClient::IDLETIME, mykey);
-		cout << "redis.object IDLETIME:" << ret << endl;
+        redis.object(CRedisClient::IDLETIME, "testKey", result );
+        std::cout << "IDLETIME:" << result << std::endl;
 
-		ret = redis.randomKey();
-		cout << "randomKey:" << ret << endl;
+        redis.select( 12 );
+        bool ret;
+        string akey;
+        ret = redis.randomKey( akey );
+        cout << "ret:" << ret << "randomKey:" << akey << endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -168,19 +178,14 @@ void testRename( void )
 		redis.connect("127.0.0.1", 6379);
 		bool ret;
 
-		ret = redis.rename("mys", "myu");
-		if ( ret )
-			cout << "redis.rename ok:" << ret << endl;
+     //   redis.rename("mys", "myu1");
+     //   cout << "redis.rename ok:" << endl;
 
-		else
-			cout << "redis.rename failed:" << ret << endl;
-
-		ret = redis.renameNx("myu", "mys");
-		if ( ret )
-			cout << "redis.nx ok:" << ret << endl;
-
-		else
-			cout << "redis.nx failed:" << ret << endl;
+        ret = redis.renameNx("myu", "mys");
+        if ( ret )
+            cout << "redis.nx ok:" << ret << endl;
+        else
+            cout << "redis.nx failed:" << ret << endl;
 	} catch( RdException& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
@@ -190,268 +195,125 @@ void testSort( void )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	CRedisClient::VecString values;
+    CResult values;
 
-	ret = redis.sort("today_cost", values);
-	if ( ret )
-		cout << "redis.sort ok:" << ret << endl;
+    CRedisClient::VecString get;
+    get.push_back( "#" );
+    get.push_back("user_info_*->name");
 
-	else
-		cout << "redis.sort failed:" << ret << endl;
+    redis.sort("uid", values,0,-1,"user_info_*->level",get,true,true );
 
-	for ( int i = values.size() - 1 ; i >= 0 ; i-- )
-	{
-		cout << i << ":" << values[i] << endl;
-	}
+    std::cout << values << std::endl;
+
+    //with store
+    redis.sort("uid","tmp", 0, -1,"user_info_*->level",get,true );
 }
 void testType( void )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	string type;
 
-	ret = redis.type("today_cost", type);
-	if ( ret )
-		cout << "redis.type ok:" << ret << endl;
+    REDIS_DATA_TYPE type = redis.type("testHash");
 
-	else
-		cout << "redis.type failed:" << ret << endl;
+    cout << "redis.type ok:" << type << endl;
 
-	cout << "type:" << type << endl;
-
-	ret = redis.type("ki", type);
-	if ( ret )
-		cout << "redis.type ok:" << ret << endl;
-
-	else
-		cout << "redis.type failed:" << ret << endl;
-
-	cout << "type:" << type << endl;
+   type = redis.type("ki");
+    cout << "redis.type ok:" << type << endl;
 }
 
 void testScan( void )
 {
+    AddManyKey();
+
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	string type;
 	CRedisClient::VecString values;
 
-	ret = redis.scan(values, 0, "k*", 100);
-	if ( ret > 0 )
-		cout << "redis.scan ok:" << ret << endl;
+    redis.scan( 0, values, "key_??" );
+    while( redis.scan( -1, values,"key_??" ) );
 
-	else
-		cout << "redis.scan failed:" << ret << endl;
-
-	cout << "ret:" << ret << endl;
-
+    std::cout << "size:" << values.size() << std::endl;
 	for ( int i = values.size() - 1 ; i >= 0 ; i-- )
 	{
 		cout << i << ":" << values[i] << endl;
 	}
 }
 
-string testDump( void )
+void testDump( string& dump )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
 	bool ret;
-	string retStr;
 
-	ret = redis.dump("rrKey", retStr);
+    ret = redis.dump("k1", dump );
 	if ( ret )
 		cout << "redis.dump ok:" << ret << endl;
-
 	else
 		cout << "redis.dump failed:" << ret << endl;
 
-	int n = retStr.length();
-	DEBUGOUT("dump", retStr)
-	DEBUGOUT("length", n)
-	char buf[24] =
-	{ 0 };
-	memcpy(buf, retStr.c_str(), n);
-	for ( int i = 0 ; i < n ; i++ )
-	{
-		cout << (int) retStr[i] << "-";
-	}
-	cout << endl;
-	return retStr;
+    DEBUGOUT("dump", dump )
 }
 //
 void testRestore( const string& strInput )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	bool ret;
-//	string retStr;
-//	char buff[256] =
-//	{ 00, 0x01, 0x65, 0x06, 0x00, 0x6c, 0x44, 0x3f, 0xcb, 0x28, 0x4d, 0xe3, 0x8a };
-//	string data; // "\x00\x01\x65\x06\x00\x6c\x44\x3f\xcb\x28\x4d\xe3\x8a";
-//	data.resize(' ', 13);
-//	for ( int i = 0 ; i < 13 ; i++ )
-//	{
-//		data[i] = buff[i];
-//	}
-//	data = data.substr(0, 13);
-
-	ret = redis.restore("uuKey", strInput);
+    bool ret;
+    ret = redis.restore("uuKey", strInput);
 	if ( ret )
 		cout << "redis.restore ok:" << ret << endl;
-
 	else
 		cout << "redis.restore failed:" << ret << endl;
 
+ //   string restoreKey;
+ //   redis.get( "uuKey", restoreKey );
+ //   std::cout << "data:" << restoreKey << std::endl;
 }
 
-void testevalSha( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	CResult result;
-	string retString;
-	if ( !redis.scriptLoad(retString, "return 'hello moto'") )
-	{
-		cout << "redis.scriptLoad failed:" << endl;
-		return;
-	}
-	cout << "redis.scriptLoad ok:" << retString << endl;
 
-	ret = redis.evalSha(result, retString);
-	if ( ret )
-		cout << "redis.evalSha ok:" << ret << endl;
-
-	else
-		cout << "redis.evalSha failed:" << ret << endl;
-
-	cout << "type:" << CResult::getTypeString(result.getType()) << endl;
-	cout << "return:" << result << endl;
-
-}
-
-void testScriptExists( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	bool ret;
-	CResult result;
-	string retString;
-	if ( !redis.scriptLoad(retString, "return 'hello moto'") )
-	{
-		cout << "redis.scriptLoad failed:" << endl;
-		return;
-	}
-	cout << "redis.scriptLoad ok:" << retString << endl;
-
-	ret = redis.scriptExists(retString);
-	if ( ret )
-		cout << "script exists ok:" << retString << endl;
-
-	else
-		cout << "script nonexists:" << retString << endl;
-
-	retString += '2';
-	ret = redis.scriptExists(retString);
-	if ( ret )
-		cout << "script exists ok:" << retString << endl;
-
-	else
-		cout << "script nonexists:" << retString << endl;
-
-}
-void testScriptFlush( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	if ( !redis.scriptFlush() )
-	{
-		cout << "scriptFlush failed:" << endl;
-		return;
-	}
-	cout << "scriptFlush ok!" << endl;
-
-}
-
-//redis-cli:>EVAL "while true do end" 0
-void testScriptKill( )
-{
-	CRedisClient redis;
-	redis.connect("127.0.0.1", 6379);
-	string retStr;
-	if ( !redis.scriptKill() )
-	{
-		cout << "scriptFlush failed:" << endl;
-		return;
-	}
-
-	cout << "scriptFlush ok!" << endl;
-
-}
 void testMigrate( )
 {
 	CRedisClient redis;
 
 	redis.connect("127.0.0.1", 6379);
-	string retStr;
-	if ( !redis.migrate("keyss", "127.0.0.1", 7777) )
-	{
-		cout << "migrate failed:" << endl;
-		return;
-	}
-
-	cout << "migrate ok!" << endl;
-
+    redis.migrate("keyss", "192.168.10.179", 6379 );
 }
 
 void testMove( )
 {
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	string key("key");
-	int dstDB = 1;
-	if ( !redis.move(key, dstDB) )
+    if ( !redis.move("k1", 2) )
 	{
 		cout << "move failed:" << endl;
 		return;
 	}
 	cout << "move ok!" << endl;
-
 }
 
-int kmain( )
+void Kmain( void )
 {
 	try
 	{
-//		testMove();
-//		testMigrate();
-//		TestDel();
-//		testScriptKill();
-//		testScriptFlush();
-//		testScriptExists();
-//		testevalSha();
-//		string dumped = testDump();
-//		testRestore(dumped);
-//		testScan();
-//		testType();
-//		testSort();
-//		testRename();
-//		testobj();
-//		testTTL();
-//		TestKeys();
+//      testMove();
+//      testMigrate();
+//     TestDel();
+//        string dumped;
+//        testDump( dumped );
+//        testRestore(dumped);
+//        testScan();
+//        testType();
+//       testSort();
+//      testRename();
+        testobj();
+      //  testTTL();
+        TestKeys();
 	} catch( RdException& e )
 	{
 		std::cout << endl << "Redis exception !!!!:" << e.what() << std::endl;
-		return -1;
 	} catch( Poco::Exception& e )
 	{
 		std::cout << "Poco_exception:" << e.what() << std::endl;
 	}
-
-	cout << "exit main" << endl;
-	return 1;
 }
 

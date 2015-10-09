@@ -17,8 +17,9 @@ int64_t CRedisClient::keys( const std::string &pattern , VecString &values )
 	Command cmd("KEYS");
 	cmd << pattern;
 
-	_getArry(cmd, values);
-	return values.size();
+    uint64_t num;
+    _getArry(cmd, values,num );
+    return num;
 }
 
 int64_t CRedisClient::del( CRedisClient::VecString &keys )
@@ -111,73 +112,48 @@ bool CRedisClient::persist( const string& key )
 	return num;
 }
 
-bool CRedisClient::move( const string& key , const int& dstDBIndex )
+bool CRedisClient::move( const string& key ,int dstDb )
 {
 	Command cmd("MOVE");
-	cmd << key << dstDBIndex;
+    cmd << key << dstDb;
 	int64_t num = 0;
 	_getInt(cmd, num);
-	return num;
+    return num;
 }
 
-string CRedisClient::object( const EobjSubCommand& subcommand , const string& key )
+void CRedisClient::object(const EobjSubCommand& subcommand , const string& key , CResult &result)
 {
-	Command cmd("OBJECT");
-	int64_t num = 0;
-	string retStr;
-	std::stringstream ss;
-	switch ( subcommand )
+    Command cmd("OBJECT");
+
+    switch ( subcommand )
 	{
 	case REFCOUNT :
-		cmd << "REFCOUNT" << key;
-		if ( _getInt(cmd, num) )
-		{
-			ss << num;
-			return ss.str();
-		}
-		break;
-
-	case IDLETIME :
-		cmd << "IDLETIME" << key;
-		if ( _getInt(cmd, num) )
-		{
-			ss << num;
-			return ss.str();
-		}
-		break;
-
-	case ENCODING :
-		cmd << "ENCODING" << key;
-
-		if ( _getString(cmd, retStr) )
-		{
-			return retStr;
-		}
-		break;
-
-	}
-
-	return REDIS_NIL;
+        cmd << "REFCOUNT" << key; break;
+        case IDLETIME :
+        cmd << "IDLETIME" << key;	break;
+        case ENCODING :
+        cmd << "ENCODING" << key;	break;
+    }
+    _getResult( cmd, result );
 }
 
-string CRedisClient::randomKey( )
+bool CRedisClient::randomKey( string& key )
 {
 	Command cmd("RANDOMKEY");
-	string retKey;
 
-	if ( _getString(cmd, retKey) )
-		return retKey;
-	else
-		return REDIS_NIL;
+    if ( _getString(cmd, key) )
+        return true;
+    else
+        return false;
 }
 
-bool CRedisClient::rename( const string& key , const string& newKey )
+void CRedisClient::rename( const string& key , const string& newKey )
 {
 	Command cmd("RENAME");
 	string status;
 	cmd << key << newKey;
 
-	return _getStatus(cmd, status);
+    _getStatus(cmd, status);
 }
 
 bool CRedisClient::renameNx( const string& key , const string& newKey )
@@ -193,83 +169,140 @@ bool CRedisClient::renameNx( const string& key , const string& newKey )
 	return false;
 }
 
-bool CRedisClient::sort( const string& key , VecString& values , const bool& desc )
+void CRedisClient::sort(const string& key ,CResult& result ,int64_t offset, int64_t count,
+                        const string& by,const VecString&get ,bool desc,bool alpha )
 {
 	Command cmd("SORT");
 	cmd << key;
 
+    if ( by != "" )
+    {
+        cmd << "BY" << by;
+    }
+    if (  offset >=0 )
+    {
+        cmd << "LIMIT" << offset << count;
+    }
+    if ( !get.empty() )
+    {
+        VecString::const_iterator it = get.begin();
+        VecString::const_iterator end = get.end();
+        for( ; it != end; ++it )
+        {
+            cmd << "GET" << *it;
+        }
+    }
 	if ( desc )
 		cmd << "DESC";
+    if ( alpha )
+        cmd << "ALPHA";
 
-	if ( _getArry(cmd, values) )
-	{
-		return values.size();
-	}
-	return false;
+    _getResult( cmd, result );
+    return ;
 }
 
-bool CRedisClient::type( const string& key , string& type )
+uint64_t CRedisClient::sort(const string& key , const string& storeKey, int64_t offset, int64_t count,
+                        const string& by, const VecString&get , bool desc, bool alpha )
+{
+    Command cmd("SORT");
+    cmd << key;
+
+    if ( by != "" )
+    {
+        cmd << "BY" << by;
+    }
+    if (  offset >=0 && count >=0 )
+    {
+        cmd << "LIMIT" << offset << count;
+    }
+    if ( !get.empty() )
+    {
+        VecString::const_iterator it = get.begin();
+        VecString::const_iterator end = get.end();
+        for( ; it != end; ++it )
+        {
+            cmd << "GET" << *it;
+        }
+    }
+    if ( desc )
+        cmd << "DESC";
+    if ( alpha )
+        cmd << "ALPHA";
+    if ( !storeKey.empty() )
+    {
+        cmd << "STORE" << storeKey;
+    }
+
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
+}
+
+REDIS_DATA_TYPE CRedisClient::type( const string& key )
 {
 	Command cmd("TYPE");
 	cmd << key;
 
-	return _getStatus(cmd, type);
+    string type;
+     _getStatus(cmd, type);
+
+     if( "none" == type )
+     {
+         return NONE;
+     }else if ( "string" == type )
+     {
+         return STRING;
+     }else if ( "list" == type )
+     {
+         return LIST;
+     }else if ( "set" == type )
+     {
+         return SET;
+     }else if ( "zset" == type )
+     {
+         return ZSET;
+     }else if ( "hash" == type )
+     {
+         return HASH;
+     }else
+     {
+         throw ProtocolErr("TYPE:" "type string is unexpection!");
+     }
 }
 
-int CRedisClient::scan( VecString& values , const int& index , const string& pattern ,
-		const int& count )
+bool CRedisClient::scan( int64_t cursor,VecString &values, const string &match, uint64_t count )
 {
-	Command cmd("SCAN");
-	string val;
-	int64_t nextNo;
-	CResult arry;
+    static uint64_t lastCur = 0;
+    uint64_t realCur = 0;
+    CResult result;
 
-	cmd << index;
+    if ( cursor >= 0 )
+    {
+        realCur = cursor;
+    }else
+    {
+        realCur = lastCur;
+    }
 
-	if ( !pattern.empty() )
-	{
-		DEBUGOUT("PATTERN:", pattern)
-		cmd << "MATCH" << pattern;
-	}
+    Command cmd( "SCAN" );
+    cmd << realCur;
 
-	if ( count > 0 && count != 10 )
-	{
-		DEBUGOUT("PATTERN:", pattern)
-		cmd << "COUNT" << count;
-	}
+    if ( "" != match )
+    {
+          cmd << "MATCH" << match;
+    }
 
-	if ( !_getArry(cmd, arry) )
-		return -1;
+    if ( 0 != count )
+    {
+           cmd << "COUNT" << count;
+    }
 
-	CResult::ListCResult arrList = arry.getArry();
-	if ( arrList.size() != 2 )
-		return -2;
-
-	CResult::ListCResult::const_iterator it = arrList.begin();
-
-	val = it->getString(); //throw TypeErr
-	std::istringstream istr(val);
-	istr >> nextNo;
-
-	if ( istr.fail() )
-	{
-		throw ProtocolErr(val + ": data received is unexpected");
-	}
-	DEBUGOUT("nextNo", nextNo)
-
-	++it;
-	CResult::ListCResult::const_iterator itKeybgein = it->getArry().begin();
-	CResult::ListCResult::const_iterator itKeyend = it->getArry().end();
-
-	values.clear();
-	while ( itKeybgein != itKeyend )
-	{
-		val = itKeybgein->getString();
-		values.push_back(val);
-		itKeybgein++;
-	}
-
-	return nextNo;
+    _getArry( cmd, result );
+    CResult::ListCResult::const_iterator it = result.getArry().begin();
+   lastCur = _valueFromString<uint64_t>( it->getString() );
+   ++it;
+   _getStringVecFromArry( it->getArry(), values );
+   return ( lastCur == 0 ? false : true );
 }
 
 bool CRedisClient::dump( const string& key , string& retStr )
@@ -279,34 +312,27 @@ bool CRedisClient::dump( const string& key , string& retStr )
 	return _getString(cmd, retStr);
 }
 
-bool CRedisClient::restore( const string& key , const string& buf , const int& ttl )
+bool CRedisClient::restore(const string& key , const string& buf , const int ttl )
 {
 	Command cmd("RESTORE");
 	string status;
-	cmd << key << ttl << buf;
 
-	return _getStatus(cmd, status);
+    cmd << key << ttl << buf;
+
+    return _getStatus(cmd, status);
 }
 
-bool CRedisClient::migrate(  const string& key ,const string& host , const uint16_t& port ,
-		const uint16_t& db , const uint16_t& timeout )
+void CRedisClient::migrate(  const string& key ,const string& host , uint16_t port ,
+        uint16_t db ,uint16_t timeout,const string& mode )
 {
-	CResult result;
 	Command cmd("MIGRATE");
-	cmd << host << port << key << db << timeout;
+    cmd << host << port << key << db << timeout << mode;
 
-	_socket.clearBuffer();
-	_sendCommand(cmd);
-	_getReply(result);
+    string status;
+    _getStatus( cmd, status );
 
-	ReplyType type = result.getType();
-	if ( REDIS_REPLY_STATUS == type )
-	{
-		//"+NOKEY" may returned
-		if (  result.compare(0,2,"OK")==0 || result.compare(0,2,"ok")==0 )
-			return true;
-	}
-
-	throw ReplyErr(result);
-	return false;
+    if ( status != "OK" )
+    {
+        throw ReplyErr( status );
+    }
 }
