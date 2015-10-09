@@ -23,13 +23,13 @@ void Cmain(void);
 
 int main()
 {
-    //Hmain();
-    //Smain();
-    //TestSortedSet();
-    //TestServer();
-    TranSactionMain();
-    Lmain();
-    Pmain();
+//    Hmain();
+//    Smain();
+//    TestSortedSet();
+//    TestServer();
+//    TranSactionMain();
+//    Lmain();
+//    Pmain();
     Cmain();
     return 0;
 }

@@ -1,0 +1,12 @@
+#!/bin/bash
+os_name=`cat /etc/issue`
+
+if [[ $os_name = CentOS* ]];then
+    install_poco="yum install poco-devel.x86_64"
+    cp epel-6.repo /etc/yum.repos.d/ 
+elif [[ $os_name = Ubuntu* ]];then 
+    install_poco="apt-get install libpoco-dev" 
+fi
+
+echo $install_poco
+$install_poco

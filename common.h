@@ -15,7 +15,7 @@
 #define COLLECTFAT_COMMON_H_
 
 #include <iostream>
-#include "Poco/Util/ServerApplication.h"
+//#include "Poco/Util/ServerApplication.h"
 
 ///< 禁止拷贝构造的宏。
 #define DISALLOW_COPY_AND_ASSIGN( TypeName ) 	\

@@ -115,7 +115,7 @@ void CRedisClient::_sendCommand( const string &cmd )
 {
     const char* sdData = cmd.data();
     size_t sdLen = cmd.length();
-
+std::cout<<sdData<<std::endl;
     size_t sded = 0;
     int sd = 0;
     do{

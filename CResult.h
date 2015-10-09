@@ -2,7 +2,8 @@
 #define CRESULT_H
 
 #include "common.h"
-
+#include<list>
+#include<stdint.h>
 
 typedef enum ReplyType
 {
