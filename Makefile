@@ -21,11 +21,12 @@ all:$(OBJS)
 		@echo "build ($(EXEC)) Successful......."
 
 install:
-		sudo cp ./*.h /usr/local/include
-		sudo cp ./*.hpp /usr/local/include
-		sudo cp $(EXEC) /usr/local/lib
-		sudo cp $(EXEC) /usr/lib64
-		sudo ldconfig
+		chmod +r *
+		cp ./*.h /usr/local/include
+		cp ./*.hpp /usr/local/include
+		cp $(EXEC) /usr/local/lib
+		cp $(EXEC) /usr/lib64
+		ldconfig
 		@echo "install Successful......."
 clean :
 		rm -rf $(EXEC) $(OBJS)
