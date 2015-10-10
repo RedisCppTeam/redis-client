@@ -23,10 +23,10 @@ void Cmain(void);
 void Kmain( void );
 void TestString( void );
 void testScript( void );
-
+void testPoolmain();
 int main()
 {
-    testScript();
+//    testScript();
     //TestString();
     //Hmain();
     //Smain();
@@ -37,5 +37,6 @@ int main()
     //Pmain();
    // Cmain();
     //Kmain();
+	testPoolmain();
 }
 
