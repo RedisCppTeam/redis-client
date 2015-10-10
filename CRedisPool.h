@@ -37,7 +37,7 @@ public:
 	* @param nScanTime [in] thread scan time, default 60
 	* @param idleTime [in] idle time, default 60
 	* @return if success return true else return false
-	* @warning If the maximum value is less than the minimum value will initialize the failure.
+	* @warning return value must be checked.pool can't be used when false is returned.
 	*/
     bool init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout=0,
              int32_t  poolSize=DEFALUT_SIZE, uint32_t nScanTime = 60);

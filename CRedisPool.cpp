@@ -10,198 +10,206 @@
  * Revision Description: initial version
  */
 #include "CRedisPool.h"
+#include "CRedisClient.h"
 #include <stdlib.h>
 #include <time.h>
 using namespace std;
 
-CRedisPool::CRedisPool()
+CRedisPool::CRedisPool( )
 {
-    _status = REDIS_POOL_UNCONN;
-    _scanTime = 60;
-    _host.clear();
-    _port = 0;
-    _password.clear();
-    _timeout = 0;
-    _poolSize = DEFALUT_SIZE;
-    _connList.clear();
-    srand( time(NULL) ) ;
+	_status = REDIS_POOL_UNCONN;
+	_scanTime = 60;
+	_host.clear();
+	_port = 0;
+	_password.clear();
+	_timeout = 0;
+	_poolSize = DEFALUT_SIZE;
+	_connList.clear();
+	srand(time(NULL));
 }
 
-CRedisPool::~CRedisPool()
+CRedisPool::~CRedisPool( )
 {
-
+	closeConnPool();
 }
 
-bool CRedisPool::init( const std::string& host, uint16_t port, const std::string& password, uint32_t timeout,
-                      int32_t poolSize, uint32_t nScanTime )
+bool CRedisPool::init( const std::string& host , uint16_t port , const std::string& password ,
+		uint32_t timeout , int32_t poolSize , uint32_t nScanTime )
 {
-    _scanTime = nScanTime;
-    _host = host;
-    _port = port;
-    _password = password;
-    _timeout = timeout;
-    _poolSize= poolSize;
-    _connList.resize( _poolSize, NULL );
+	_scanTime = nScanTime;
+	_host = host;
+	_port = port;
+	_password = password;
+	_timeout = timeout;
+	_poolSize = poolSize;
+	_connList.resize(_poolSize, NULL);
 
-    int32_t i;
-    for( i = 0; i < _poolSize; i++ )
-    {
-        SRedisConn* pRedisConn = new SRedisConn;
-        pRedisConn->idle = true;
-        pRedisConn->connStatus = true;
-        try {
-            pRedisConn->conn.connect( _host, _port );
-        } catch ( Poco::Exception& e ) {
-            DEBUGOUT( "CRedisPool::getConn:------Error:---", e.message() );
-            if( pRedisConn ) {
-                delete pRedisConn;
-                pRedisConn = NULL;
-            }
-            //throw ConnectErr("This connection is timeout");
-            return false;
-        }
-        _connList[i] = pRedisConn;
-    }
-    _status = REDIS_POOL_WORKING;
-    _scanThread.start( __onRunCallBack, this );
-    return true;
+	int32_t i;
+	for ( i = 0; i < _poolSize ; i++ )
+	{
+		SRedisConn* pRedisConn = new SRedisConn;
+		pRedisConn->idle = true;
+		pRedisConn->connStatus = true;
+		try
+		{
+			pRedisConn->conn.connect(_host, _port);
+		} catch( Poco::Exception& e )
+		{
+			DEBUGOUT("Poco::Exception", e.displayText());
+			if ( pRedisConn )
+			{
+				delete pRedisConn;
+				pRedisConn = NULL;
+			}
+			return false;
+		}
+		_connList[i] = pRedisConn;
+	}
+	_status = REDIS_POOL_WORKING;
+	_scanThread.start(__onRunCallBack, this);
+	return true;
 }
 
-CRedisClient *CRedisPool::getConn()
+CRedisClient *CRedisPool::getConn( )
 {
-    if( _status != REDIS_POOL_WORKING )
-        return NULL;
-    Poco::Mutex::ScopedLock lock( _mutex );
-    int32_t  connNum = _getConn();
-    if ( connNum < 0)
-    {
-        _cond.wait( _mutex );
-        connNum = _getConn();
-    }
-    if( connNum >= 0 )
-        return  &( _connList[connNum]->conn );
-    return NULL;
+	if ( _status != REDIS_POOL_WORKING )
+	{
+		return NULL;
+	}
+	Poco::Mutex::ScopedLock lock(_mutex);
+	int32_t connNum = _getConn();
+	if ( connNum < 0 )
+	{
+		DEBUGOUT( "getConn()", "waitting for a idle connection" );
+		_cond.wait(_mutex);
+		connNum = _getConn();
+	}
+	if ( connNum >= 0 )
+		return &( _connList[connNum]->conn );
+	return NULL;
 }
 
 CRedisClient* CRedisPool::getConn( int32_t& connNum )
 {
-    if( _status != REDIS_POOL_WORKING )
-        return NULL;
-    Poco::Mutex::ScopedLock lock( _mutex );
-    connNum=_getConn();
-    if ( connNum < 0 )
-    {
-        _cond.wait( _mutex );
-        connNum = _getConn();
-    }
-    if( connNum >= 0 )
-        return   &( _connList[connNum]->conn );
-    return NULL;
+	if ( _status != REDIS_POOL_WORKING )
+		return NULL;
+	Poco::Mutex::ScopedLock lock(_mutex);
+	connNum = _getConn();
+	if ( connNum < 0 )
+	{
+		DEBUGOUT( "getConn():", "waitting for a idle connection" );
+		_cond.wait(_mutex);
+		connNum = _getConn();
+	}
+	if ( connNum >= 0 )
+		return &( _connList[connNum]->conn );
+	return NULL;
 }
 
 void CRedisPool::pushBackConn( CRedisClient *&pConn )
 {
-    if( _status != REDIS_POOL_WORKING )
-        return;
-    Poco::Mutex::ScopedLock lock( _mutex );
-    int32_t i;
-    for( i = 0; i < _poolSize; i++ )
-    {
-        if ( _connList[i] != NULL )
-        {
-            if ( &( _connList[i]->conn ) == pConn )
-                _connList[i]->idle = true;
-        }
-    }
-    _cond.signal();
+	if ( _status != REDIS_POOL_WORKING )
+		return;
+	Poco::Mutex::ScopedLock lock(_mutex);
+	int32_t i;
+	for ( i = 0; i < _poolSize ; i++ )
+	{
+		if ( _connList[i] != NULL )
+		{
+			if ( &( _connList[i]->conn ) == pConn )
+				_connList[i]->idle = true;
+		}
+	}
+	_cond.signal();
 }
 
 void CRedisPool::pushBackConn( int32_t connNum )
 {
-    if(_status!=REDIS_POOL_WORKING)
-        return;
-    Poco::Mutex::ScopedLock lock( _mutex );
-    _connList[connNum]->idle = true;
-    _cond.signal();
+	if ( _status != REDIS_POOL_WORKING )
+		return;
+	Poco::Mutex::ScopedLock lock(_mutex);
+	_connList[connNum]->idle = true;
+	_cond.signal();
 }
 
-void CRedisPool::closeConnPool(void)
+void CRedisPool::closeConnPool( void )
 {
-    if( _status == REDIS_POOL_DEAD )
-        return;
-    _mutex.lock();
-    _status = REDIS_POOL_DEAD;
-    int32_t i;
-    SRedisConn* pRedisConn;
-    for( i=0; i < _poolSize; i++ )
-    {
-        pRedisConn = _connList[i];
-        if( pRedisConn )
-        {
-        	_connList[i] = NULL;
-            delete pRedisConn;
-        }
-    }
+	if ( _status == REDIS_POOL_DEAD )
+		return;
+	_mutex.lock();
+	_status = REDIS_POOL_DEAD;
+	int32_t i;
+	SRedisConn* pRedisConn;
+	for ( i = 0; i < _poolSize ; i++ )
+	{
+		pRedisConn = _connList[i];
+		if ( pRedisConn )
+		{
+			_connList[i] = NULL;
+			delete pRedisConn;
+		}
+	}
 
-
-    _mutex.unlock();
-    _scanThread.join();	//Waiting for the thread to end
+	_mutex.unlock();
+	_scanThread.join();	//Waiting for the thread to end
 }
 
-int32_t CRedisPool::_getConn()
+int32_t CRedisPool::_getConn( )
 {
-    int32_t i, tRand, tmp;
-    tRand = rand() % _poolSize;
-    for( i = 0; i< _poolSize; i++ )
-    {
-        tmp = ( tRand+i ) % _poolSize;
-        if ( ( _connList[tmp]->idle ) && ( _connList[tmp]->connStatus ) )
-        {
-            _connList[tmp]->idle = false;
-            return tmp;
-        }
-    }
-    return -1;
+	int32_t i, tRand, tmp;
+	tRand = rand() % _poolSize;
+	for ( i = 0; i < _poolSize ; i++ )
+	{
+		tmp = ( tRand + i ) % _poolSize;
+		if ( ( _connList[tmp]->idle ) && ( _connList[tmp]->connStatus ) )
+		{
+			_connList[tmp]->idle = false;
+			return tmp;
+		}
+	}
+	return -1;
 }
 
 void CRedisPool::_keepAlive( void )
 {
-    Poco::Mutex::ScopedLock lock( _mutex );
-    if( _status == REDIS_POOL_DEAD )
-          return;
+	Poco::Mutex::ScopedLock lock(_mutex);
+	if ( _status == REDIS_POOL_DEAD )
+		return;
 
-    int32_t i;
-    SRedisConn* pRedisConn;
-    string value;
-    for( i=0; i < _poolSize; i++ )
-    {
-        pRedisConn = _connList[i];
-        if( !pRedisConn->idle )
-            continue;
-        pRedisConn->connStatus = true;
-        if( !pRedisConn->conn.ping( value ) )
-        {
-            try {
-                pRedisConn->conn.reconnect();
-            }catch ( Poco::Exception& e ) {
-                pRedisConn->idle = true;
-                pRedisConn->connStatus = false;
-                DEBUGOUT( "CRedisPool::keepAlive:------reconnect--Error:---", e.message() );
-                DEBUGOUT( "the connect number ", i );
-            }
-        }
-    }
+	int32_t i;
+	SRedisConn* pRedisConn;
+	string value;
+	for ( i = 0; i < _poolSize ; i++ )
+	{
+		pRedisConn = _connList[i];
+		if ( !pRedisConn->idle )
+			continue;
+		pRedisConn->connStatus = true;
+		if ( !pRedisConn->conn.ping(value) )
+		{
+			try
+			{
+				pRedisConn->conn.reconnect();
+			} catch( Poco::Exception& e )
+			{
+				pRedisConn->idle = true;
+				pRedisConn->connStatus = false;
+				DEBUGOUT("CRedisPool::keepAlive:------reconnect--Error:---", e.message());
+				DEBUGOUT("the connect number ", i);
+			}
+		}
+	}
 }
 
 void CRedisPool::__onRunCallBack( void* pVoid )
 {
-    CRedisPool* pRedisPool = (CRedisPool*)pVoid;
-    if( pRedisPool )
-    {
-        while( pRedisPool->_status == CRedisPool::REDIS_POOL_WORKING )
-        {
-            ::sleep( pRedisPool->_scanTime );
-            pRedisPool->_keepAlive();
-        }
-    }
+	CRedisPool* pRedisPool = (CRedisPool*) pVoid;
+	if ( pRedisPool )
+	{
+		while ( pRedisPool->_status == CRedisPool::REDIS_POOL_WORKING )
+		{
+			::sleep(pRedisPool->_scanTime);
+			pRedisPool->_keepAlive();
+		}
+	}
 }

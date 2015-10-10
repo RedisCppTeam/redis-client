@@ -25,42 +25,77 @@ using namespace std;
 
 void testPoolmain( )
 {
+
 	CRedisClient *pRedis1 = NULL;
 	CRedisPool redisPool;
-
+	int connNum;
+	std::string value;
 	//test CRedisClient::init()  ::getConn()   ::pushBackConn()
-
-	redisPool.init("127.0.0.1", 6379, "", 6, 1000, 6);
-	for ( int i = 0 ; i < 500 ; i++ )
+	try
 	{
-		pRedis1 = redisPool.getConn();
-		std::string value;
-		pRedis1->get("two", value);
-		std::cout << "getConn():two = " << value << "i = " << i << std::endl;
-		redisPool.pushBackConn(pRedis1);
-
-		//test  CRedisClient::getConn( int& )   ::pushBackConn( int& )
-		int connNum;
-		pRedis1 = redisPool.getConn(connNum);
-		if ( NULL != pRedis1 )
+		redisPool.init("127.0.0.1", 6379, "", 6, 1000, 6);
+		for ( int i = 0 ; i < 600 ; i++ )
 		{
+			sleep(1);
+			pRedis1 = redisPool.getConn();
+			if ( pRedis1 == NULL )
+				return;
+
+			pRedis1->get("two", value);
+			std::cout << "getConn():two = " << value << "i = " << i << std::endl;
+//		redisPool.pushBackConn(pRedis1);
+
+//test  CRedisClient::getConn( int& )   ::pushBackConn( int& )
+
+			pRedis1 = redisPool.getConn(connNum);
+			if ( pRedis1 == NULL )
+				return;
 			value.clear();
 			pRedis1->get("two", value);
-			std::cout << "getConn(int&):two = " << value << "ii = " << i<< std::endl;
-			redisPool.pushBackConn(connNum);
+			std::cout << "getConn(int&):two = " << value << "ii = " << i << std::endl;
+//		redisPool.pushBackConn(connNum);
 		}
-
-		pRedis1 = redisPool.getConn(connNum);
-		if ( NULL != pRedis1 )
-		{
-			value.clear();
-			pRedis1->get("two", value);
-			std::cout << "getConn(int&):two = " << value << "iii = " << i<< std::endl;
-			redisPool.pushBackConn(connNum);
-		}
+		redisPool.closeConnPool();
+		return;
+	} catch( RdException& e )
+	{
+		redisPool.closeConnPool();
+		std::cout << "Redis exception:" << e.what() << std::endl;
+	} catch( Poco::Exception& e )
+	{
+		redisPool.closeConnPool();
+		std::cout << "Poco_exception:" << e.what() << std::endl;
 	}
-
-	redisPool.closeConnPool();
-	return;
-
 }
+
+//// 测试 CRedisPool::pushBackConn(CRedisClient *) 释放连接
+//void testPoolmain( )
+//{
+//	CRedisClient *pRedis1 = NULL;
+//	CRedisPool redisPool;
+//	std::string value;
+//	//test CRedisClient::init()  ::getConn()   ::pushBackConn()
+//
+//	redisPool.init("127.0.0.1", 6379, "", 6, 100, 6);
+//	for ( int i = 0 ; i < 100 ; i++ )
+//	{
+//		pRedis1 = redisPool.getConn();
+//		if ( pRedis1 == NULL )
+//			return;
+//
+//		pRedis1->get("two", value);
+//		std::cout << "getConn():two = " << value << "i = " << i << std::endl;
+////		redisPool.pushBackConn(pRedis1);
+//
+//	}
+//	redisPool.pushBackConn( pRedis1 );
+//	redisPool.pushBackConn( pRedis1 );
+//	if ( pRedis1 == NULL )
+//		return;
+//	value.clear();
+//	pRedis1->get("two", value);
+//	std::cout << "getConn(int&):two = " << value << std::endl;
+//	redisPool.closeConnPool();
+//	return;
+//
+//}
