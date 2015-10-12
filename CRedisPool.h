@@ -37,7 +37,7 @@ public:
 	* @param nScanTime [in] thread scan time, default 60
 	* @param idleTime [in] idle time, default 60
 	* @return if success return true else return false
-	* @warning If the maximum value is less than the minimum value will initialize the failure.
+	* @warning return value must be checked.pool can't be used when false is returned.
 	*/
     bool init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout=0,
              int32_t  poolSize=DEFALUT_SIZE, uint32_t nScanTime = 60);
@@ -58,11 +58,7 @@ public:
     void pushBackConn(CRedisClient*& pConn);
     void pushBackConn(int32_t connNum);
 
-	/**
-	* @brief traverse connection pool, if disconnected will be reconnect
-	* @warning If the idle time is reached, the connection will be released.
-	*/
-	void keepAlive(void);
+
 
 	/**
 	* @brief close connection pool
@@ -72,6 +68,11 @@ public:
 protected:
     int32_t _getConn();
 
+	/**
+	* @brief traverse connection pool, if disconnected will be reconnect
+	* @warning If the idle time is reached, the connection will be released.
+	*/
+	void _keepAlive(void);
 private:
 	///< single connection
 	typedef struct
@@ -102,9 +103,9 @@ private:
 
 	RedisConnList _connList;	///< the list of redis connection pool
 
-	uint32_t scanTime;		///< thread scan time, unit: Second
-    REDIS_POOL_STATE status;	///< redis pool state
-	Poco::Thread scanThread;	///< scan thread, if disconnected will be reconnect
+	uint32_t _scanTime;		///< thread scan time, unit: Second
+    REDIS_POOL_STATE _status;	///< redis pool state
+	Poco::Thread _scanThread;	///< scan thread, if disconnected will be reconnect
 
 
 	Poco::Mutex _mutex;

@@ -23,19 +23,20 @@ void Cmain(void);
 void Kmain( void );
 void TestString( void );
 void testScript( void );
-
+void testPoolmain();
 int main()
 {
-    testScript();
+//    testScript();
     //TestString();
     //Hmain();
     //Smain();
     //TestSortedSet();
     //TestServer();
     //TranSactionMain();
-    //Lmain();
+//    Lmain();
     //Pmain();
    // Cmain();
     //Kmain();
+	testPoolmain();
 }
 
