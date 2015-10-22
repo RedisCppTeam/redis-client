@@ -47,8 +47,8 @@ public:
 	* @return return a connection, if busy will wait
 	* @warning The connection timeout will throw exception.
 	*/
-    CRedisClient* getConn();
-    CRedisClient* getConn(int32_t& connNum);
+    CRedisClient* getConn( long millisecond );
+    CRedisClient* getConn(int32_t& connNum, long millisecond);
 
 	/**
 	* @brief put back a connection to the pool

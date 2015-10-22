@@ -70,26 +70,29 @@ bool CRedisPool::init( const std::string& host , uint16_t port , const std::stri
 	return true;
 }
 
-CRedisClient *CRedisPool::getConn( )
+CRedisClient *CRedisPool::getConn(long millisecond)
 {
 	if ( _status != REDIS_POOL_WORKING )
 	{
 		return NULL;
 	}
-	Poco::Mutex::ScopedLock lock(_mutex);
+    Poco::Mutex::ScopedLock lock(_mutex);
+
 	int32_t connNum = _getConn();
 	if ( connNum < 0 )
 	{
 		DEBUGOUT( "getConn()", "waitting for a idle connection" );
-		_cond.wait(_mutex);
+        _cond.wait(_mutex, millisecond );
 		connNum = _getConn();
 	}
-	if ( connNum >= 0 )
+    if ( connNum >= 0 )
+    {
 		return &( _connList[connNum]->conn );
-	return NULL;
+    }
+    return NULL;
 }
 
-CRedisClient* CRedisPool::getConn( int32_t& connNum )
+CRedisClient* CRedisPool::getConn( int32_t& connNum,long millisecond )
 {
 	if ( _status != REDIS_POOL_WORKING )
 		return NULL;
@@ -98,7 +101,7 @@ CRedisClient* CRedisPool::getConn( int32_t& connNum )
 	if ( connNum < 0 )
 	{
 		DEBUGOUT( "getConn():", "waitting for a idle connection" );
-		_cond.wait(_mutex);
+        _cond.wait(_mutex,millisecond);
 		connNum = _getConn();
 	}
 	if ( connNum >= 0 )
