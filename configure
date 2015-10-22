@@ -1,0 +1,22 @@
+#!/bin/bash
+os_name=`cat /etc/issue`
+
+if [[ $os_name = CentOS* ]];then
+    echo "使用root权限执行:"
+	echo "cp epel-6.repo /etc/yum.repos.d/"
+	lib=`yum list|grep poco-devel`
+	if [[ $lib = "poco-devel"* ]];then
+		echo "poco-devel 存在"
+	else
+		echo "yum install poco-devel.x86_64"
+	fi
+elif [[ $os_name = Ubuntu* ]];then
+	lib=`dpkg -l | grep libpoco-dev`
+	if [[ $lib = *"libpoco-dev"* ]];then
+		echo "libpoco-dev 存在"
+	else
+		echo "使用root权限执行:"
+		echo "apt-get install libpoco-dev"
+	fi
+fi
+
