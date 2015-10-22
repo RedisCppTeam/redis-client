@@ -1,0 +1,18 @@
+1.首先下载poco库文件和头文件
+centos
+yum list |grep poco选poco-devel.x86_64安装（64位系统），只有这样全部安装才会有头文件，如果只装一个so，就没头文件。
+安装完头文件在/usr/include/Poco下，so文件在/usr/lib64
+ubuntu
+apt-cache search poco选libpoco-dev，原因同上
+安装完头文件在/usr/include/Poco下，so文件在/usr/lib
+
+2.把我们自己开发的redisclient代码编译成动态链接库.so文件。这里不要编译test.cpp和test目录下的所有test文件
+centos下将so拷贝到/usr/lib64,ubuntu拷贝到/usr/local/lib
+注意：两个系统在经过以上操作后，都要将hpp和h文件拷贝到/usr/local/include
+
+3.g++ test.cpp test/*.cpp -lRedisclient -lPocoNet -lPocoFoundation
+
+
+
+
+注意：执行./configure要用超级用户
