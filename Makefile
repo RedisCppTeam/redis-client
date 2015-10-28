@@ -6,7 +6,7 @@ INCLUDES=-I ./
 
 CXXFLAGS+=$(INCLUDES)
 
-CXXFLAGS+= -Wall -o2 
+CXXFLAGS+= -Wall -o2  -fPIC
 
 #当前目录下的头文件
 SRCS = $(wildcard ./C*.cpp ./R*.cpp )
@@ -17,7 +17,7 @@ LDFLAGS=-lPocoFoundation -lPocoNet
 OBJS=$(SRCS:.cpp=.o)
 
 all:$(OBJS)
-		$(CXX) -shared -fpic C*.cpp R*.cpp R*.hpp -o $(EXEC) 
+		$(CXX) --shared -fPIC $(OBJS) -o $(EXEC) 
 		@echo "build ($(EXEC)) Successful......."
 
 install:
