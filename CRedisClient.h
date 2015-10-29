@@ -493,7 +493,7 @@ public:
 	bool setNX( const string& key , const string& value );
 	bool setXX( const string& key , const string& value );
 
-	uint8_t setbit( const string& key , uint32_t offset , const string& value );
+	uint8_t setbit_( const string& key , uint32_t offset , const string& value );
 
 	uint64_t setrange( const string& key , uint32_t offset , const string& value );
 

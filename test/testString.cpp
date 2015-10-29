@@ -35,7 +35,7 @@ void TestBITCOUNT( CRedisClient& redis )
 	std::cout << "------testBITCOUNT------" << std::endl;
 	uint64_t iRet = redis.bitcount("bits", 0, -1);
 	std::cout << "iRet: " << iRet << std::endl;
-	iRet = redis.setbit("bits", 0, "1");
+	iRet = redis.setbit_("bits", 0, "1");
 	std::cout << "iRet: " << iRet << std::endl;
 	iRet = redis.bitcount("bits");
 	std::cout << "iRet: " << iRet << std::endl;
@@ -45,12 +45,12 @@ void TestBITOP( CRedisClient& redis )
 {
 	std::cout << "------testBITOP------" << std::endl;
 	//bits-1 = 1001
-	redis.setbit("bits-1", 0, "1");
-	redis.setbit("bits-1", 3, "1");
+	redis.setbit_("bits-1", 0, "1");
+	redis.setbit_("bits-1", 3, "1");
 	//bits-2 = 1011
-	redis.setbit("bits-2", 0, "1");
-	redis.setbit("bits-2", 1, "1");
-	redis.setbit("bits-2", 3, "1");
+	redis.setbit_("bits-2", 0, "1");
+	redis.setbit_("bits-2", 1, "1");
+	redis.setbit_("bits-2", 3, "1");
 
 	CRedisClient::VecString keys;
 	keys.push_back("bits-1");
@@ -99,7 +99,7 @@ void TestGET( CRedisClient& redis )
 void TestGETBIT( CRedisClient& redis )
 {
 	std::cout << "------testGETBIT------" << std::endl;
-	redis.setbit("bit", 10086, "1");
+	redis.setbit_("bit", 10086, "1");
 	int iRet = redis.getbit("bit", 10086);
 	std::cout << "iRet: " << iRet << std::endl;
 }
@@ -250,7 +250,7 @@ void TestPSETEX( CRedisClient& redis )
 void TestSETBIT( CRedisClient& redis )
 {
 	std::cout << "------testSETBIT------" << std::endl;
-	int iRet = redis.setbit("bit", 10086, "1");
+	int iRet = redis.setbit_("bit", 10086, "1");
 	std::cout << "iRet: " << iRet << std::endl;
 	iRet = redis.getbit("bit", 10086);
 	std::cout << "iRet: " << iRet << std::endl;

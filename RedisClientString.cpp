@@ -361,7 +361,7 @@ bool CRedisClient::setXX(const std::string &key, const std::string &value)
 }
 
 
-uint8_t CRedisClient::setbit( const string& key, uint32_t offset, const string& value )
+uint8_t CRedisClient::setbit_( const string& key, uint32_t offset, const string& value )
 {
 	Command cmd( "SETBIT" );
 	cmd << key << offset << value;
