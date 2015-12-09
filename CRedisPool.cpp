@@ -109,8 +109,12 @@ CRedisClient* CRedisPool::getConn( int32_t& connNum,long millisecond )
 	return NULL;
 }
 
-void CRedisPool::pushBackConn( CRedisClient *&pConn )
+void CRedisPool::putBackConn( CRedisClient *&pConn )
 {
+	if( NULL == pConn )
+	{
+		return;
+	}
 	if ( _status != REDIS_POOL_WORKING )
 		return;
 	Poco::Mutex::ScopedLock lock(_mutex);
@@ -123,15 +127,21 @@ void CRedisPool::pushBackConn( CRedisClient *&pConn )
 				_connList[i]->idle = true;
 		}
 	}
+	pConn = NULL;
 	_cond.signal();
 }
 
-void CRedisPool::pushBackConn( int32_t connNum )
+void CRedisPool::putBackConn( int32_t& connNum )
 {
+	if ( connNum < 0 || connNum > _poolSize  )
+	{
+		return;
+	}
 	if ( _status != REDIS_POOL_WORKING )
 		return;
 	Poco::Mutex::ScopedLock lock(_mutex);
 	_connList[connNum]->idle = true;
+	connNum = -1;
 	_cond.signal();
 }
 

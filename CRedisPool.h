@@ -55,8 +55,8 @@ public:
 	* @param pConn [in and out] a connection reference
 	* @warning pConn will be set free.If you close the connection pool, not pushBackConn will cause the memory leak.
 	*/
-    void pushBackConn(CRedisClient*& pConn);
-    void pushBackConn(int32_t connNum);
+    void putBackConn(CRedisClient*& pConn);
+    void putBackConn(int32_t& connNum);
 
 
 
