@@ -9,7 +9,7 @@
 using namespace std;
 
 typedef CRedisClient::VecString VEC;
-typedef CRedisClient::MapString MAP;
+typedef CRedisClient::TupleString MAP;
 void TSortesSetPrint(const string &cmd,uint64_t num)
 {
     cout<<cmd<<":"<<num<<endl;
@@ -38,7 +38,7 @@ void TSortesSetPrint(const string &cmd,MAP& map)
     MAP::const_iterator end = map.end();
     for ( ; it != end; ++it )
     {
-        cout << it->first << ":     " << it->second << endl;
+        cout << std::get<0>(*it)<< ":     " << std::get<1>(*it) << endl;
     }
     cout<<endl;
 }
@@ -72,7 +72,7 @@ void SetMap(MAP& map,const string& mapName,uint64_t start,uint64_t end)
         ss << i;
         score= ss.str();
         member += ss.str();
-        map.insert( CRedisClient::MapString::value_type(score,member) );
+        map.push_back(CRedisClient::TupleString::value_type(score,member) );
     }
 }
 
@@ -267,9 +267,10 @@ void TestZscan(){
     redis.connect( "127.0.0.1", 6379 );
     cout<<"----------zscan----------"<<endl;
     MAP map;
-    redis.zscan( "SortedSet", 0, map);
-    while ( redis.zscan("SortedSet", -1, map ) );
+    int64_t cursor=0;
+    while ( redis.zscan("SortedSet", cursor, map ) );
     TSortesSetPrint("redis.zscan( SortedSet, -1, map",map);
+    std::cout<<"totle:"<<map.size()<<std::endl;
 }
 void TestZrangebylex (){
     CRedisClient redis;
@@ -290,26 +291,26 @@ void TestZremrangebylex (){
 }
 void TestSortedSet(){
     TestZadd();
-    TestZcard();
-    TestZcount();
-    TestZincrby();
-    TestZrange();
-    TestZrangeWithscore();
-    TestZrangebyscore();
-    TestZrangebyscoreWithscore();
-    TestZrank();
-    TestZrem();
-    TestZremrangebyrank();
-    TestZremrangebyscore();
-    TestZrevrangeWithscore();
-    TestZrevrangebyscore();
-    TestZrevrangebyscoreWithscore();
-    TestZrevrank();
-    TestZscore();
-    TestZunionstore ();
-    TestZinterstore ();
+//    TestZcard();
+//    TestZcount();
+//    TestZincrby();
+//    TestZrange();
+//    TestZrangeWithscore();
+//    TestZrangebyscore();
+//    TestZrangebyscoreWithscore();
+//    TestZrank();
+//    TestZrem();
+//    TestZremrangebyrank();
+//    TestZremrangebyscore();
+//    TestZrevrangeWithscore();
+//    TestZrevrangebyscore();
+//    TestZrevrangebyscoreWithscore();
+//    TestZrevrank();
+//    TestZscore();
+//    TestZunionstore ();
+//    TestZinterstore ();
     TestZscan();
-    TestZrangebylex ();
-    TestZlexcount ();
-    TestZremrangebylex ();
+//    TestZrangebylex ();
+//    TestZlexcount ();
+//    TestZremrangebylex ();
 }

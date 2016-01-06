@@ -174,7 +174,7 @@ uint64_t CRedisClient::lrange( const string &key , int64_t start , int64_t stop 
 }
 
 bool CRedisClient::blpop( const CRedisClient::VecString &key , uint64_t &timeout ,
-		CRedisClient::MapString &value )
+		CRedisClient::TupleString &value )
 {
 	Command cmd("BLPOP");
 	CRedisClient::VecString::const_iterator it = key.begin();
@@ -190,7 +190,7 @@ bool CRedisClient::blpop( const CRedisClient::VecString &key , uint64_t &timeout
 }
 
 bool CRedisClient::brpop( const CRedisClient::VecString &key , uint64_t &timeout ,
-		CRedisClient::MapString &value )
+		CRedisClient::TupleString &value )
 {
 	Command cmd("BRPOP");
 	CRedisClient::VecString::const_iterator it = key.begin();

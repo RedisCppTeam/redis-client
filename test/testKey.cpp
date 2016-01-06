@@ -229,8 +229,8 @@ void testScan( void )
 	redis.connect("127.0.0.1", 6379);
 	CRedisClient::VecString values;
 
-    redis.scan( 0, values, "key_??" );
-    while( redis.scan( -1, values,"key_??" ) );
+    int64_t cursor=0;
+    while( redis.scan( cursor, values , "key_??"));
 
     std::cout << "size:" << values.size() << std::endl;
 	for ( int i = values.size() - 1 ; i >= 0 ; i-- )
@@ -301,13 +301,13 @@ void Kmain( void )
 //        string dumped;
 //        testDump( dumped );
 //        testRestore(dumped);
-//        testScan();
+       testScan();
 //        testType();
 //       testSort();
 //      testRename();
-        testobj();
+      //  testobj();
       //  testTTL();
-        TestKeys();
+        //TestKeys();
 	} catch( RdException& e )
 	{
 		std::cout << endl << "Redis exception !!!!:" << e.what() << std::endl;

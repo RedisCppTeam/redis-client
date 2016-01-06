@@ -36,7 +36,7 @@ void TestSet( void )
     {
         CRedisClient redis;
         redis.connect( "127.0.0.1", 6379 );
-
+        /*
         //--------------------------test sadd-------------------------------
         CRedisClient::VecString members;
         members.push_back( "yuhaiyang" );
@@ -153,7 +153,8 @@ void TestSet( void )
         uint64_t sunionstoreNum = redis.sunionstroe( "sunionstoreSet", sunionKeys );
         std::cout << "sunionstoreNum: " << sunionstoreNum << std::endl;
         //--------------------------test sscan--------------------------------------------------
-
+        */
+        redis.flushall();
         std::cout << "====================sscan value===================" << std::endl;
         string value = "value_";
         stringstream ss;
@@ -170,10 +171,11 @@ void TestSet( void )
         redis.sadd( "testSet4", sscanMembers1 );
 
         CRedisClient::VecString sscanMembers;
-        redis.sscan( "testSet4", 0, sscanMembers,"value_?" );
-        while ( redis.sscan( "testSet4", -1, sscanMembers ,"value_?") );
+        int64_t cursor=0;
+        while ( redis.sscan( "testSet4", cursor, sscanMembers ,"value_??") );
 
         PrintVector( "sscan", sscanMembers );
+        std::cout<<"totle:"<<sscanMembers.size()<<std::endl;
 
     }catch( RdException& e )
     {

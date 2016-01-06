@@ -7,12 +7,12 @@
  *
  */
 #include <iostream>
-#include "../Command.h"
-#include "../CRedisClient.h"
+#include "Command.h"
+#include "CRedisClient.h"
 #include <stdio.h>
 #include <sstream>
-#include "../RdException.hpp"
-#include "../CResult.h"
+#include "RdException.hpp"
+#include "CResult.h"
 
 using namespace std;
 
@@ -34,46 +34,46 @@ void TestHash( void )
         std::cout << "ret: " << ret << std::endl;
         std::cout << "value:" << value << std::endl;
 
-         //------------------------test hdel------------------------------------------
-         CRedisClient::VecString fields;
-         fields.push_back( "name4" );
-         fields.push_back( "name5" );
+        //------------------------test hdel------------------------------------------
+        CRedisClient::VecString fields;
+        fields.push_back( "name4" );
+        fields.push_back( "name5" );
 
-         uint64_t delNum = redis.hdel( "member", fields );
-         std::cout << "delNum: " << delNum << std::endl;
-         //------------------------test hexists---------------------------------------
-         string field  = "name4";
-         bool isExists = redis.hexists( "testHash", field );
-         if ( isExists )
-             std::cout << "testHash key exists field:" << field << std::endl;
-         else
-             std::cout << "testHash key not exists field:" << field << std::endl;
+        uint64_t delNum = redis.hdel( "member", fields );
+        std::cout << "delNum: " << delNum << std::endl;
+        //------------------------test hexists---------------------------------------
+        string field  = "name4";
+        bool isExists = redis.hexists( "testHash", field );
+        if ( isExists )
+            std::cout << "testHash key exists field:" << field << std::endl;
+        else
+            std::cout << "testHash key not exists field:" << field << std::endl;
         //-----------------------test hgetall-------------------------------------------
-            CRedisClient::MapString allValue;
-            uint64_t allNum = redis.hgetall( "testHash", allValue );
-            std::cout << "allNum: " << allNum <<std::endl;
-            CRedisClient::MapString::const_iterator it = allValue.begin();
+        CRedisClient::TupleString allValue;
+        uint64_t allNum = redis.hgetall( "testHash", allValue );
+        std::cout << "allNum: " << allNum <<std::endl;
+        CRedisClient::TupleString::const_iterator it = allValue.begin();
 
-            for ( ; it != allValue.end(); it++ )
-            {
-                std::cout << it->first << ":" << it->second << std::endl;
-            }
+        for ( ; it != allValue.end(); it++ )
+        {
+            std::cout << get<0>(*it) << ":" << get<1>(*it) << std::endl;
+        }
         //------------------------test incrby-------------------------------------------
-              uint64_t incrybyNum = redis.hincrby( "testHash", "num2", 20 );
-              std::cout << "incrybyNum: " << incrybyNum << std::endl;
-              //------------------------test incrbyfloat-------------------------------------
-              float floatNum = redis.hincrbyfloat( "testHash", "float", 10.1e2 );
-              std::cout << "floatNum: " << floatNum << std::endl;
+        uint64_t incrybyNum = redis.hincrby( "testHash", "num2", 20 );
+        std::cout << "incrybyNum: " << incrybyNum << std::endl;
+        //------------------------test incrbyfloat-------------------------------------
+        float floatNum = redis.hincrbyfloat( "testHash", "float", 10.1e2 );
+        std::cout << "floatNum: " << floatNum << std::endl;
         //------------------------test hkeys-------------------------------------------
-            CRedisClient::VecString hkeysValue;
-            uint64_t hkeysNum = redis.hkeys( "testHash", hkeysValue );
-            std::cout << "hkeysNum: " << hkeysNum << std::endl;
+        CRedisClient::VecString hkeysValue;
+        uint64_t hkeysNum = redis.hkeys( "testHash", hkeysValue );
+        std::cout << "hkeysNum: " << hkeysNum << std::endl;
 
-            CRedisClient::VecString::const_iterator hkeysit = hkeysValue.begin();
-            for ( ; hkeysit != hkeysValue.end(); hkeysit++ )
-            {
-                std::cout << *hkeysit << std::endl;
-            }
+        CRedisClient::VecString::const_iterator hkeysit = hkeysValue.begin();
+        for ( ; hkeysit != hkeysValue.end(); hkeysit++ )
+        {
+            std::cout << *hkeysit << std::endl;
+        }
         //------------------------test hlen-----------------------------------------------
         //     uint64_t fieldNum = redis.hlen( "testHash" );
         //     std::cout << "fieldNum: " << fieldNum << std::endl;
@@ -138,17 +138,31 @@ void TestHash2()
         //-------------------------------test hscan-----------------------------
 
         std::cout << "====================hscan value===================" << std::endl;
-        CRedisClient::MapString hscanPairs;
+        redis.flushall();
 
-        redis.hscan( "testHash", 0, hscanPairs,"pair_1??" );
-        while ( redis.hscan( "testHash", -1, hscanPairs ,"pair_1??") );
+        CRedisClient::TupleString hscanPairs;
 
-        CRedisClient::MapString::const_iterator hscanIt = hscanPairs.begin();
-        CRedisClient::MapString::const_iterator hscanEnd = hscanPairs.end();
+        for(int i=0;i<1000;i++)
+        {
+            std::stringstream ss;
+            string key;
+            ss << i;
+            ss >> key;
+            key="key"+key;
+            string value=key+"VALUE";
+            hscanPairs.push_back(std::tuple<string,string>(key,value));
+        }
+        redis.hmset("testHash",hscanPairs);
+        hscanPairs.clear();
+        int64_t cur=0;
+        while ( redis.hscan( "testHash", cur, hscanPairs) );
+
+        CRedisClient::TupleString::const_iterator hscanIt = hscanPairs.begin();
+        CRedisClient::TupleString::const_iterator hscanEnd = hscanPairs.end();
 
         for ( ; hscanIt != hscanEnd ; ++hscanIt )
         {
-            std::cout << hscanIt->first <<": " << hscanIt->second << std::endl;
+            std::cout << std::get<0>(*hscanIt) <<": " << std::get<1>(*hscanIt) << std::endl;
         }
         std::cout << "totalNum: " << hscanPairs.size() << std::endl;
 
@@ -164,7 +178,7 @@ void TestHash2()
 
 void Hmain( void )
 {
-    TestHash();
+    //  TestHash();
     TestHash2();
 }
 

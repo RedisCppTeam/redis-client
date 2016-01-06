@@ -28,15 +28,15 @@ int main()
 {
 //    testScript();
     //TestString();
-    //Hmain();
-    //Smain();
-    //TestSortedSet();
+   Hmain();
+  //  Smain();
+    TestSortedSet();
     //TestServer();
     //TranSactionMain();
 //    Lmain();
     //Pmain();
    // Cmain();
     //Kmain();
-	testPoolmain();
+    //testPoolmain();
 }
 

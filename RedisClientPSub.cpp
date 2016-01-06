@@ -63,7 +63,7 @@
     return num;
  }
 
- uint64_t CRedisClient::psubnumsub(CRedisClient::MapString& value ,  const VecString& channel )
+ uint64_t CRedisClient::psubnumsub(CRedisClient::TupleString& value ,  const VecString& channel )
  {
 	Command cmd( "PUBSUB" );
 	cmd << "NUMSUB";

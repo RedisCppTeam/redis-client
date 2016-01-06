@@ -26,9 +26,8 @@ using namespace std;
 void testPoolmain( )
 {
 
-	CRedisClient *pRedis1 = NULL;
+    shared_ptr<CRedisClient> pRedis1(nullptr);
 	CRedisPool redisPool;
-	int connNum;
 	std::string value;
 	//test CRedisClient::init()  ::getConn()   ::pushBackConn()
 	try
@@ -37,7 +36,7 @@ void testPoolmain( )
 		for ( int i = 0 ; i < 600 ; i++ )
 		{
 			sleep(1);
-			pRedis1 = redisPool.getConn();
+            pRedis1 = redisPool.getConn(1000);
 			if ( pRedis1 == NULL )
 				return;
 
@@ -47,7 +46,7 @@ void testPoolmain( )
 
 //test  CRedisClient::getConn( int& )   ::pushBackConn( int& )
 
-			pRedis1 = redisPool.getConn(connNum);
+            pRedis1 = redisPool.getConn(1000);
 			if ( pRedis1 == NULL )
 				return;
 			value.clear();

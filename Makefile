@@ -1,12 +1,12 @@
 CXX=g++
-EXEC=libRedisclient.so
+EXEC=libRedisClient.so
 ROOT_PATH=/$(EXEC)
 
 INCLUDES=-I ./
 
 CXXFLAGS+=$(INCLUDES)
 
-CXXFLAGS+= -Wall -o2  -fPIC
+CXXFLAGS+= -Wall -o2  -fPIC -std=c++0x
 
 #当前目录下的头文件
 SRCS = $(wildcard ./C*.cpp ./R*.cpp )

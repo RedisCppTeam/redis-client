@@ -4,8 +4,8 @@
  * @file	CRedisPool.h		
  * @brief CRedisPool class is to create and manage redis connections in the buffer pool.
  * These connections are ready to be used by any thread that needs them.
- * @author: 		yp
- * @date: 		Jul 6, 2015
+ * @author: 		zhangxinhao
+ * @date: 	2015-10
  *
  * Revision Description: initial version
  */
@@ -15,7 +15,7 @@
 
 #include "CRedisClient.h"
 #include <Poco/Condition.h>
-
+#include <memory>
 #define DEFALUT_SIZE   10
 
 
@@ -42,22 +42,7 @@ public:
     bool init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout=0,
              int32_t  poolSize=DEFALUT_SIZE, uint32_t nScanTime = 60);
 
-	/**
-	* @brief get a single connection in the pool
-	* @return return a connection, if busy will wait
-	* @warning The connection timeout will throw exception.
-	*/
-    CRedisClient* getConn( long millisecond );
-    CRedisClient* getConn(int32_t& connNum, long millisecond);
-
-	/**
-	* @brief put back a connection to the pool
-	* @param pConn [in and out] a connection reference
-	* @warning pConn will be set free.If you close the connection pool, not pushBackConn will cause the memory leak.
-	*/
-    void putBackConn(CRedisClient*& pConn);
-    void putBackConn(int32_t& connNum);
-
+    std::shared_ptr <CRedisClient> getConn(long  millisecond ) ;
 
 
 	/**
@@ -65,15 +50,34 @@ public:
 	* @warning Free idle connection, waiting for the scan thread to end.
 	*/
 	void closeConnPool(void);
-protected:
-    int32_t _getConn();
+    int32_t connectedNumber() const;
 
-	/**
-	* @brief traverse connection pool, if disconnected will be reconnect
-	* @warning If the idle time is reached, the connection will be released.
-	*/
-	void _keepAlive(void);
+protected:
+    /**
+    * @brief get a single connection in the pool
+    * @return return a connection, if busy will wait
+    * @warning The connection timeout will throw exception.
+    */
+    CRedisClient* _getConn(int32_t& connNum, long millisecond);
+
+    /**
+    * @brief put back a connection to the pool
+    * @param pConn [in and out] a connection reference
+    * @warning pConn will be set free.If you close the connection pool, not pushBackConn will cause the memory leak.
+    */
+    void _putBackConn(int32_t& connNum);
+
+
 private:
+    int32_t __getConn();
+    /**
+    * @brief traverse connection pool, if disconnected will be reconnect
+    * @warning If the idle time is reached, the connection will be released.
+    */
+    void __keepAlive(void);
+
+    int32_t _connectedNumber;
+
 	///< single connection
 	typedef struct
 	{
