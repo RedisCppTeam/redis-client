@@ -46,7 +46,8 @@ void CRedisPool::closeConnPool()
     _redisPoolIsExistConn = false;
     for (auto& it: _connList)
     {
-        delete it.pConn;
+        if(it.pConn)
+            delete it.pConn;
         it.pConn = nullptr;
     }
     _mutex.unlock();
