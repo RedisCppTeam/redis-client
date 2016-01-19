@@ -15,6 +15,7 @@
 
 #include "CRedisClient.h"
 #include <Poco/Condition.h>
+#include <memory>
 
 #define DEFALUT_SIZE   10
 
@@ -22,7 +23,7 @@
 class CRedisPool
 {
 public:
-	typedef std::shared_ptr<CRedisClient> Hadler;
+	typedef std::shared_ptr<CRedisClient> Handle;
 	CRedisPool();
 	~CRedisPool();
 
