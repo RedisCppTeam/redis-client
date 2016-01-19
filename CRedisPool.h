@@ -22,6 +22,7 @@
 class CRedisPool
 {
 public:
+	typedef std::shared_ptr<CRedisClient> Hadler;
 	CRedisPool();
 	~CRedisPool();
 
