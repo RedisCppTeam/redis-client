@@ -77,7 +77,27 @@ void TranSactionMain( void )
 }
 ```
 
+### CRedisPool
+```cpp
+
+int main()
+{
+    try
+    {
+        CRedisPool redis;
+        redis.init( "127.0.0.1", 6379,"");
+
+        CRedisPool::Handle con = redis.getConn( 10 );
+        con->set("name","haiyang");
+    }catch( RdException& e )
+    {
+        std::cout << e.what() << std::endl;
+    }catch( Poco::Exception& e )
+    {
+        std::cout << e.what() << std::endl;
+    }
+}
+
+```
 ### TODO:
-I think connection pool is needed.
-CRedisSocket could not depend on Poco::Net.Your pull request will be appreciated.
-Could you finish it?
+
