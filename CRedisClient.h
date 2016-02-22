@@ -640,7 +640,7 @@ public:
 	 * @param 当给定多个 key 参数时，按参数 key 的先后顺序依次检查各个列表，弹出第一个非空列表的头元素
 	 * @param key[in] name of list
 	 * @param timeout[in] 超时时间
-	 * @param value[out]弹出的元素，map类型，包含列表名和元素值
+	 * @param value[out]弹出的元素，tuple类型，包含列表名和元素值
 	 * @return 没元素弹出返回false，否则返回true
 	 */
     bool blpop( const VecString &key , uint64_t &timeout , TupleString &value );
@@ -650,7 +650,7 @@ public:
 	 * @param 当给定多个 key 参数时，按参数 key 的先后顺序依次检查各个列表，弹出第一个非空列表的尾部元素。
 	 * @param key[in] name of list
 	 * @param timeout[in] 超时时间
-	 * @param value[out]弹出的元素，map类型，包含列表名和元素值
+	 * @param value[out]弹出的元素，tuple类型，包含列表名和元素值
 	 * @return 没元素弹出返回false，否则返回true
 	 */
     bool brpop( const VecString &key , uint64_t &timeout , TupleString &value );
@@ -789,10 +789,10 @@ public:
     /**
      * @brief zadd Add one or more members to a sorted set, or update its score if it already exists
      * @param key[in]
-     * @param map[in]
+     * @param datas[in]
      * @return:  The number of elements added to the sorted sets, not including elements already existing for which the score was updated.
      */
-    uint64_t  zadd(const string& key,const TupleString& map);
+    uint64_t  zadd(const string& key,const TupleString& datas);
     /**
      * @brief zcard Get the number of members in a sorted set
      * @param key[in]

@@ -3,12 +3,12 @@
 #include "CRedisClient.h"
 
 
-uint64_t CRedisClient::zadd(const string &key, const CRedisClient::TupleString &map)
+uint64_t CRedisClient::zadd(const string &key, const CRedisClient::TupleString &datas)
 {
     Command cmd( "ZADD" );
     cmd << key;
-    TupleString::const_iterator it = map.begin();
-    TupleString::const_iterator end = map.end();
+    TupleString::const_iterator it = datas.begin();
+    TupleString::const_iterator end = datas.end();
 
     for ( ; it !=end ; ++it )
     {
