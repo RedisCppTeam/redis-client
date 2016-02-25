@@ -342,40 +342,6 @@ uint64_t CRedisClient::zinterstore (const string& destination,const VecString& k
 }
 bool CRedisClient::zscan(const string &key, int64_t& cursor, TupleString &reply, const string &match, uint64_t count )
 {
-//    static uint64_t lastCur = 0;
-//    uint64_t realCur = 0;
-//    CResult result;
-
-//    if ( cursor >= 0 )
-//    {
-//        realCur = cursor;
-//    }else
-//    {
-//        realCur = lastCur;
-//    }
-
-//    Command cmd( "ZSCAN" );
-//    cmd << key << realCur;
-
-//    if ( "" != match )
-//    {
-//        cmd << "MATCH" << match;
-//    }
-
-//    if ( 0 != count )
-//    {
-//        cmd << "COUNT" << count;
-//    }
-
-//    _getArry( cmd, result );
-//    CResult::ListCResult::const_iterator it = result.getArry().begin();
-//    lastCur = _valueFromString<uint64_t>( it->getString() );
-//    ++it;
-//    _getStringMapFromArry( it->getArry(),reply );
-//    return ( lastCur == 0 ? false : true );
-
-
-
     CResult result;
     Command cmd( "ZSCAN" );
     cmd << key << cursor;
@@ -417,7 +383,6 @@ uint64_t CRedisClient::zlexcount(const string &key, const string &min, const str
     int64_t num;
     _getInt(cmd,num);
     return num;
-
 }
 
 uint64_t CRedisClient::zremrangebylex(const string &key, const string &min, const string &max)
