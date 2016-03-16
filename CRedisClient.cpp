@@ -68,6 +68,8 @@ void CRedisClient::connect( const string &ip, UInt16 port )
 void CRedisClient::connect()
 {
     _socket.connect( _addr,_timeout );
+    _socket.setSendTimeout( _timeout );
+    _socket.setReceiveTimeout( _timeout );
 }
 
 void CRedisClient::reconnect()
