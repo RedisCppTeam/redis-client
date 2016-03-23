@@ -168,39 +168,27 @@ uint64_t CRedisClient::hvals(const string &key, CRedisClient::VecString &values)
 }
 
 
-bool CRedisClient::hscan(const string &key, int64_t cursor, MapString &values, const string &match, uint64_t count )
+bool CRedisClient::hscan(const string &key, int64_t &cursor, MapString &values, const string &match, uint64_t count )
 {
-    static uint64_t lastCur = 0;
-    uint64_t realCur = 0;
     CResult result;
-
-    if ( cursor >= 0 )
-    {
-        realCur = cursor;
-    }else
-    {
-        realCur = lastCur;
-    }
-
     Command cmd( "HSCAN" );
-    cmd << key << realCur;
+    cmd << key << cursor;
 
     if ( "" != match )
     {
-          cmd << "MATCH" << match;
+        cmd << "MATCH" << match;
     }
 
     if ( 0 != count )
     {
-           cmd << "COUNT" << count;
+        cmd << "COUNT" << count;
     }
-
     _getArry( cmd, result );
     CResult::ListCResult::const_iterator it = result.getArry().begin();
-   lastCur = _valueFromString<uint64_t>( it->getString() );
-   ++it;
-   _getStringMapFromArry( it->getArry(), values );
-   return ( lastCur == 0 ? false : true );
+    cursor = _valueFromString<uint64_t>( it->getString() );
+    ++ it;
+    _getStringMapFromArry( it->getArry(), values );
+    return ( cursor == 0 ? false : true );
 }
 
 

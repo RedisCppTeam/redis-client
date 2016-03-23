@@ -37,7 +37,7 @@ void testPoolmain( )
 		for ( int i = 0 ; i < 600 ; i++ )
 		{
 			sleep(1);
-			pRedis1 = redisPool.getConn();
+            pRedis1 = redisPool.getConn(1000);
 			if ( pRedis1 == NULL )
 				return;
 

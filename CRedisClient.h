@@ -721,7 +721,7 @@ public:
 	 *       	redis.hscan( "testHash", 0, hscanPairs,"pair_1??" );
 	 *			while ( redis.hscan( "testHash", -1, hscanPairs ,"pair_1??") );
 	 */
-	bool hscan( const string& key , int64_t cursor , MapString& values , const string& match =
+    bool hscan( const string& key , int64_t &cursor , MapString& values , const string& match =
 			"" , uint64_t count = 0 );
 
     //---------------------------Set----------------------------------

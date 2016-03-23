@@ -139,9 +139,8 @@ void TestHash2()
 
         std::cout << "====================hscan value===================" << std::endl;
         CRedisClient::MapString hscanPairs;
-
-        redis.hscan( "testHash", 0, hscanPairs,"pair_1??" );
-        while ( redis.hscan( "testHash", -1, hscanPairs ,"pair_1??") );
+        int64_t cursor = 0;
+        while ( redis.hscan( "testHash", cursor, hscanPairs ,"pair_1??") );
 
         CRedisClient::MapString::const_iterator hscanIt = hscanPairs.begin();
         CRedisClient::MapString::const_iterator hscanEnd = hscanPairs.end();
