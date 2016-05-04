@@ -1,18 +1,18 @@
-1.Ê×ÏÈÏÂÔØpoco¿âÎÄ¼şºÍÍ·ÎÄ¼ş
+1.é¦–å…ˆä¸‹è½½pocoåº“æ–‡ä»¶å’Œå¤´æ–‡ä»¶
 centos
-yum list |grep pocoÑ¡poco-devel.x86_64°²×°£¨64Î»ÏµÍ³£©£¬Ö»ÓĞÕâÑùÈ«²¿°²×°²Å»áÓĞÍ·ÎÄ¼ş£¬Èç¹ûÖ»×°Ò»¸öso£¬¾ÍÃ»Í·ÎÄ¼ş¡£
-°²×°ÍêÍ·ÎÄ¼şÔÚ/usr/include/PocoÏÂ£¬soÎÄ¼şÔÚ/usr/lib64
+yum list |grep pocoé€‰poco-devel.x86_64å®‰è£…ï¼ˆ64ä½ç³»ç»Ÿï¼‰ï¼Œåªæœ‰è¿™æ ·å…¨éƒ¨å®‰è£…æ‰ä¼šæœ‰å¤´æ–‡ä»¶ï¼Œå¦‚æœåªè£…ä¸€ä¸ªsoï¼Œå°±æ²¡å¤´æ–‡ä»¶ã€‚
+å®‰è£…å®Œå¤´æ–‡ä»¶åœ¨/usr/include/Pocoä¸‹ï¼Œsoæ–‡ä»¶åœ¨/usr/lib64
 ubuntu
-apt-cache search pocoÑ¡libpoco-dev£¬Ô­ÒòÍ¬ÉÏ
-°²×°ÍêÍ·ÎÄ¼şÔÚ/usr/include/PocoÏÂ£¬soÎÄ¼şÔÚ/usr/lib
+apt-cache search pocoé€‰libpoco-devï¼ŒåŸå› åŒä¸Š
+å®‰è£…å®Œå¤´æ–‡ä»¶åœ¨/usr/include/Pocoä¸‹ï¼Œsoæ–‡ä»¶åœ¨/usr/lib
 
-2.°ÑÎÒÃÇ×Ô¼º¿ª·¢µÄredisclient´úÂë±àÒë³É¶¯Ì¬Á´½Ó¿â.soÎÄ¼ş¡£ÕâÀï²»Òª±àÒëtest.cppºÍtestÄ¿Â¼ÏÂµÄËùÓĞtestÎÄ¼ş
-centosÏÂ½«so¿½±´µ½/usr/lib64,ubuntu¿½±´µ½/usr/local/lib
-×¢Òâ£ºÁ½¸öÏµÍ³ÔÚ¾­¹ıÒÔÉÏ²Ù×÷ºó£¬¶¼Òª½«hppºÍhÎÄ¼ş¿½±´µ½/usr/local/include
+2.æŠŠæˆ‘ä»¬è‡ªå·±å¼€å‘çš„redisclientä»£ç ç¼–è¯‘æˆåŠ¨æ€é“¾æ¥åº“.soæ–‡ä»¶ã€‚è¿™é‡Œä¸è¦ç¼–è¯‘test.cppå’Œtestç›®å½•ä¸‹çš„æ‰€æœ‰testæ–‡ä»¶
+centosä¸‹å°†soæ‹·è´åˆ°/usr/lib64,ubuntuæ‹·è´åˆ°/usr/local/lib
+æ³¨æ„ï¼šä¸¤ä¸ªç³»ç»Ÿåœ¨ç»è¿‡ä»¥ä¸Šæ“ä½œåï¼Œéƒ½è¦å°†hppå’Œhæ–‡ä»¶æ‹·è´åˆ°/usr/local/include
 
 3.g++ test.cpp test/*.cpp -lRedisclient -lPocoNet -lPocoFoundation
 
 
 
 
-×¢Òâ£ºÖ´ĞĞ./configureÒªÓÃ³¬¼¶ÓÃ»§
+æ³¨æ„ï¼šæ‰§è¡Œ./configureè¦ç”¨è¶…çº§ç”¨æˆ·
