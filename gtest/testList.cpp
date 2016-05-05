@@ -449,7 +449,7 @@ void TestBrpoplpush( void )
 	}
 }
 
-void Lmain( void )
+void TestListMain( void )
 {
  // TestLpush();
  // TestRpush();

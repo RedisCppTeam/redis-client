@@ -6,7 +6,9 @@ CONFIG -= qt
 LIBS += \
         -lPocoFoundation \
         -lPocoNet	\
-        -lpthread
+        -lgtest \
+        -lgtest_main \
+        -lpthread \
 
 INCLUDEPATH += \
     ../redis-client
@@ -18,7 +20,8 @@ HEADERS += \
     ../redis-client/CRedisSocket.h \
     ../redis-client/CResult.h \
     ../redis-client/RdException.hpp \
-    ../redis-client/reidsCommon.h
+    ../redis-client/reidsCommon.h \
+    CTestRedis.h
 
 SOURCES += \
     testConnection.cpp \
@@ -34,7 +37,7 @@ SOURCES += \
     testSortedSet.cpp \
     testString.cpp \
     testTransaction.cpp \
-    ../redis-client/Command.cpp \
+     ../redis-client/Command.cpp \
     ../redis-client/CRedisClient.cpp \
     ../redis-client/CRedisPool.cpp \
     ../redis-client/CRedisSocket.cpp \
@@ -51,7 +54,8 @@ SOURCES += \
     ../redis-client/RedisClientSortedSet.cpp \
     ../redis-client/RedisClientString.cpp \
     ../redis-client/RedisTransaction.cpp \
-    ../redis-client/test.cpp
+    CTestRedis.cpp
+
 
 
 

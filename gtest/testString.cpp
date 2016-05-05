@@ -308,7 +308,7 @@ void TestSTRLEN( CRedisClient& redis )
 
 
 
-void TestString( void )
+void TestStringMain( void )
 {
     try
     {

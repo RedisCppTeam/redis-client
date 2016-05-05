@@ -83,7 +83,7 @@ void testEval( void )
 }
 
 
-void testScript( void )
+void TestScriptMain( void )
 {
     try
     {

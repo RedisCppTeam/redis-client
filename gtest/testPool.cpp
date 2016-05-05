@@ -23,7 +23,7 @@
 
 using namespace std;
 
-void testPoolmain( )
+void TestPoolMain( )
 {
 
 	CRedisClient *pRedis1 = NULL;
@@ -47,7 +47,7 @@ void testPoolmain( )
 
 //test  CRedisClient::getConn( int& )   ::pushBackConn( int& )
 
-			pRedis1 = redisPool.getConn(connNum);
+            pRedis1 = redisPool.getConn(connNum, 2000);
 			if ( pRedis1 == NULL )
 				return;
 			value.clear();

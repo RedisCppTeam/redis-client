@@ -105,7 +105,7 @@ void TestSelect( void )
 	}
 }
 
-void Cmain( void )
+void TestConnectionMain( void )
 {
 //	TestPing();
 	TestQuit();

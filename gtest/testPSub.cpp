@@ -114,7 +114,7 @@ void TestUNSUBSCRIBE( CRedisClient& redis )
 
 
 
-void TestPSub( void )
+void TestPSubMain( void )
 {
     try
     {

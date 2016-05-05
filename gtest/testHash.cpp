@@ -161,7 +161,7 @@ void TestHash2()
     }
 }
 
-void Hmain( void )
+void TestHashMain( void )
 {
     TestHash();
     TestHash2();

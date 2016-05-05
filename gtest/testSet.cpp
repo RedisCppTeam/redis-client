@@ -184,7 +184,7 @@ void TestSet( void )
     }
 }
 
-void Smain( void )
+void TestSetMain( void )
 {
     TestSet();
 }

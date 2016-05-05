@@ -291,7 +291,7 @@ void testMove( )
 	cout << "move ok!" << endl;
 }
 
-void Kmain( void )
+void TestKeyMain( void )
 {
 	try
 	{

@@ -229,7 +229,7 @@ void TestStime(){
     cout<<"redis.time(cur,mic): "<<"cur="<<cur<<",mic="<<mic<<endl;
 }
 
-void TestServer(){
+void TestServerMain(){
     //TestSbgrewriteaof();
     //sleep(1);//重写需要时间，不能立刻执行bgsave
     //TestSbgsave();

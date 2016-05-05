@@ -288,7 +288,7 @@ void TestZremrangebylex (){
     redis.connect( "127.0.0.1", 6379 );
     TSortesSetPrint("redis.zremrangebylex(SortedSet,[10,(60)",redis.zremrangebylex("SortedSet","[10","(60"));
 }
-void TestSortedSet(){
+void TestSortedSetMain(){
     TestZadd();
     TestZcard();
     TestZcount();

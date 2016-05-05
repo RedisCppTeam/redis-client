@@ -109,7 +109,7 @@ void TestPfmerge( void )
 	}
 }
 
-void Pmain( void )
+void TestPfMain( void )
 {
 	TestPfadd();
 	TestPfcount();
