@@ -12,7 +12,3 @@ centos下将so拷贝到/usr/lib64,ubuntu拷贝到/usr/local/lib
 
 3.g++ test.cpp test/*.cpp -lRedisclient -lPocoNet -lPocoFoundation
 
-
-
-
-注意：执行./configure要用超级用户

@@ -11,8 +11,8 @@
  * @date: 		2015年4月20日
  * 修订说明:初始版本
  */
-#ifndef COLLECTFAT_COMMON_H_
-#define COLLECTFAT_COMMON_H_
+#ifndef REDISCOMMON_H
+#define REDISCOMMON_H
 
 #include <iostream>
 #include "Poco/Util/ServerApplication.h"
@@ -33,6 +33,6 @@
 
 using std::string;
 
-#endif /* COLLECTFAT_COMMON_H_ */
+#endif //REDISCOMMON_H
 
 

@@ -13,12 +13,12 @@ INCLUDEPATH += \
 
 HEADERS += \
     ../redis-client/Command.h \
-    ../redis-client/common.h \
     ../redis-client/CRedisClient.h \
     ../redis-client/CRedisPool.h \
     ../redis-client/CRedisSocket.h \
     ../redis-client/CResult.h \
-    ../redis-client/RdException.hpp
+    ../redis-client/RdException.hpp \
+    ../redis-client/reidsCommon.h
 
 SOURCES += \
     testConnection.cpp \

@@ -1,9 +1,9 @@
-#include "../Command.h"
-#include "../CRedisClient.h"
+#include "Command.h"
+#include "CRedisClient.h"
 #include <stdio.h>
 #include <sstream>
-#include "../RdException.hpp"
-#include "../CResult.h"
+#include "RdException.hpp"
+#include "CResult.h"
 #include <iostream>
 
 using namespace std;
