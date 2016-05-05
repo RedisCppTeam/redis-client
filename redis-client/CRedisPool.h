@@ -60,7 +60,7 @@ public:
     void pushBackConn(CRedisClient*& pConn);
     void pushBackConn(int32_t connNum);
 
-
+    Handle getRedis(long millisecond );
 
 	/**
 	* @brief close connection pool

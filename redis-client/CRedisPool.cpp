@@ -132,7 +132,26 @@ void CRedisPool::pushBackConn( int32_t connNum )
 		return;
 	Poco::Mutex::ScopedLock lock(_mutex);
 	_connList[connNum]->idle = true;
-	_cond.signal();
+    _cond.signal();
+}
+
+CRedisPool::Handle CRedisPool::getRedis(long millisecond)
+{
+    int32_t place = -1;
+     CRedisClient* predis = getConn( place,millisecond );
+     if (NULL == predis)
+     {
+         throw HandleErr("lack handle");
+     }
+     //智能指针的析构器。把 redis 对象 putBack() 回去。
+     auto deleter = [ place,this ]( CRedisClient * pConn )
+     {
+         if( place >= 0 && nullptr != pConn  )
+         {
+             this->pushBackConn( place );
+         }
+     };
+     return CRedisPool::Handle( predis,deleter );
 }
 
 void CRedisPool::closeConnPool( void )

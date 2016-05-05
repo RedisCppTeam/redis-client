@@ -66,6 +66,7 @@ NEW_EXCEPTION( ConvertErr )
 ///<
 NEW_EXCEPTION( TypeErr )
 
+NEW_EXCEPTION( HandleErr )
 #endif // RDEXCEPTION_H
 
 
