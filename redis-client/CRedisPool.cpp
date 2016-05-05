@@ -50,19 +50,7 @@ bool CRedisPool::init( const std::string& host , uint16_t port , const std::stri
 		SRedisConn* pRedisConn = new SRedisConn;
 		pRedisConn->idle = true;
 		pRedisConn->connStatus = true;
-		try
-		{
-			pRedisConn->conn.connect(_host, _port);
-		} catch( Poco::Exception& e )
-		{
-			DEBUGOUT("Poco::Exception", e.displayText());
-			if ( pRedisConn )
-			{
-				delete pRedisConn;
-				pRedisConn = NULL;
-			}
-			return false;
-		}
+        pRedisConn->conn.connect(_host, _port);
 		_connList[i] = pRedisConn;
 	}
 	_status = REDIS_POOL_WORKING;
@@ -156,7 +144,7 @@ CRedisPool::Handle CRedisPool::getRedis(long millisecond)
 
 void CRedisPool::closeConnPool( void )
 {
-	if ( _status == REDIS_POOL_DEAD )
+    if ( _status != REDIS_POOL_WORKING )
 		return;
 	_mutex.lock();
 	_status = REDIS_POOL_DEAD;
