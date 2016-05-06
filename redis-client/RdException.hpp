@@ -11,7 +11,7 @@
 #ifndef RDEXCEPTION_H
 #define RDEXCEPTION_H
 
-#include "common.h"
+#include "redisCommon.h"
 
 class RdException :public std::exception
 {

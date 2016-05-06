@@ -14,7 +14,7 @@
 #include <map>
 #include <Poco/Net/StreamSocket.h>
 #include "Command.h"
-#include "reidsCommon.h"
+#include "redisCommon.h"
 #include "RdException.hpp"
 #include "CRedisSocket.h"
 

@@ -1,7 +1,7 @@
 #ifndef CREDISSOCKET_H
 #define CREDISSOCKET_H
 
-#include "reidsCommon.h"
+#include "redisCommon.h"
 #include <Poco/Net/StreamSocket.h>
 
 using Poco::Net::StreamSocket;

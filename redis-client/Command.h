@@ -14,7 +14,7 @@
 #include <sstream>
 #include <vector>
 #include <Poco/Types.h>
-#include "common.h"
+#include "redisCommon.h"
 
 using std::stringstream;
 using std::vector;

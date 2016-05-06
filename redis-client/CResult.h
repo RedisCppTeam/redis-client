@@ -1,7 +1,7 @@
 #ifndef CRESULT_H
 #define CRESULT_H
 
-#include "reidsCommon.h"
+#include "redisCommon.h"
 
 
 typedef enum ReplyType
