@@ -198,39 +198,26 @@ uint64_t CRedisClient::sunionstroe(const string &dest, const CRedisClient::VecSt
     return num;
 }
 
-bool CRedisClient::sscan(const string &key, int64_t cursor, VecString &values, const string &match, uint64_t count)
+bool CRedisClient::sscan(const string &key, int64_t &cursor, VecString &values, const string &match, uint64_t count)
 {
-     static uint64_t lastCur = 0;
-     uint64_t realCur = 0;
-     CResult result;
+    CResult result;
+    Command cmd( "SSCAN" );
+    cmd << key << cursor;
 
-     if ( cursor >= 0 )
-     {
-         realCur = cursor;
-     }else
-     {
-         realCur = lastCur;
-     }
+    if ( "" != match )
+    {
+        cmd << "MATCH" << match;
+    }
 
-     Command cmd( "SSCAN" );
-     cmd << key << realCur;
-
-     if ( "" != match )
-     {
-           cmd << "MATCH" << match;
-     }
-
-     if ( 0 != count )
-     {
-            cmd << "COUNT" << count;
-     }
-
-     _getArry( cmd, result );
-
-     CResult::ListCResult::const_iterator it = result.getArry().begin();
-     lastCur = _valueFromString<uint64_t>( it->getString() );
-    ++it;
-
+    if ( 0 != count )
+    {
+        cmd << "COUNT" << count;
+    }
+    _getArry( cmd, result );
+    CResult::ListCResult::const_iterator it = result.getArry().begin();
+    cursor = _valueFromString<uint64_t>( it->getString() );
+    ++ it;
     _getStringVecFromArry( it->getArry(), values );
-    return ( lastCur == 0 ? false : true );
+    return ( cursor == 0 ? false : true );
+
 }

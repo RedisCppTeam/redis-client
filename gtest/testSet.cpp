@@ -170,8 +170,9 @@ void TestSet( void )
         redis.sadd( "testSet4", sscanMembers1 );
 
         CRedisClient::VecString sscanMembers;
-        redis.sscan( "testSet4", 0, sscanMembers,"value_?" );
-        while ( redis.sscan( "testSet4", -1, sscanMembers ,"value_?") );
+        int64_t cur = 0;
+     //   redis.sscan( "testSet4", 0, sscanMembers,"value_?" );
+        while ( redis.sscan( "testSet4", cur, sscanMembers ,"value_?") );
 
         PrintVector( "sscan", sscanMembers );
 

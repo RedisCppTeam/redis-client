@@ -783,7 +783,7 @@ public:
 
 	uint64_t sunionstroe( const string& dest , const VecString& keys );
 
-	bool sscan( const string& key , int64_t cursor , VecString& values , const string& match =
+    bool sscan( const string& key , int64_t &cursor , VecString& values , const string& match =
 			"" , uint64_t count = 0 );
 	//---------------------------SortedSet-------------------------------------------
     /**
