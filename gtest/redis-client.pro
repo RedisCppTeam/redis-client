@@ -20,7 +20,7 @@ HEADERS += \
     ../redis-client/CRedisSocket.h \
     ../redis-client/CResult.h \
     ../redis-client/RdException.hpp \
-    ../redis-client/reidsCommon.h \
+    ../redis-client/redisCommon.h \
     CTestRedis.h
 
 SOURCES += \
