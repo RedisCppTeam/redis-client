@@ -22,7 +22,7 @@ int64_t CRedisClient::keys( const std::string &pattern , VecString &values )
     return num;
 }
 
-int64_t CRedisClient::del( CRedisClient::VecString &keys )
+int64_t CRedisClient::del(const CRedisClient::VecString &keys )
 {
 
 	Command cmd("DEL");

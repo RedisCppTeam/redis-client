@@ -194,7 +194,7 @@ public:
 	 */
 	int64_t keys( const string& pattern , VecString &values );
 
-	int64_t del( VecString &keys );
+    int64_t del(const VecString &keys );
 	bool exists( const string& key );
 
 	/**
