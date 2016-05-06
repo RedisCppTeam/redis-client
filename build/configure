@@ -1,5 +1,15 @@
 #!/bin/bash
 os_name=`cat /etc/issue`
+path="/usr/local/lib"
+
+file1="libPocoFoundation.so"
+file2="libPocoNet.so"
+if [ -f "${path}/${file1}" ]; then
+	if [ -f "${path}/${file2}" ]; then
+    		echo 可以编译redisclient了。 
+		exit
+	fi
+fi 
 
 if [[ $os_name = CentOS* ]];then
     echo "使用root权限执行:"
