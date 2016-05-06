@@ -948,7 +948,7 @@ public:
      *       	redis.zscan( "test", 0, zscanPairs,"pair_1??" );
      *			while ( redis.zscan( "testHash", -1, zscanPairs ,"pair_1??") );
      */
-    bool zscan( const string& key, int64_t cursor, MapString& reply, const string& match="", uint64_t count=0 );
+    bool zscan( const string& key, int64_t &cursor, MapString& reply, const string& match="", uint64_t count=0 );
     /**
      * @brief zrangebylex Return a range of members in a sorted set, by lexicographical range
      * @param key[in]

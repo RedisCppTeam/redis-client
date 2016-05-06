@@ -340,22 +340,11 @@ uint64_t CRedisClient::zinterstore (const string& destination,const VecString& k
 
 
 }
-bool CRedisClient::zscan(const string &key, int64_t cursor, MapString &reply, const string &match, uint64_t count )
+bool CRedisClient::zscan(const string &key, int64_t &cursor, MapString &reply, const string &match, uint64_t count )
 {
-    static uint64_t lastCur = 0;
-    uint64_t realCur = 0;
     CResult result;
-
-    if ( cursor >= 0 )
-    {
-        realCur = cursor;
-    }else
-    {
-        realCur = lastCur;
-    }
-
     Command cmd( "ZSCAN" );
-    cmd << key << realCur;
+    cmd << key << cursor;
 
     if ( "" != match )
     {
@@ -366,13 +355,12 @@ bool CRedisClient::zscan(const string &key, int64_t cursor, MapString &reply, co
     {
         cmd << "COUNT" << count;
     }
-
     _getArry( cmd, result );
     CResult::ListCResult::const_iterator it = result.getArry().begin();
-    lastCur = _valueFromString<uint64_t>( it->getString() );
-    ++it;
-    _getStringMapFromArry( it->getArry(),reply );
-    return ( lastCur == 0 ? false : true );
+    cursor = _valueFromString<uint64_t>( it->getString() );
+    ++ it;
+    _getStringMapFromArry( it->getArry(), reply );
+    return ( cursor == 0 ? false : true );
 }
 
 uint64_t CRedisClient::zrangebylex(const string &key, const string &min, const string &max, CRedisClient::VecString &reply, int64_t offset,int64_t count)

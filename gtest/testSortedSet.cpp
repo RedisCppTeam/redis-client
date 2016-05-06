@@ -267,8 +267,8 @@ void TestZscan(){
     redis.connect( "127.0.0.1", 6379 );
     cout<<"----------zscan----------"<<endl;
     MAP map;
-    redis.zscan( "SortedSet", 0, map);
-    while ( redis.zscan("SortedSet", -1, map ) );
+    int64_t cur = 0;
+    while ( redis.zscan("SortedSet", cur, map ) );
     TSortesSetPrint("redis.zscan( SortedSet, -1, map",map);
 }
 void TestZrangebylex (){
