@@ -137,7 +137,7 @@ void CRedisClient::_getReply( CResult &result )
     result.clear();
     std::string line;
     _socket.readLine( line );
-    DEBUGOUT( "row data",line )
+    REDIS_DEBUGOUT( "row data",line )
     switch ( line[0] )
     {
     case PREFIX_REPLY_INT:

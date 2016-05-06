@@ -251,7 +251,7 @@ void testDump( string& dump )
 	else
 		cout << "redis.dump failed:" << ret << endl;
 
-    DEBUGOUT("dump", dump )
+    REDIS_DEBUGOUT("dump", dump )
 }
 //
 void testRestore( const string& strInput )

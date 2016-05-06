@@ -28,7 +28,7 @@ void TranSactionMain( void )
         CResult result;
 
         //------------------------test multi, transactionCmd, exec---------------------
-        DEBUGOUT("test multi, transactionCmd, and exec","");
+        REDIS_DEBUGOUT("test multi, transactionCmd, and exec","");
         redis.multi();
         CRedisClient::VecString params;
         params.push_back( "*" );
@@ -39,7 +39,7 @@ void TranSactionMain( void )
         redis.transactionCmd("get", params );
         redis.exec( result );
 
-        DEBUGOUT("result", result );
+        REDIS_DEBUGOUT("result", result );
 
         //---------------------------Watch---------------------------------------
         result.clear();
@@ -57,12 +57,12 @@ void TranSactionMain( void )
         getchar();
         if ( !redis.exec( result ) )
         {
-            DEBUGOUT("transaction exec false","");
+            REDIS_DEBUGOUT("transaction exec false","");
         }else
         {
-            DEBUGOUT("transaction exec successful","");
+            REDIS_DEBUGOUT("transaction exec successful","");
         }
-        DEBUGOUT("result", result );
+        REDIS_DEBUGOUT("result", result );
         //-----------------------UNWATCH-----------------------------------------
 
         result.clear();
@@ -80,12 +80,12 @@ void TranSactionMain( void )
         getchar();
         if ( !redis.exec( result ) )
         {
-            DEBUGOUT("transaction exec false","");
+            REDIS_DEBUGOUT("transaction exec false","");
         }else
         {
-            DEBUGOUT("transaction exec successful","");
+            REDIS_DEBUGOUT("transaction exec successful","");
         }
-        DEBUGOUT("result", result );
+        REDIS_DEBUGOUT("result", result );
         //-----------------------------DISCARD--------------------------------------
         result.clear();
         params.clear();
@@ -97,10 +97,10 @@ void TranSactionMain( void )
         redis.discard();
         if ( !redis.exec( result ) )
         {
-            DEBUGOUT("transaction exec false","");
+            REDIS_DEBUGOUT("transaction exec false","");
         }else
         {
-            DEBUGOUT("transaction exec successful","");
+            REDIS_DEBUGOUT("transaction exec successful","");
         }
 
     }catch ( std::exception& e )

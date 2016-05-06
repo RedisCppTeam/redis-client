@@ -29,7 +29,7 @@
 #define CL_CONF Poco::Util::Application::instance().config()
 
 ///<  debug information
-#define DEBUGOUT( argv, value ) // 	std::cout << "DEBUG INFO:" << argv << ":" << value << std::endl;
+#define REDIS_DEBUGOUT( argv, value ) // 	std::cout << "DEBUG INFO:" << argv << ":" << value << std::endl;
 
 using std::string;
 

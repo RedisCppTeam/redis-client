@@ -69,7 +69,7 @@ CRedisClient *CRedisPool::getConn(long millisecond)
 	int32_t connNum = _getConn();
 	if ( connNum < 0 )
 	{
-		DEBUGOUT( "getConn()", "waitting for a idle connection" );
+        REDIS_DEBUGOUT( "getConn()", "waitting for a idle connection" );
         _cond.wait(_mutex, millisecond );
 		connNum = _getConn();
 	}
@@ -88,7 +88,7 @@ CRedisClient* CRedisPool::getConn( int32_t& connNum,long millisecond )
 	connNum = _getConn();
 	if ( connNum < 0 )
 	{
-		DEBUGOUT( "getConn():", "waitting for a idle connection" );
+        REDIS_DEBUGOUT( "getConn():", "waitting for a idle connection" );
         _cond.wait(_mutex,millisecond);
 		connNum = _getConn();
 	}
@@ -204,8 +204,8 @@ void CRedisPool::_keepAlive( void )
 			{
 				pRedisConn->idle = true;
 				pRedisConn->connStatus = false;
-				DEBUGOUT("CRedisPool::keepAlive:------reconnect--Error:---", e.message());
-				DEBUGOUT("the connect number ", i);
+                REDIS_DEBUGOUT("CRedisPool::keepAlive:------reconnect--Error:---", e.message());
+                REDIS_DEBUGOUT("the connect number ", i);
 			}
 		}
 	}
