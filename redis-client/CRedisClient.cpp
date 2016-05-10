@@ -221,18 +221,33 @@ void CRedisClient::_getStringVecFromArry(const CResult::ListCResult &arry, CRedi
     }
 }
 
-void CRedisClient::_getStringMapFromArry(const CResult::ListCResult &arry, CRedisClient::MapString &pairs)
+//void CRedisClient::_getStringTupleFromArry(const CResult::ListCResult &arry, CRedisClient::MapString &pairs)
+//{
+//    CResult::ListCResult::const_iterator it = arry.begin();
+//    CResult::ListCResult::const_iterator it2 = it;
+//    CResult::ListCResult::const_iterator end = arry.end();
+
+//    for ( ; it != end; ++it )
+//    {
+//        it2 = it++;		// the next element is value.
+//        pairs.insert( MapString::value_type( *it2, *it ) );
+//    }
+//}
+
+
+void CRedisClient::_getStringTupleFromArry(const CResult::ListCResult &arry, CRedisClient::TupleString &pairs)
 {
     CResult::ListCResult::const_iterator it = arry.begin();
     CResult::ListCResult::const_iterator it2 = it;
     CResult::ListCResult::const_iterator end = arry.end();
-
+    pairs.reserve(arry.size()/2);
     for ( ; it != end; ++it )
     {
-        it2 = it++;		// the next element is value.
-        pairs.insert( MapString::value_type( *it2, *it ) );
+        it2 = it++;             // the next element is value.
+        pairs.push_back(std::tuple<string,string>(static_cast<string>(*it2),static_cast<string>(*it)  ));
     }
 }
+
 
 
 
@@ -370,7 +385,7 @@ bool CRedisClient::_getArry(Command &cmd, VecString &values , uint64_t &num)
     return true;
 }
 
-bool CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs , uint64_t &num)
+bool CRedisClient::_getArry(Command &cmd, CRedisClient::TupleString &pairs , uint64_t &num)
 {
     num = 0;
     _socket.clearBuffer();
@@ -395,6 +410,6 @@ bool CRedisClient::_getArry(Command &cmd, CRedisClient::MapString &pairs , uint6
     }
 
     num = result.getArry().size();
-    _getStringMapFromArry( result.getArry(), pairs );
+    _getStringTupleFromArry( result.getArry(), pairs );
     return true;
 }

@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 #include <vector>
-#include <map>
+#include <tuple>
 #include <Poco/Net/StreamSocket.h>
 #include "Command.h"
 #include "redisCommon.h"
@@ -63,7 +63,7 @@ class CRedisClient
 public:
 
 	typedef std::vector<std::string> VecString;
-	typedef std::map<string , string> MapString;
+    typedef std::vector<std::tuple<string,string>> TupleString;
     typedef std::vector<bool> VecBool;
 
 	CRedisClient( );
@@ -473,9 +473,9 @@ public:
 
 	void mget( VecString& keys , CResult& result );
 
-	void mset( CRedisClient::MapString &value );
+    void mset( CRedisClient::TupleString &value );
 
-	uint8_t msetnx( CRedisClient::MapString &value );
+    uint8_t msetnx( CRedisClient::TupleString &value );
 
 	/**
 	 * @brief set set a string type key = value
@@ -643,7 +643,7 @@ public:
 	 * @param value[out]弹出的元素，map类型，包含列表名和元素值
 	 * @return 没元素弹出返回false，否则返回true
 	 */
-	bool blpop( const VecString &key , uint64_t &timeout , MapString &value );
+    bool blpop( const VecString &key , uint64_t &timeout , TupleString &value );
 
 	/**
 	 * @brief rpop的阻塞版本，当给定列表内没有元素弹出的时候，将阻塞，直到等待超时或发现可弹出元素为止。
@@ -653,7 +653,7 @@ public:
 	 * @param value[out]弹出的元素，map类型，包含列表名和元素值
 	 * @return 没元素弹出返回false，否则返回true
 	 */
-	bool brpop( const VecString &key , uint64_t &timeout , MapString &value );
+    bool brpop( const VecString &key , uint64_t &timeout , TupleString &value );
 
 	/**
 	 * @brief BRPOPLPUSH 是 RPOPLPUSH 的阻塞版本，当给定列表 source 不为空时， BRPOPLPUSH 的表现和 RPOPLPUSH 一样。
@@ -690,7 +690,7 @@ public:
 
 	bool hexists( const string& key , const string& field );
 
-	uint64_t hgetall( const string& key , MapString& pairs );
+    uint64_t hgetall( const string& key , TupleString& pairs );
 
     int64_t hincrby( const string& key , const string& field , int64_t increment );
 
@@ -702,7 +702,7 @@ public:
 
     void hmget(const string &key, const CRedisClient::VecString &fields, CResult &result);
 
-	void hmset( const string& key , const MapString& pairs );
+    void hmset( const string& key , const TupleString& pairs );
 
 	bool hsetnx( const string& key , const string& field , const string& value );
 
@@ -721,7 +721,7 @@ public:
 	 *       	redis.hscan( "testHash", 0, hscanPairs,"pair_1??" );
 	 *			while ( redis.hscan( "testHash", -1, hscanPairs ,"pair_1??") );
 	 */
-    bool hscan( const string& key , int64_t &cursor , MapString& values , const string& match =
+    bool hscan( const string& key , int64_t &cursor , TupleString& values , const string& match =
 			"" , uint64_t count = 0 );
 
     //---------------------------Set----------------------------------
@@ -792,7 +792,7 @@ public:
      * @param map[in]
      * @return:  The number of elements added to the sorted sets, not including elements already existing for which the score was updated.
      */
-    uint64_t  zadd(const string& key,const MapString& map);
+    uint64_t  zadd(const string& key,const TupleString& map);
     /**
      * @brief zcard Get the number of members in a sorted set
      * @param key[in]
@@ -824,7 +824,7 @@ public:
      * @return: size of reply list.
      */
     uint64_t zrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
-    uint64_t zrangeWithscore(const string& key,const int64_t start,const int64_t stop,MapString& reply);
+    uint64_t zrangeWithscore(const string& key,const int64_t start,const int64_t stop,TupleString& reply);
     /**
      * @brief zrangebyscore  Return a range of members in a sorted set, by score
      * @param key [in]
@@ -836,7 +836,7 @@ public:
      * @return: size of reply list.
      */
     uint64_t zrangebyscore(const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
-    uint64_t zrangebyscoreWithscore(const string& key,const string& min,const string& max,MapString& reply,int64_t offset=0,int64_t count=0);
+    uint64_t zrangebyscoreWithscore(const string& key,const string& min,const string& max,TupleString& reply,int64_t offset=0,int64_t count=0);
     /**
      * @brief zrank  Determine the index of a member in a sorted set
      * @param key[in]
@@ -878,7 +878,7 @@ public:
      * @return: size of reply list.
      */
     uint64_t zrevrange(const string& key,const int64_t start,const int64_t stop,VecString& reply);
-    uint64_t zrevrangeWithscore(const string& key,const int64_t start,const int64_t stop,MapString& reply);
+    uint64_t zrevrangeWithscore(const string& key,const int64_t start,const int64_t stop,TupleString& reply);
     /**
      * @brief zrevrangebyscore Return a range of members in a sorted set, by score, with scores ordered from high to low.
      * @param key[in]
@@ -890,7 +890,7 @@ public:
      * @return: size of reply list.
      */
     uint64_t zrevrangebyscore(const string& key,const string& max,const string& min,VecString& reply,int64_t offset=0,int64_t count=0);
-    uint64_t zrevrangebyscoreWithscore(const string& key,const string& max,const string& min,MapString& reply,int64_t offset=0,int64_t count=0);
+    uint64_t zrevrangebyscoreWithscore(const string& key,const string& max,const string& min,TupleString& reply,int64_t offset=0,int64_t count=0);
     /**
      * @brief zrevrank Determine the index of a member in a sorted set, with scores ordered from high to low.
      * @param key[in]
@@ -948,7 +948,7 @@ public:
      *       	redis.zscan( "test", 0, zscanPairs,"pair_1??" );
      *			while ( redis.zscan( "testHash", -1, zscanPairs ,"pair_1??") );
      */
-    bool zscan( const string& key, int64_t &cursor, MapString& reply, const string& match="", uint64_t count=0 );
+    bool zscan( const string& key, int64_t &cursor, TupleString& reply, const string& match="", uint64_t count=0 );
     /**
      * @brief zrangebylex Return a range of members in a sorted set, by lexicographical range
      * @param key[in]
@@ -1005,7 +1005,7 @@ public:
 
 	uint64_t psubchannels( VecString& value, const VecString& pattern = VecString() );
 
-    uint64_t psubnumsub( CRedisClient::MapString& value,const VecString& channel = VecString() );
+    uint64_t psubnumsub( CRedisClient::TupleString& value,const VecString& channel = VecString() );
 
 	uint64_t psubnumpat( );
 
@@ -1193,7 +1193,7 @@ protected:
 
     void _getStringVecFromArry( const CResult::ListCResult& arry , VecString& values );
 
-	void _getStringMapFromArry( const CResult::ListCResult& arry , MapString& pairs );
+    void _getStringTupleFromArry( const CResult::ListCResult& arry , TupleString& pairs );
 
 	/**
 	 * @brief set
@@ -1226,7 +1226,7 @@ protected:
 	 */
 	bool _getArry( Command& cmd , CResult& result );
     bool _getArry( Command &cmd , VecString& values, uint64_t& num );
-    bool _getArry(Command &cmd , MapString& pairs, uint64_t &num  );
+    bool _getArry(Command &cmd , TupleString& pairs, uint64_t &num  );
 
     uint64_t stringToVecString(string& str,VecString& vec);
 private:

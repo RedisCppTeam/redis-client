@@ -3,17 +3,17 @@
 #include "CRedisClient.h"
 
 
-uint64_t CRedisClient::zadd(const string &key, const CRedisClient::MapString &map)
+uint64_t CRedisClient::zadd(const string &key, const CRedisClient::TupleString &map)
 {
     Command cmd( "ZADD" );
     cmd << key;
-    MapString::const_iterator it = map.begin();
-    MapString::const_iterator end = map.end();
+    TupleString::const_iterator it = map.begin();
+    TupleString::const_iterator end = map.end();
 
     for ( ; it !=end ; ++it )
     {
-        cmd << it->first;
-        cmd << it->second;
+        cmd << std::get<0>(*it);
+        cmd << std::get<1>(*it);
     }
     int64_t num;
     _getInt(cmd,num);
@@ -65,7 +65,7 @@ uint64_t CRedisClient::zrange(const string &key, const int64_t start, const int6
     _getArry(cmd,reply,num);
     return num;
 }
-uint64_t CRedisClient::zrangeWithscore(const string &key, const int64_t start, const int64_t stop, CRedisClient::MapString &reply)
+uint64_t CRedisClient::zrangeWithscore(const string &key, const int64_t start, const int64_t stop, CRedisClient::TupleString &reply)
 {
     Command cmd( "ZRANGE" );
     cmd << key << start<< stop;
@@ -90,7 +90,7 @@ uint64_t CRedisClient::zrangebyscore(const string &key, const string &min, const
     return num;
 }
 
-uint64_t CRedisClient::zrangebyscoreWithscore(const string &key, const string &min, const string &max, CRedisClient::MapString &reply,int64_t offset,int64_t count)
+uint64_t CRedisClient::zrangebyscoreWithscore(const string &key, const string &min, const string &max, CRedisClient::TupleString &reply,int64_t offset,int64_t count)
 {
     _socket.clearBuffer();
     Command cmd( "ZRANGEBYSCORE" );
@@ -163,7 +163,7 @@ uint64_t CRedisClient::zrevrange(const string &key, const int64_t start, const i
     return num;
 }
 
-uint64_t CRedisClient::zrevrangeWithscore(const string &key, const int64_t start, const int64_t stop, CRedisClient::MapString &reply)
+uint64_t CRedisClient::zrevrangeWithscore(const string &key, const int64_t start, const int64_t stop, CRedisClient::TupleString &reply)
 {
     Command cmd( "ZREVRANGE" );
     cmd << key << start<< stop;
@@ -191,7 +191,7 @@ uint64_t CRedisClient::zrevrangebyscore(const string &key, const string &max, co
     return num;
 }
 
-uint64_t CRedisClient::zrevrangebyscoreWithscore(const string &key, const string &max, const string &min, CRedisClient::MapString &reply, int64_t offset,int64_t count)
+uint64_t CRedisClient::zrevrangebyscoreWithscore(const string &key, const string &max, const string &min, CRedisClient::TupleString &reply, int64_t offset,int64_t count)
 {
     Command cmd( "ZREVRANGEBYSCORE");
     cmd << key << max<< min;
@@ -340,7 +340,7 @@ uint64_t CRedisClient::zinterstore (const string& destination,const VecString& k
 
 
 }
-bool CRedisClient::zscan(const string &key, int64_t &cursor, MapString &reply, const string &match, uint64_t count )
+bool CRedisClient::zscan(const string &key, int64_t &cursor, TupleString &reply, const string &match, uint64_t count )
 {
     CResult result;
     Command cmd( "ZSCAN" );
@@ -359,7 +359,7 @@ bool CRedisClient::zscan(const string &key, int64_t &cursor, MapString &reply, c
     CResult::ListCResult::const_iterator it = result.getArry().begin();
     cursor = _valueFromString<uint64_t>( it->getString() );
     ++ it;
-    _getStringMapFromArry( it->getArry(), reply );
+    _getStringTupleFromArry( it->getArry(), reply );
     return ( cursor == 0 ? false : true );
 }
 

@@ -62,7 +62,7 @@ bool CRedisClient::hexists(const string &key, const string &field)
 }
 
 
-uint64_t CRedisClient::hgetall(const string &key, CRedisClient::MapString &pairs)
+uint64_t CRedisClient::hgetall(const string &key, CRedisClient::TupleString &pairs)
 {
     Command cmd( "HGETALL" );
     cmd << key;
@@ -130,17 +130,17 @@ void CRedisClient::hmget(const string &key, const CRedisClient::VecString &field
     _getArry( cmd , result );
 }
 
-void CRedisClient::hmset(const string &key, const CRedisClient::MapString &pairs)
+void CRedisClient::hmset(const string &key, const CRedisClient::TupleString &pairs)
 {
     Command cmd( "HMSET" );
     cmd << key;
-    MapString::const_iterator it = pairs.begin();
-    MapString::const_iterator end = pairs.end();
+    TupleString::const_iterator it = pairs.begin();
+    TupleString::const_iterator end = pairs.end();
 
     for ( ; it !=end ; ++it )
     {
-        cmd << it->first;
-        cmd << it->second;
+        cmd << std::get<0>(*it);
+        cmd << std::get<1>(*it);
     }
     string status;
     _getStatus( cmd, status );
@@ -168,7 +168,7 @@ uint64_t CRedisClient::hvals(const string &key, CRedisClient::VecString &values)
 }
 
 
-bool CRedisClient::hscan(const string &key, int64_t &cursor, MapString &values, const string &match, uint64_t count )
+bool CRedisClient::hscan(const string &key, int64_t &cursor, TupleString &values, const string &match, uint64_t count )
 {
     CResult result;
     Command cmd( "HSCAN" );
@@ -187,7 +187,7 @@ bool CRedisClient::hscan(const string &key, int64_t &cursor, MapString &values, 
     CResult::ListCResult::const_iterator it = result.getArry().begin();
     cursor = _valueFromString<uint64_t>( it->getString() );
     ++ it;
-    _getStringMapFromArry( it->getArry(), values );
+    _getStringTupleFromArry( it->getArry(), values );
     return ( cursor == 0 ? false : true );
 }
 

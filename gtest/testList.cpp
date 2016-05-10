@@ -352,7 +352,7 @@ void TestBlpop( void )
 		keys.push_back("key");
 		keys.push_back("key2");
 
-		CRedisClient::MapString value;
+		CRedisClient::TupleString value;
         uint64_t timeout = 2;
 
         if ( !redis.blpop(keys, timeout, value) )
@@ -360,12 +360,11 @@ void TestBlpop( void )
             std::cout << "blpop failed" << std::endl;
         }else
         {
-            CRedisClient::MapString::const_iterator it = value.begin();
-            CRedisClient::MapString::const_iterator end = value.end();
+            CRedisClient::TupleString::const_iterator it = value.begin();
+            CRedisClient::TupleString::const_iterator end = value.end();
             while ( it != end )
             {
-                cout << it->first << endl;
-                cout << it->second << endl;
+                std::cout << std::get<0>(*it) << ":" <<std::get<1>(*it) << std::endl;
                 ++it;
             }
         }
@@ -404,7 +403,7 @@ void TestBrpop( void )
 		keys.push_back("key");
 		keys.push_back("key2");
 
-		CRedisClient::MapString value;
+		CRedisClient::TupleString value;
 		uint64_t timeout = 3;
         if ( !redis.brpop(keys, timeout, value) )
         {
@@ -412,12 +411,11 @@ void TestBrpop( void )
             return;
         }
 
-		CRedisClient::MapString::const_iterator it = value.begin();
-		CRedisClient::MapString::const_iterator end = value.end();
+		CRedisClient::TupleString::const_iterator it = value.begin();
+		CRedisClient::TupleString::const_iterator end = value.end();
 		while ( it != end )
 		{
-			cout << it->first << endl;
-			cout << it->second << endl;
+            std::cout << std::get<0>(*it) << ":" <<std::get<1>(*it) << std::endl;
 			++it;
 		}
 	} catch( RdException& e )

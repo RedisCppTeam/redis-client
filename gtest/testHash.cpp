@@ -49,14 +49,15 @@ void TestHash( void )
          else
              std::cout << "testHash key not exists field:" << field << std::endl;
         //-----------------------test hgetall-------------------------------------------
-            CRedisClient::MapString allValue;
+            CRedisClient::TupleString allValue;
             uint64_t allNum = redis.hgetall( "testHash", allValue );
             std::cout << "allNum: " << allNum <<std::endl;
-            CRedisClient::MapString::const_iterator it = allValue.begin();
+            CRedisClient::TupleString::const_iterator it = allValue.begin();
 
             for ( ; it != allValue.end(); it++ )
             {
-                std::cout << it->first << ":" << it->second << std::endl;
+                //std::cout << it->first << ":" << it->second << std::endl;
+                std::cout << std::get<0>(*it) << ":" <<std::get<1>(*it) << std::endl;
             }
         //------------------------test incrby-------------------------------------------
               uint64_t incrybyNum = redis.hincrby( "testHash", "num2", 20 );
@@ -138,16 +139,16 @@ void TestHash2()
         //-------------------------------test hscan-----------------------------
 
         std::cout << "====================hscan value===================" << std::endl;
-        CRedisClient::MapString hscanPairs;
+        CRedisClient::TupleString hscanPairs;
         int64_t cursor = 0;
         while ( redis.hscan( "testHash", cursor, hscanPairs ,"pair_1??") );
 
-        CRedisClient::MapString::const_iterator hscanIt = hscanPairs.begin();
-        CRedisClient::MapString::const_iterator hscanEnd = hscanPairs.end();
+        CRedisClient::TupleString::const_iterator hscanIt = hscanPairs.begin();
+        CRedisClient::TupleString::const_iterator hscanEnd = hscanPairs.end();
 
         for ( ; hscanIt != hscanEnd ; ++hscanIt )
         {
-            std::cout << hscanIt->first <<": " << hscanIt->second << std::endl;
+           std::cout << std::get<0>(*hscanIt) << ":" <<std::get<1>(*hscanIt) << std::endl;
         }
         std::cout << "totalNum: " << hscanPairs.size() << std::endl;
 

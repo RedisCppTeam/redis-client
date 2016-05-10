@@ -9,7 +9,7 @@
 using namespace std;
 
 typedef CRedisClient::VecString VEC;
-typedef CRedisClient::MapString MAP;
+typedef CRedisClient::TupleString MAP;
 void TSortesSetPrint(const string &cmd,uint64_t num)
 {
     cout<<cmd<<":"<<num<<endl;
@@ -38,7 +38,7 @@ void TSortesSetPrint(const string &cmd,MAP& map)
     MAP::const_iterator end = map.end();
     for ( ; it != end; ++it )
     {
-        cout << it->first << ":     " << it->second << endl;
+         std::cout << std::get<0>(*it) << ":" <<std::get<1>(*it) << std::endl;
     }
     cout<<endl;
 }
@@ -72,7 +72,8 @@ void SetMap(MAP& map,const string& mapName,uint64_t start,uint64_t end)
         ss << i;
         score= ss.str();
         member += ss.str();
-        map.insert( CRedisClient::MapString::value_type(score,member) );
+        map.push_back( CRedisClient::TupleString::value_type(score,member) );
+
     }
 }
 
