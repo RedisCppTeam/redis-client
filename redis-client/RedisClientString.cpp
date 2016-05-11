@@ -232,10 +232,10 @@ void CRedisClient::set(const std::string &key,const std::string &value)
     CResult result;
     _set( key, value, result );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    if ( result.getType() == CResult::REDIS_REPLY_ERROR )
     {
         throw ExceptReply( result.getErrorString() );
-    }else if ( result.getType() == REDIS_REPLY_STATUS )
+    }else if ( result.getType() == CResult::REDIS_REPLY_STATUS )
     {
         if ( result.getStatus() == "OK" )
         {
@@ -271,20 +271,21 @@ bool CRedisClient::setEX(const std::string &key, const std::string &value, long 
     CResult result;
     _set( key, value, result,"EX", time,suffix );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    if ( result.getType() == CResult::REDIS_REPLY_ERROR )
     {
         throw ExceptReply( result.getErrorString() );
     }
-    else if ( result.getType() == REDIS_REPLY_STATUS )
+    else if ( result.getType() == CResult::REDIS_REPLY_STATUS )
     {
        return true;
-    }else if ( result.getType() == REDIS_REPLY_NIL )
+    }else if ( result.getType() == CResult::REDIS_REPLY_NIL )
     {
         return false;
     }else
     {
         throw ExceptProtocol( "SET: data recved is not status" );
     }
+    return false;
 }
 
 bool CRedisClient::setPX(const std::string &key, const std::string &value, long time, SET_OPTION opt)
@@ -308,14 +309,14 @@ bool CRedisClient::setPX(const std::string &key, const std::string &value, long 
     CResult result;
     _set( key, value, result,"PX", time,suffix );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    if ( result.getType() == CResult::REDIS_REPLY_ERROR )
     {
         throw ExceptReply( result.getErrorString() );
     }
-    else if ( result.getType() == REDIS_REPLY_STATUS )
+    else if ( result.getType() == CResult::REDIS_REPLY_STATUS )
     {
        return true;
-    }else if ( result.getType() == REDIS_REPLY_NIL )
+    }else if ( result.getType() == CResult::REDIS_REPLY_NIL )
     {
         return false;
     }else
@@ -329,13 +330,13 @@ bool CRedisClient::setNX(const std::string &key, const std::string &value)
     CResult result;
     _set( key, value, result,"NX" );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    if ( result.getType() == CResult::REDIS_REPLY_ERROR )
     {
        throw ExceptReply( result.getErrorString() );
-    } else if ( result.getType() == REDIS_REPLY_NIL )
+    } else if ( result.getType() == CResult::REDIS_REPLY_NIL )
     {
         return false;
-    }else if ( result.getType() == REDIS_REPLY_STATUS )
+    }else if ( result.getType() == CResult::REDIS_REPLY_STATUS )
     {
         return true;
     }else
@@ -349,13 +350,13 @@ bool CRedisClient::setXX(const std::string &key, const std::string &value)
     CResult result;
     _set( key, value, result,"XX" );
 
-    if ( result.getType() == REDIS_REPLY_ERROR )
+    if ( result.getType() == CResult::REDIS_REPLY_ERROR )
     {
        throw ExceptReply( result.getErrorString() );
-    } else if ( result.getType() == REDIS_REPLY_NIL )
+    } else if ( result.getType() == CResult::REDIS_REPLY_NIL )
     {
         return false;
-    }else if ( result.getType() == REDIS_REPLY_STATUS )
+    }else if ( result.getType() == CResult::REDIS_REPLY_STATUS )
     {
         return true;
     }else

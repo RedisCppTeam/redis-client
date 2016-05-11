@@ -145,23 +145,23 @@ void CRedisClient::_getReply( CResult &result )
     switch ( line[0] )
     {
     case PREFIX_REPLY_INT:
-        result.setType( REDIS_REPLY_INTEGERER );
+        result.setType( CResult::REDIS_REPLY_INTEGERER );
         result = line.substr( 1 );
         break;
     case PREFIX_REPLY_STATUS:
-        result.setType( REDIS_REPLY_STATUS );
+        result.setType( CResult::REDIS_REPLY_STATUS );
         result = line.substr( 1 );
         break;
     case PREFIX_REPLY_ERR:
-        result.setType( REDIS_REPLY_ERROR );
+        result.setType( CResult::REDIS_REPLY_ERROR );
         result = line.substr( 1 );
         break;
     case PREFIX_BULK_REPLY:
-        result.setType( REDIS_REPLY_STRING );
+        result.setType( CResult::REDIS_REPLY_STRING );
         _replyBulk( result,line );
         break;
     case PREFIX_MULTI_BULK_REPLY:
-        result.setType( REDIS_REPLY_ARRAY );
+        result.setType( CResult::REDIS_REPLY_ARRAY );
         _replyMultiBulk( result,line );
         break;
     default:
@@ -181,7 +181,7 @@ bool CRedisClient::_replyBulk(CResult& result , const std::string &len )
     if ( protoLen == -1 )
     {
         result = "";
-        result.setType(REDIS_REPLY_NIL);
+        result.setType(CResult::REDIS_REPLY_NIL);
         return false;
     }
 
@@ -189,7 +189,7 @@ bool CRedisClient::_replyBulk(CResult& result , const std::string &len )
     string tmp;
     _socket.readN( 2, tmp );
 
-    result.setType( REDIS_REPLY_STRING );
+    result.setType( CResult::REDIS_REPLY_STRING );
     return true;
 }
 
@@ -200,7 +200,7 @@ uint64_t CRedisClient::_replyMultiBulk(CResult& result, const std::string &line 
    //The concept of Null Array exists as well
    if ( -1 == replyNum )
    {
-        result.setType( REDIS_REPLY_NIL );
+        result.setType( CResult::REDIS_REPLY_NIL );
         return 0;
    }
 
@@ -269,16 +269,16 @@ bool CRedisClient::_getStatus(  Command& cmd , string& status )
     _sendCommand( cmd );
     _getReply( result );
 
-    ReplyType type = result.getType();
-    if ( REDIS_REPLY_NIL ==  type )
+    CResult::ReplyType type = result.getType();
+    if ( CResult::REDIS_REPLY_NIL ==  type )
     {
         return false;
     }
-    if ( REDIS_REPLY_ERROR == type )
+    if ( CResult::REDIS_REPLY_ERROR == type )
     {
         throw ExceptReply( result.getErrorString() );
     }
-    if ( REDIS_REPLY_STATUS != type )
+    if ( CResult::REDIS_REPLY_STATUS != type )
     {
        throw ExceptProtocol( cmd.getCommand() + ": data recved is not status" );
     }
@@ -296,16 +296,16 @@ bool CRedisClient::_getInt(  Command& cmd , int64_t& number )
     _sendCommand( cmd );
     _getReply( result );
 
-    ReplyType type = result.getType();
-    if ( REDIS_REPLY_NIL ==  type )
+    CResult::ReplyType type = result.getType();
+    if ( CResult::REDIS_REPLY_NIL ==  type )
     {
         return false;
     }
-    if ( REDIS_REPLY_ERROR == type )
+    if ( CResult::REDIS_REPLY_ERROR == type )
     {
         throw ExceptReply( result.getErrorString() );
     }
-    if ( REDIS_REPLY_INTEGERER != type )
+    if ( CResult::REDIS_REPLY_INTEGERER != type )
     {
        throw ExceptProtocol( cmd.getCommand() + ": data recved is not iintergerer" );
     }
@@ -320,16 +320,16 @@ bool CRedisClient::_getString(  Command& cmd , string& value  )
     _sendCommand( cmd );
     _getReply( result );
 
-    ReplyType type = result.getType();
-    if ( REDIS_REPLY_NIL ==  type )
+    CResult::ReplyType type = result.getType();
+    if ( CResult::REDIS_REPLY_NIL ==  type )
     {
         return false;
     }
-    if ( REDIS_REPLY_ERROR == type )
+    if ( CResult::REDIS_REPLY_ERROR == type )
     {
         throw ExceptReply( result.getErrorString() );
     }
-    if ( REDIS_REPLY_STRING != type )
+    if ( CResult::REDIS_REPLY_STRING != type )
     {
        throw ExceptProtocol( cmd.getCommand() + ": data recved is not string" );
     }
@@ -343,17 +343,17 @@ bool CRedisClient::_getArry(Command &cmd, CResult &result)
     _sendCommand( cmd );
     _getReply( result );
 
-    ReplyType type = result.getType();
+    CResult::ReplyType type = result.getType();
 
-    if ( REDIS_REPLY_NIL == type )
+    if ( CResult::REDIS_REPLY_NIL == type )
     {
         return false;
     }
-    if ( REDIS_REPLY_ERROR == type )
+    if ( CResult::REDIS_REPLY_ERROR == type )
     {
         throw ExceptReply( result.getErrorString() );
     }
-    if ( REDIS_REPLY_ARRAY != type )
+    if ( CResult::REDIS_REPLY_ARRAY != type )
     {
        throw ExceptProtocol( cmd.getCommand() + ": data recved is not arry" );
     }
@@ -369,17 +369,17 @@ bool CRedisClient::_getArry(Command &cmd, VecString &values , uint64_t &num)
     CResult result;
     _getReply( result );
 
-    ReplyType type = result.getType();
+    CResult::ReplyType type = result.getType();
 
-    if ( REDIS_REPLY_NIL == type )
+    if ( CResult::REDIS_REPLY_NIL == type )
     {
         return false;
     }
-    if ( REDIS_REPLY_ERROR == type )
+    if ( CResult::REDIS_REPLY_ERROR == type )
     {
         throw ExceptReply( result.getErrorString() );
     }
-    if ( REDIS_REPLY_ARRAY != type )
+    if ( CResult::REDIS_REPLY_ARRAY != type )
     {
        throw ExceptProtocol( cmd.getCommand() + ": data recved is not arry" );
     }
@@ -397,18 +397,18 @@ bool CRedisClient::_getArry(Command &cmd, CRedisClient::TupleString &pairs , uin
     CResult result;
     _getReply( result );
 
-    ReplyType type = result.getType();
+    CResult::ReplyType type = result.getType();
 
 
-    if ( REDIS_REPLY_NIL == type )
+    if ( CResult::REDIS_REPLY_NIL == type )
     {
         return false;
     }
-    if ( REDIS_REPLY_ERROR == type )
+    if ( CResult::REDIS_REPLY_ERROR == type )
     {
         throw ExceptReply( result.getErrorString() );
     }
-    if ( REDIS_REPLY_ARRAY != type )
+    if ( CResult::REDIS_REPLY_ARRAY != type )
     {
        throw ExceptProtocol( cmd.getCommand() + ": data recved is not arry" );
     }

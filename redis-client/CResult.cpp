@@ -36,7 +36,7 @@ void CResult::setType(const ReplyType e)
     _type = e;
 }
 
-ReplyType CResult::getType() const
+CResult::ReplyType CResult::getType() const
 {
     return _type;
 }

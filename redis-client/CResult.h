@@ -8,19 +8,21 @@ namespace Redis {
 
 
 
-typedef enum ReplyType
-{
-    REDIS_REPLY_STRING,
-    REDIS_REPLY_ARRAY,
-    REDIS_REPLY_INTEGERER,
-    REDIS_REPLY_NIL,
-    REDIS_REPLY_STATUS,
-    REDIS_REPLY_ERROR
-} ReplyType;
+
 
 class CResult : public std::string
 {
 public:
+
+    typedef enum ReplyType
+    {
+        REDIS_REPLY_STRING,
+        REDIS_REPLY_ARRAY,
+        REDIS_REPLY_INTEGERER,
+        REDIS_REPLY_NIL,
+        REDIS_REPLY_STATUS,
+        REDIS_REPLY_ERROR
+    } ReplyType;
 
     typedef std::list<CResult> ListCResult;
 
