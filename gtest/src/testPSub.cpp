@@ -61,11 +61,11 @@ void TestPUBSUBNUMSUB( CRedisClient& redis )
 	channel.push_back("news.internet");
 	channel.push_back("news.sport");
 	channel.push_back("news.music");
-	CRedisClient::TupleString value;
+	CRedisClient::VecTuple value;
 	uint64_t iRet = redis.psubnumsub(value, channel);
 	std::cout << "iRet: " << iRet << std::endl;
-	CRedisClient::TupleString::const_iterator it = value.begin();
-	CRedisClient::TupleString::const_iterator end = value.end();
+	CRedisClient::VecTuple::const_iterator it = value.begin();
+	CRedisClient::VecTuple::const_iterator end = value.end();
 	for ( ; it != end; ++it )
 	{
         std::cout << "value first: " << static_cast<string>(std::get<0>(*it)) << std::endl;

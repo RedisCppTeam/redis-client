@@ -49,10 +49,10 @@ void TestHash( void )
          else
              std::cout << "testHash key not exists field:" << field << std::endl;
         //-----------------------test hgetall-------------------------------------------
-            CRedisClient::TupleString allValue;
+            CRedisClient::VecTuple allValue;
             uint64_t allNum = redis.hgetall( "testHash", allValue );
             std::cout << "allNum: " << allNum <<std::endl;
-            CRedisClient::TupleString::const_iterator it = allValue.begin();
+            CRedisClient::VecTuple::const_iterator it = allValue.begin();
 
             for ( ; it != allValue.end(); it++ )
             {
@@ -139,12 +139,12 @@ void TestHash2()
         //-------------------------------test hscan-----------------------------
 
         std::cout << "====================hscan value===================" << std::endl;
-        CRedisClient::TupleString hscanPairs;
+        CRedisClient::VecTuple hscanPairs;
         int64_t cursor = 0;
         while ( redis.hscan( "testHash", cursor, hscanPairs ,"pair_1??") );
 
-        CRedisClient::TupleString::const_iterator hscanIt = hscanPairs.begin();
-        CRedisClient::TupleString::const_iterator hscanEnd = hscanPairs.end();
+        CRedisClient::VecTuple::const_iterator hscanIt = hscanPairs.begin();
+        CRedisClient::VecTuple::const_iterator hscanEnd = hscanPairs.end();
 
         for ( ; hscanIt != hscanEnd ; ++hscanIt )
         {

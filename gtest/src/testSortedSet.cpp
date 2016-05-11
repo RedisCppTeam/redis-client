@@ -5,11 +5,12 @@
 #include <sstream>
 #include "ExceptRedis.h"
 #include "CResult.h"
+#include "CTestRedis.h"
 
 using namespace std;
 using namespace Taiji::Redis;
 typedef CRedisClient::VecString VEC;
-typedef CRedisClient::TupleString MAP;
+typedef CRedisClient::VecTuple MAP;
 void TSortesSetPrint(const string &cmd,uint64_t num)
 {
     cout<<cmd<<":"<<num<<endl;
@@ -72,7 +73,7 @@ void SetMap(MAP& map,const string& mapName,uint64_t start,uint64_t end)
         ss << i;
         score= ss.str();
         member += ss.str();
-        map.push_back( CRedisClient::TupleString::value_type(score,member) );
+        map.push_back( CRedisClient::VecTuple::value_type(score,member) );
 
     }
 }
@@ -82,16 +83,23 @@ void SetMap(MAP& map,const string& mapName,uint64_t start,uint64_t end)
 void TestZadd(){
     CRedisClient redis;
     redis.connect( "127.0.0.1", 6379 );
-    cout<<"----------zadd----------"<<endl;
+    redis.flushall();
+    //cout<<"----------zadd----------"<<endl;
     MAP map;
     SetMap(map,"member_",1,1000);
-    TSortesSetPrint("redis.zadd(SortedSet,map)",redis.zadd("SortedSet",map));
+
+    EXPECT_EQ(1000, redis.zadd("SortedSet",map));
+
+
 }
 void TestZcard(){
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
-    cout<<"----------zcard----------"<<endl;
-    TSortesSetPrint("redis.zcard(SortedSet)",redis.zcard("SortedSet"));
+//    CRedisClient redis;
+//    redis.connect( "127.0.0.1", 6379 );
+//    redis.flushall();
+//    TestZadd();
+//    EXPECT_EQ(1000, redis.zcard("SortedSet"));
+//    cout<<"----------zcard----------"<<endl;
+//    TSortesSetPrint("redis.zcard(SortedSet)",);
 }
 void TestZcount(){
     CRedisClient redis;

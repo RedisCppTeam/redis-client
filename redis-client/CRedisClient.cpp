@@ -239,7 +239,7 @@ void CRedisClient::_getStringVecFromArry(const CResult::ListCResult &arry, CRedi
 //}
 
 
-void CRedisClient::_getStringTupleFromArry(const CResult::ListCResult &arry, CRedisClient::TupleString &pairs)
+void CRedisClient::_getStringTupleFromArry(const CResult::ListCResult &arry, CRedisClient::VecTuple &pairs)
 {
     CResult::ListCResult::const_iterator it = arry.begin();
     CResult::ListCResult::const_iterator it2 = it;
@@ -389,7 +389,7 @@ bool CRedisClient::_getArry(Command &cmd, VecString &values , uint64_t &num)
     return true;
 }
 
-bool CRedisClient::_getArry(Command &cmd, CRedisClient::TupleString &pairs , uint64_t &num)
+bool CRedisClient::_getArry(Command &cmd, CRedisClient::VecTuple &pairs , uint64_t &num)
 {
     num = 0;
     _socket.clearBuffer();

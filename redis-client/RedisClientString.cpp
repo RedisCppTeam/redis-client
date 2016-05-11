@@ -160,10 +160,10 @@ void CRedisClient::mget(VecString& keys, CResult& result )
 
 
 
-void CRedisClient::mset( CRedisClient::TupleString &value )
+void CRedisClient::mset( CRedisClient::VecTuple &value )
 {
 	Command cmd( "MSET" );
-	CRedisClient::TupleString::const_iterator it = value.begin();
+    CRedisClient::VecTuple::const_iterator it = value.begin();
 	for ( ; it != value.end(); ++it )
 	{
         cmd << std::get<0>(*it);
@@ -179,10 +179,10 @@ void CRedisClient::mset( CRedisClient::TupleString &value )
 
 
 
-uint8_t CRedisClient::msetnx( CRedisClient::TupleString &value )
+uint8_t CRedisClient::msetnx( CRedisClient::VecTuple &value )
 {
 	Command cmd( "MSETNX" );
-	CRedisClient::TupleString::const_iterator it = value.begin();
+    CRedisClient::VecTuple::const_iterator it = value.begin();
 	for ( ; it != value.end(); ++it )
 	{
         cmd << std::get<0>(*it);

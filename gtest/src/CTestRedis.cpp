@@ -27,59 +27,59 @@ void CTestRedis::TearDownTestCase()
 
 TEST_F(CTestRedis, TestStringMain)
 {
-    TestStringMain();
+    //TestStringMain();
 }
 
 TEST_F(CTestRedis, TestPSubMain)
 {
-    TestPSubMain();
+    //TestPSubMain();
 }
 
 TEST_F(CTestRedis, TestHashMain)
 {
-    TestHashMain();
+   // TestHashMain();
 }
 
 TEST_F(CTestRedis, TestSetMain)
 {
-    TestSetMain();
+    //TestSetMain();
 }
 
 TEST_F(CTestRedis, TestSortedSetMain)
 {
-    TestSortedSetMain();
+    //TestSortedSetMain();
 }
 
 TEST_F(CTestRedis, TestServerMain)
 {
-    TestServerMain();
+    //TestServerMain();
 }
 
 
 
 TEST_F(CTestRedis, TestListMain)
 {
-    TestListMain();
+   // TestListMain();
 }
 
 TEST_F(CTestRedis, TestPfMain)
 {
-    TestPfMain();
+    //TestPfMain();
 }
 
 TEST_F(CTestRedis, TestConnectionMain)
 {
-    TestConnectionMain();
+   // TestConnectionMain();
 }
 
 TEST_F(CTestRedis, TestKeyMain)
 {
-    TestKeyMain();
+    //TestKeyMain();
 }
 
 TEST_F(CTestRedis, TestScriptMain)
 {
-    TestScriptMain();
+    //TestScriptMain();
 }
 
 TEST_F(CTestRedis, TestPoolMain)

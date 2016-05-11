@@ -191,7 +191,7 @@ void TestMSET( CRedisClient& redis )
 {
 	std::cout << "------testMSET------" << std::endl;
     //CRedisClient::TupleString value;
-     CRedisClient::TupleString value{std::tuple<string,string>("date","2012.3.30"),
+     CRedisClient::VecTuple value{std::tuple<string,string>("date","2012.3.30"),
                  std::tuple<string,string>("time","11:00 a.m.")};
 //	value["date"] = "2012.3.30";
 //	value["time"] = "11:00 a.m.";
@@ -220,7 +220,7 @@ void TestMSETNX( CRedisClient& redis )
 //	value["rmdbs"] = "MySQL";
 //	value["nosql"] = "MongoDB";
 //	value["key-value-store"] = "redis";
-    CRedisClient::TupleString value{std::tuple<string,string>("rmdbs","MySQL"),
+    CRedisClient::VecTuple value{std::tuple<string,string>("rmdbs","MySQL"),
                 std::tuple<string,string>("nosql","MongoDB")};
 	int iRet = redis.msetnx(value);
 	std::cout << "iRet: " << iRet << std::endl;
