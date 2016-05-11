@@ -1,6 +1,11 @@
 #include "Command.h"
 #include "CRedisClient.h"
-#include "RdException.hpp"
+#include "RdException.h"
+
+namespace Taiji {
+namespace Redis {
+
+
 
 uint64_t CRedisClient::stringToVecString(string& str, CRedisClient::VecString& vec)
 {
@@ -282,4 +287,9 @@ void CRedisClient::time(string& currentseconds,string& microseconds)
     currentseconds=it->getString();
     ++it;
     microseconds=it->getString();
+}
+
+
+
+}
 }

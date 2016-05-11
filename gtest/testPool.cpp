@@ -17,12 +17,12 @@
 #include "CRedisClient.h"
 #include <stdio.h>
 #include <sstream>
-#include "RdException.hpp"
+#include "RdException.h"
 #include "CResult.h"
 #include "CRedisPool.h"
 
 using namespace std;
-
+using namespace Taiji::Redis;
 void TestPoolMain( )
 {
 

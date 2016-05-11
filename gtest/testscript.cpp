@@ -2,12 +2,12 @@
 #include "CRedisClient.h"
 #include <stdio.h>
 #include <sstream>
-#include "RdException.hpp"
+#include "RdException.h"
 #include "CResult.h"
 #include <iostream>
 
 using namespace std;
-
+using namespace Taiji::Redis;
 //redis-cli:>EVAL "while true do end" 0
 void testScriptKill( )
 {

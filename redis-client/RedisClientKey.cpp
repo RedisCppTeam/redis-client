@@ -11,6 +11,10 @@
 
 #include "Command.h"
 #include "CRedisClient.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 int64_t CRedisClient::keys( const std::string &pattern , VecString &values )
 {
@@ -335,4 +339,8 @@ void CRedisClient::migrate(  const string& key ,const string& host , uint16_t po
     {
         throw ExceptReply( status );
     }
+}
+
+
+}
 }

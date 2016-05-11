@@ -1,6 +1,10 @@
 
 #include "Command.h"
 #include "CRedisClient.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 
 
@@ -220,4 +224,8 @@ bool CRedisClient::sscan(const string &key, int64_t &cursor, VecString &values, 
     _getStringVecFromArry( it->getArry(), values );
     return ( cursor == 0 ? false : true );
 
+}
+
+
+}
 }

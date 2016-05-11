@@ -14,6 +14,10 @@
 
 #include"Command.h"
 #include"CRedisClient.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 bool CRedisClient::ping( string &value )
 {
@@ -60,3 +64,5 @@ void CRedisClient::select( uint64_t index )
 
 
 
+}
+}

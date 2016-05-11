@@ -16,8 +16,12 @@
 #include <Poco/Types.h>
 #include "redisCommon.h"
 
-using std::stringstream;
-using std::vector;
+//using std::stringstream;
+//using std::vector;
+namespace Taiji {
+namespace Redis {
+
+
 
 class Command
 {
@@ -54,7 +58,7 @@ public:
         _dataString.str("");
         size_t size = _param.size();
         _dataString << '*' << size << _CRLF;
-        vector<string>::const_iterator it = _param.begin();
+        std::vector<string>::const_iterator it = _param.begin();
         for ( ; it != _param.end(); ++it )
         {
             _dataString << '$' << it->size() << _CRLF;
@@ -91,4 +95,8 @@ private:
     bool _make;									///< 标记是否已经 makeCommand
 };
 
+
+
+}
+}
 #endif // COMMAND_H

@@ -18,6 +18,9 @@
 #include <memory>
 
 #define DEFALUT_SIZE   10
+namespace Taiji {
+namespace Redis {
+
 
 
 class CRedisPool
@@ -123,6 +126,11 @@ private:
 	static void __onRunCallBack(void* pVoid);
 };
 
+
+
+
+}
+}
 
 
 

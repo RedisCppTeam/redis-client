@@ -14,6 +14,10 @@
 #include <stdlib.h>
 #include <time.h>
 using namespace std;
+namespace Taiji {
+namespace Redis {
+
+
 
 CRedisPool::CRedisPool( )
 {
@@ -222,4 +226,9 @@ void CRedisPool::__onRunCallBack( void* pVoid )
 			pRedisPool->_keepAlive();
 		}
 	}
+}
+
+
+
+}
 }

@@ -13,6 +13,10 @@
 
 #include "Command.h"
 #include "CRedisClient.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 void CRedisClient::eval(const string& script , const VecString& keysVec ,
         const VecString& argsVec , CResult& result )
@@ -144,4 +148,9 @@ void CRedisClient::scriptKill()
     _getStatus( cmd, status );
     if ( "OK"!=status)
         throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
+}
+
+
+
+}
 }

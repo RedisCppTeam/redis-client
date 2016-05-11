@@ -14,16 +14,18 @@ INCLUDEPATH += \
     ../redis-client
 
 HEADERS += \
+    CTestRedis.h \
+    ../redis-client/Exception/Exception.h \
     ../redis-client/Command.h \
     ../redis-client/CRedisClient.h \
     ../redis-client/CRedisPool.h \
     ../redis-client/CRedisSocket.h \
     ../redis-client/CResult.h \
-    ../redis-client/RdException.hpp \
     ../redis-client/redisCommon.h \
-    CTestRedis.h
+    ../redis-client/RdException.h
 
 SOURCES += \
+    CTestRedis.cpp \
     testConnection.cpp \
     testHash.cpp \
     testHyperLogLog.cpp \
@@ -37,7 +39,8 @@ SOURCES += \
     testSortedSet.cpp \
     testString.cpp \
     testTransaction.cpp \
-     ../redis-client/Command.cpp \
+    ../redis-client/Exception/Exception.cpp \
+    ../redis-client/Command.cpp \
     ../redis-client/CRedisClient.cpp \
     ../redis-client/CRedisPool.cpp \
     ../redis-client/CRedisSocket.cpp \
@@ -53,9 +56,5 @@ SOURCES += \
     ../redis-client/RedisClientSet.cpp \
     ../redis-client/RedisClientSortedSet.cpp \
     ../redis-client/RedisClientString.cpp \
-    ../redis-client/RedisTransaction.cpp \
-    CTestRedis.cpp
-
-
-
+    ../redis-client/RedisTransaction.cpp
 

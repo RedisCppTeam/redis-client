@@ -1,6 +1,10 @@
 
 #include "Command.h"
 #include "CRedisClient.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 
 uint64_t CRedisClient::zadd(const string &key, const CRedisClient::TupleString &map)
@@ -392,4 +396,9 @@ uint64_t CRedisClient::zremrangebylex(const string &key, const string &min, cons
     int64_t num;
     _getInt(cmd,num);
     return num;
+}
+
+
+
+}
 }

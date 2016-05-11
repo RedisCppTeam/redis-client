@@ -10,6 +10,10 @@
 #include "CRedisClient.h"
 
 //-----------------------------string method--------------------------------------
+namespace Taiji {
+namespace Redis {
+
+
 
 
 
@@ -391,6 +395,9 @@ uint64_t CRedisClient::strlen( const string& key )
 }
 
 
+
+}
+}
 
 
 

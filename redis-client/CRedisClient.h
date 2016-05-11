@@ -15,12 +15,17 @@
 #include <Poco/Net/StreamSocket.h>
 #include "Command.h"
 #include "redisCommon.h"
-#include "RdException.hpp"
+#include "RdException.h"
 #include "CRedisSocket.h"
 
 #include "CResult.h"
 
 using namespace Poco;
+
+namespace Taiji {
+namespace Redis {
+
+
 
 
 typedef enum
@@ -61,6 +66,7 @@ typedef enum
 class CRedisClient
 {
 public:
+
 
 	typedef std::vector<std::string> VecString;
     typedef std::vector<std::tuple<string,string>> TupleString;
@@ -1247,4 +1253,8 @@ private:
 	static const char PREFIX_MULTI_BULK_REPLY;
 };
 
+
+
+}
+}
 #endif // REDIS_H

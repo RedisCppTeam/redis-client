@@ -10,6 +10,10 @@
 
 #include "Command.h"
 #include "CRedisClient.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 uint64_t CRedisClient::lpush( const string &key , const VecString &value )
 {
@@ -215,3 +219,8 @@ bool CRedisClient::brpoplpush(const string &source , const string &dest , uint64
     return (_getString( cmd, value ));
 }
 
+
+
+
+}
+}

@@ -3,6 +3,10 @@
 
 #include "redisCommon.h"
 
+namespace Taiji {
+namespace Redis {
+
+
 
 typedef enum ReplyType
 {
@@ -71,4 +75,7 @@ private:
     ListCResult _arry;
 };
 
+
+}
+}
 #endif // CRESULT_H

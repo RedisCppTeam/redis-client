@@ -1,5 +1,9 @@
 #include "CRedisSocket.h"
-#include "RdException.hpp"
+#include "RdException.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 
 
@@ -148,4 +152,5 @@ void CRedisSocket::_flushSocketRecvBuff()
 
 
 
-
+}
+}

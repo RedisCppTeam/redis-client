@@ -1,6 +1,10 @@
 #include "CResult.h"
 #include <sstream>
-#include "RdException.hpp"
+#include "RdException.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 CResult::CResult():
    _type( REDIS_REPLY_NIL )
@@ -223,3 +227,5 @@ std::ostream &operator<<(std::ostream& out,  const CResult &value)
 
 
 
+}
+}

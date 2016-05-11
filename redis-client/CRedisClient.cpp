@@ -12,6 +12,10 @@
 #include "CRedisClient.h"
 #include "Poco/Types.h"
 
+namespace Taiji {
+namespace Redis {
+
+
 
 const char CRedisClient:: PREFIX_REPLY_STATUS = '+';
 const char CRedisClient:: PREFIX_REPLY_ERR = '-';
@@ -412,4 +416,9 @@ bool CRedisClient::_getArry(Command &cmd, CRedisClient::TupleString &pairs , uin
     num = result.getArry().size();
     _getStringTupleFromArry( result.getArry(), pairs );
     return true;
+}
+
+
+
+}
 }

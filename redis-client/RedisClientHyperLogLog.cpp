@@ -14,6 +14,10 @@
 
 #include"Command.h"
 #include"CRedisClient.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 uint64_t CRedisClient::pfadd( const string &key , const CRedisClient::VecString &element )
 {
@@ -65,3 +69,5 @@ bool CRedisClient::pfmerge( const string &destKey , const CRedisClient::VecStrin
 }
 
 
+}
+}

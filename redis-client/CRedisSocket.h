@@ -2,15 +2,21 @@
 #define CREDISSOCKET_H
 
 #include "redisCommon.h"
+#include "RdException.h"
 #include <Poco/Net/StreamSocket.h>
 
 using Poco::Net::StreamSocket;
 using Poco::Net::SocketAddress;
 using Poco::Net::Socket;
+namespace Taiji {
+namespace Redis {
+
+
 
 class CRedisSocket : public StreamSocket
 {
 public:
+
     CRedisSocket();
     explicit CRedisSocket(const SocketAddress& address );
 
@@ -65,5 +71,10 @@ private:
     char* _pNext;		///< a pointer that points to the data to be  read.
     char* _pEnd;		///< the end of the buffer.
 };
+
+
+
+}
+}
 
 #endif // CREDISSOCKET_H

@@ -9,6 +9,10 @@
 #include "Command.h"
 #include "CRedisClient.h"
 
+namespace Taiji {
+namespace Redis {
+
+
 
 
 
@@ -153,7 +157,8 @@
 
 
 
-
+}
+}
 
 
 

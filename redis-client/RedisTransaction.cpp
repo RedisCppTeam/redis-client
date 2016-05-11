@@ -1,6 +1,10 @@
 
 #include "Command.h"
 #include "CRedisClient.h"
+namespace Taiji {
+namespace Redis {
+
+
 
 void CRedisClient::watch(const CRedisClient::VecString &keys)
 {
@@ -100,6 +104,7 @@ bool CRedisClient::exec( CResult &result )
 }
 
 
-
+}
+}
 
 

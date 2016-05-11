@@ -12,6 +12,10 @@
 #include "Command.h"
 #include "CRedisClient.h"
 
+namespace Taiji {
+namespace Redis {
+
+
 
 
 //------------------------------hash method-----------------------------------
@@ -193,7 +197,8 @@ bool CRedisClient::hscan(const string &key, int64_t &cursor, TupleString &values
 
 
 
-
+}
+}
 
 
 

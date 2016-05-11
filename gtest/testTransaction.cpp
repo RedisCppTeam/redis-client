@@ -12,10 +12,10 @@
 #include "CRedisClient.h"
 #include <stdio.h>
 #include <sstream>
-#include "RdException.hpp"
+#include "RdException.h"
 #include "CResult.h"
 
-
+using namespace Taiji::Redis;
 //////////////////////////////////////// test transaction////////////////////////////////////////
 void TranSactionMain( void )
 {
