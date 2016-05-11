@@ -1,6 +1,6 @@
 #include "Command.h"
 #include "CRedisClient.h"
-#include "RdException.h"
+#include "ExceptRedis.h"
 
 namespace Taiji {
 namespace Redis {

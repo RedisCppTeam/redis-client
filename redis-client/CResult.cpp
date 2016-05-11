@@ -1,6 +1,6 @@
 #include "CResult.h"
 #include <sstream>
-#include "RdException.h"
+#include "ExceptRedis.h"
 namespace Taiji {
 namespace Redis {
 

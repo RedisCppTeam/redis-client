@@ -15,7 +15,7 @@
 #include <Poco/Net/StreamSocket.h>
 #include "Command.h"
 #include "redisCommon.h"
-#include "RdException.h"
+#include "ExceptRedis.h"
 #include "CRedisSocket.h"
 
 #include "CResult.h"

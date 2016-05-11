@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef RDEXCEPTION_H
-#define RDEXCEPTION_H
+#ifndef EXCEPTREDIS_H
+#define EXCEPTREDIS_H
 
 #include "redisCommon.h"
 #include "Exception/Exception.h"
@@ -48,7 +48,7 @@ TAIJI_NEW_EXCEPTION_INCLUDE(ExceptHandle, ExceptRedis, 70)
 }
 }
 
-#endif // RDEXCEPTION_H
+#endif // EXCEPTREDIS_H
 
 
 

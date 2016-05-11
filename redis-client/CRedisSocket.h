@@ -2,7 +2,7 @@
 #define CREDISSOCKET_H
 
 #include "redisCommon.h"
-#include "RdException.h"
+#include "ExceptRedis.h"
 #include <Poco/Net/StreamSocket.h>
 
 

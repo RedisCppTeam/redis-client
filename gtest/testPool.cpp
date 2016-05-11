@@ -17,7 +17,7 @@
 #include "CRedisClient.h"
 #include <stdio.h>
 #include <sstream>
-#include "RdException.h"
+#include "ExceptRedis.h"
 #include "CResult.h"
 #include "CRedisPool.h"
 

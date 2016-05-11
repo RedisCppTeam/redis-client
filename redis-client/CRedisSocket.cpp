@@ -1,5 +1,5 @@
 #include "CRedisSocket.h"
-#include "RdException.h"
+#include "ExceptRedis.h"
 namespace Taiji {
 namespace Redis {
 
