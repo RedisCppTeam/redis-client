@@ -27,7 +27,7 @@ void TestPing( void )
 
 		string value;
         redis.ping(value);
-    } catch( RdException& e )
+    } catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -44,7 +44,7 @@ void TestQuit( void )
 		redis.connect("127.0.0.1", 6379);
 
         redis.quit();
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -62,7 +62,7 @@ void TestEcho( void )
 
 		string value;
         redis.echo("hello world", value);
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -79,7 +79,7 @@ void TestAuth( void )
 		redis.connect("127.0.0.1", 6379);
 
         redis.auth("1234");
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -96,7 +96,7 @@ void TestSelect( void )
 		redis.connect("127.0.0.1", 6379);
 
         redis.select(1);
-    } catch( RdException& e )
+    } catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )

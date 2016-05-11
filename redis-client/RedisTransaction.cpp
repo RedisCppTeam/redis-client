@@ -16,7 +16,7 @@ void CRedisClient::watch(const CRedisClient::VecString &keys)
     _getStatus( cmd, status );
     if ( "OK" != status )
     {
-        throw ProtocolErr( "WATCH recv unexpected data: " + status );
+        throw ExceptProtocol( "WATCH recv unexpected data: " + status );
     }
 }
 
@@ -28,7 +28,7 @@ void CRedisClient::unwatch()
 
    if ( "OK" != status )
    {
-       throw ProtocolErr( "UNWATCH recv unexpected data: " + status );
+       throw ExceptProtocol( "UNWATCH recv unexpected data: " + status );
    }
  }
 
@@ -41,7 +41,7 @@ void CRedisClient::multi( void )
 
     if ( "OK" != status )
     {
-        throw ProtocolErr( "MULTI recv unexpected data: " + status );
+        throw ExceptProtocol( "MULTI recv unexpected data: " + status );
     }
 }
 
@@ -54,7 +54,7 @@ void CRedisClient::transactionCmd(const std::string &cmmand )
 
     if ( "QUEUED" != status )
     {
-        throw ProtocolErr( "TRANSACTION recv unexpected data:" + status );
+        throw ExceptProtocol( "TRANSACTION recv unexpected data:" + status );
     }
 }
 
@@ -76,7 +76,7 @@ void CRedisClient::transactionCmd(const std::string &cmmand,  VecString& params 
 
     if ( "QUEUED" != status )
     {
-        throw ProtocolErr( "TRANSACTION recv unexpected data:" + status );
+        throw ExceptProtocol( "TRANSACTION recv unexpected data:" + status );
     }
 }
 
@@ -88,7 +88,7 @@ void CRedisClient::discard( void )
 
     if ( "OK" != status )
     {
-            throw ProtocolErr("DISCARD: data recved is not OK");
+            throw ExceptProtocol("DISCARD: data recved is not OK");
     }
 }
 

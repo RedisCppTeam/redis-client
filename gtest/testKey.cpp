@@ -51,7 +51,7 @@ void TestDel( void )
         keys.push_back("k2");
         uint64_t num = redis.del( keys );
 		std::cout << "del num:" << num << std::endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -81,7 +81,7 @@ void TestKeys( void )
 			cout << keys[ret] << endl;
 		}
 
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -131,7 +131,7 @@ void testTTL( void )
 		}
 		cout << "ttlu break****:" << ttl << endl << endl;
 
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -161,7 +161,7 @@ void testobj( void )
         string akey;
         ret = redis.randomKey( akey );
         cout << "ret:" << ret << "randomKey:" << akey << endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -186,7 +186,7 @@ void testRename( void )
             cout << "redis.nx ok:" << ret << endl;
         else
             cout << "redis.nx failed:" << ret << endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	}
@@ -308,7 +308,7 @@ void TestKeyMain( void )
         testobj();
       //  testTTL();
         TestKeys();
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << endl << "Redis exception !!!!:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )

@@ -266,7 +266,7 @@ REDIS_DATA_TYPE CRedisClient::type( const string& key )
          return HASH;
      }else
      {
-         throw ProtocolErr("TYPE:" "type string is unexpection!");
+         throw ExceptProtocol("TYPE:" "type string is unexpection!");
      }
 }
 
@@ -333,6 +333,6 @@ void CRedisClient::migrate(  const string& key ,const string& host , uint16_t po
 
     if ( status != "OK" )
     {
-        throw ReplyErr( status );
+        throw ExceptReply( status );
     }
 }

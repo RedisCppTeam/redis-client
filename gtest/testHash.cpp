@@ -87,7 +87,7 @@ void TestHash( void )
         //     redis.hmget( "testHash", hmgeFields,result );
         //     std::cout << "hmget:" << std::endl;
         //     std::cout << result << std::endl;
-    }catch( RdException& e )
+    }catch( ExceptRedis& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
     }catch( Poco::Exception& e )
@@ -153,7 +153,7 @@ void TestHash2()
         std::cout << "totalNum: " << hscanPairs.size() << std::endl;
 
 
-    }catch( RdException& e )
+    }catch( ExceptRedis& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
     }catch( Poco::Exception& e )

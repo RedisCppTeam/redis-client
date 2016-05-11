@@ -32,7 +32,7 @@ void TestPfadd( void )
 		string key("key1");
 		uint64_t count = redis.pfadd(key, element);
 		cout << count << endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -66,7 +66,7 @@ void TestPfcount( void )
 		keys.push_back(key2);
 		uint64_t num = redis.pfcount(keys);
 		cout << num << endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -100,7 +100,7 @@ void TestPfmerge( void )
 		keys.push_back(key2);
 		bool flag = redis.pfmerge("test", keys);
 		cout << flag << endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )

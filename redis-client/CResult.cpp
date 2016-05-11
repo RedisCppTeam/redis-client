@@ -52,7 +52,7 @@ const CResult::ListCResult &CResult::getArry( void ) const
 {
     if ( _type != REDIS_REPLY_ARRAY )
     {
-        throw TypeErr( "Data is not arry type" );
+        throw ExceptType( "Data is not arry type" );
     }
     return _arry;
 }
@@ -61,7 +61,7 @@ int64_t CResult::getInt(void) const
 {
     if ( _type != REDIS_REPLY_INTEGERER )
     {
-         throw TypeErr( "Data is not int type" );
+         throw ExceptType( "Data is not int type" );
     }
 
     int64_t value;
@@ -70,7 +70,7 @@ int64_t CResult::getInt(void) const
 
     if ( istr.fail() )
     {
-         throw TypeErr( "Data is not int type" );
+         throw ExceptType( "Data is not int type" );
     }
 
     return value;
@@ -80,7 +80,7 @@ string CResult::getString( void ) const
 {
     if ( _type != REDIS_REPLY_STRING )
     {
-         throw TypeErr( "Data is not string type" );
+         throw ExceptType( "Data is not string type" );
     }
     return *this;
 }
@@ -89,7 +89,7 @@ string CResult::getErrorString( void ) const
 {
     if ( _type != REDIS_REPLY_ERROR )
     {
-         throw TypeErr( "Data is not error type" );
+         throw ExceptType( "Data is not error type" );
     }
     return *this;
 }
@@ -98,7 +98,7 @@ string CResult::getStatus( void ) const
 {
     if ( _type != REDIS_REPLY_STATUS )
     {
-         throw TypeErr( "Data is not error type" );
+         throw ExceptType( "Data is not error type" );
     }
     return *this;
 }

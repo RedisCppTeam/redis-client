@@ -133,7 +133,7 @@ void CRedisClient::scriptFlush( void )
 	cmd << "FLUSH";
     _getStatus(cmd, status);
     if ( "OK"!=status)
-        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
+        throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
 void CRedisClient::scriptKill()
@@ -143,5 +143,5 @@ void CRedisClient::scriptKill()
     string status;
     _getStatus( cmd, status );
     if ( "OK"!=status)
-        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
+        throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }

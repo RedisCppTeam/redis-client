@@ -106,7 +106,7 @@ void CRedisSocket::_refill()
         int n = receiveBytes(_pBuffer, RECEIVE_BUFFER_SIZE);
         if ( n <=0 )
         {
-            throw ConnectErr( "socket is disconnect!" );
+            throw ExceptConnect( "socket is disconnect!" );
         }
         if (n > 0)
         {

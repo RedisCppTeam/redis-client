@@ -129,7 +129,7 @@ CRedisPool::Handle CRedisPool::getRedis(long millisecond)
      CRedisClient* predis = getConn( place,millisecond );
      if (NULL == predis)
      {
-         throw HandleErr("lack handle");
+         throw ExceptHandle("lack handle");
      }
      //智能指针的析构器。把 redis 对象 putBack() 回去。
      auto deleter = [ place,this ]( CRedisClient * pConn )

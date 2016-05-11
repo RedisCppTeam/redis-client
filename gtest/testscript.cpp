@@ -92,7 +92,7 @@ void TestScriptMain( void )
        //testevalSha();
         testScriptExists();
        // testScriptFlush();
-    } catch( RdException& e )
+    } catch( ExceptRedis& e )
     {
         std::cout << endl << "Redis exception !!!!:" << e.what() << std::endl;
     } catch( Poco::Exception& e )

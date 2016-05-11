@@ -176,7 +176,7 @@ void TestSet( void )
 
         PrintVector( "sscan", sscanMembers );
 
-    }catch( RdException& e )
+    }catch( ExceptRedis& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
     }catch( Poco::Exception& e )

@@ -13,10 +13,10 @@
 
 #include "redisCommon.h"
 
-class RdException :public std::exception
+class ExceptRedis :public std::exception
 {
 public:
-    RdException( const string& rhs ):
+    ExceptRedis( const string& rhs ):
         _err( rhs )
     {
     }
@@ -25,7 +25,7 @@ public:
     {
         return _err.c_str();
     }
-    ~RdException() throw()
+    ~ExceptRedis() throw()
     {
 
     }
@@ -36,11 +36,11 @@ private:
 
 
 #define NEW_EXCEPTION( name ) \
-    class name : public RdException \
+    class name : public ExceptRedis \
     { \
         public: 	\
             name( const string& rhs) \
-            : RdException( rhs ) \
+            : ExceptRedis( rhs ) \
             { \
                     \
             }	\
@@ -54,19 +54,19 @@ private:
 ///< All exception base class is RdException
 
 ///<  Do not conform to the requirements of the redis  protocol.
-NEW_EXCEPTION( ProtocolErr )
+NEW_EXCEPTION( ExceptProtocol )
 ///< Get unexcepted reply
-NEW_EXCEPTION( ReplyErr )
+NEW_EXCEPTION( ExceptReply )
 ///< Connection Exception
-NEW_EXCEPTION( ConnectErr )
+NEW_EXCEPTION( ExceptConnect )
 ///< Data received exceeded Maximum limit.
-NEW_EXCEPTION( MaximumErr )
+NEW_EXCEPTION( ExceptMaximum )
 ///< Convert from string to other type value failed.
-NEW_EXCEPTION( ConvertErr )
+NEW_EXCEPTION( ExceptConvert )
 ///<
-NEW_EXCEPTION( TypeErr )
+NEW_EXCEPTION( ExceptType )
 
-NEW_EXCEPTION( HandleErr )
+NEW_EXCEPTION( ExceptHandle )
 #endif // RDEXCEPTION_H
 
 

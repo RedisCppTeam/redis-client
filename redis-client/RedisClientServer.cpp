@@ -52,7 +52,7 @@ void CRedisClient::clientKill(const string& ip,const UInt16 port)
     string status;
      _getStatus(cmd,status);
     if ( "OK"!=status)
-        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
+        throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 /*
 void CRedisClient::clientList(CResult& result)
@@ -85,7 +85,7 @@ void CRedisClient::clientSetname(const string& connectionName)
 
     _getStatus( cmd, status );
     if ( "OK"!=status)
-        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
+        throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
 uint64_t CRedisClient::configGet(const string& parameter,CRedisClient::VecString& reply)
@@ -106,7 +106,7 @@ void CRedisClient::configResetstat()
     string status;
     _getStatus( cmd, status );
     if ( "OK"!=status)
-        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
+        throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
 void CRedisClient::configRewrite()
@@ -116,7 +116,7 @@ void CRedisClient::configRewrite()
     string status;
     _getStatus( cmd, status );
     if ( "OK"!=status)
-        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
+        throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
 void CRedisClient::configSet(const string& parameter,const string& value)
@@ -127,7 +127,7 @@ void CRedisClient::configSet(const string& parameter,const string& value)
     string status;
     _getStatus( cmd, status );
     if ( "OK"!=status)
-        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
+        throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
 
@@ -163,7 +163,7 @@ void CRedisClient::flushall()
     string status;
     _getStatus( cmd, status );
     if ( "OK"!=status)
-        throw ProtocolErr( "FLUSHALL: data recved is not OK" );
+        throw ExceptProtocol( "FLUSHALL: data recved is not OK" );
 }
 
 void CRedisClient::flushdb()
@@ -172,7 +172,7 @@ void CRedisClient::flushdb()
     string status;
     _getStatus( cmd, status );
     if ( "OK"!=status)
-        throw ProtocolErr( "FLUSHDB: data recved is not OK" );
+        throw ExceptProtocol( "FLUSHDB: data recved is not OK" );
 }
 
 void CRedisClient::info(CRedisClient::VecString& reply,const string& section)
@@ -230,7 +230,7 @@ void CRedisClient::save()
     string status;
     _getStatus( cmd, status );
     if ( "OK"!=status)
-        throw ProtocolErr( "SAVE: data recved is not OK" );
+        throw ExceptProtocol( "SAVE: data recved is not OK" );
 }
 
 bool CRedisClient::shutdown( string& status )
@@ -240,7 +240,7 @@ bool CRedisClient::shutdown( string& status )
     {
         _getStatus( cmd, status );
         return false;
-    }catch( RdException&e )
+    }catch( ExceptRedis&e )
     {
         e.what();
         return true;
@@ -255,7 +255,7 @@ void CRedisClient::slaveof(const string& host,const UInt16 port)
     _getStatus( cmd, status );
     std::cout<<status<<std::endl;
     if ( "OK"!=status)
-        throw ProtocolErr( "CONFIG RESETSTAT: data recved is not OK" );
+        throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
 void CRedisClient::slowlog(const CRedisClient::VecString &subcommand, CResult &reply)

@@ -33,7 +33,7 @@ void TestLpush( void )
 		value.push_back("c");
 		int count = redis.lpush(mykey, value);
 		std::cout << count << std::endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -57,7 +57,7 @@ void TestRpush( void )
     //	value.push_back("j");
 		int count = redis.rpush(mykey, value);
 		std::cout << count << std::endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -84,7 +84,7 @@ void TestLpop( void )
             std::cout << value << std::endl;
         }
 
-    } catch( RdException& e )
+    } catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -110,7 +110,7 @@ void TestRpop( void )
             std::cout << "rpop successful!!" << std::endl;
             std::cout << value << std::endl;
         }
-    } catch( RdException& e )
+    } catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -137,7 +137,7 @@ void TestLindex( void )
         {
             std::cout << value << std::endl;
         }
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -158,7 +158,7 @@ void TestLlen( void )
 		std::string value;
 		int64_t count = redis.llen(mykey);
 		std::cout << count << std::endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -179,7 +179,7 @@ void TestLpushx( void )
 
 		int64_t count = redis.lpushx(mykey, value);
 		std::cout << count << std::endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -199,7 +199,7 @@ void TestRpushx( void )
 
 		int64_t count = redis.rpushx(mykey, value);
 		std::cout << count << std::endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -218,7 +218,7 @@ void TestLinsert( void )
 
         int64_t count = redis.linsert(mykey, BEFORE, "zhongwei", "hello");
 		std::cout << count << std::endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -236,7 +236,7 @@ void TestLrem( void )
 
         uint64_t num = redis.lrem("testList","yuhaiyang");
         std::cout << "num: " << num << std::endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -254,7 +254,7 @@ void TestLtrim( void )
         string mykey = "testList";
 
         redis.ltrim(mykey, 0, -2);
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -272,7 +272,7 @@ void TestLset( void )
         string mykey = "testList";
 
         redis.lset(mykey, 10, "haha");
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -298,7 +298,7 @@ void TestLrange( void )
 			cout << *it << endl;
 			++it;
 		}
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -318,7 +318,7 @@ void TestRpoplpush( )
         bool flag = redis.rpoplpush("source", "dest", value);
 		cout << flag << endl;
         cout << "value:" << value << endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -368,7 +368,7 @@ void TestBlpop( void )
                 ++it;
             }
         }
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -418,7 +418,7 @@ void TestBrpop( void )
             std::cout << std::get<0>(*it) << ":" <<std::get<1>(*it) << std::endl;
 			++it;
 		}
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )
@@ -438,7 +438,7 @@ void TestBrpoplpush( void )
         bool flag=redis.brpoplpush("source", "dest", 1, value);
 		cout<<flag<<endl;
 		cout<<value<<endl;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		std::cout << "Redis exception:" << e.what() << std::endl;
 	} catch( Poco::Exception& e )

@@ -169,7 +169,7 @@ void CRedisClient::mset( CRedisClient::TupleString &value )
 	string status;
 	_getStatus( cmd, status );
 	if ( status != "OK" )
-		throw ProtocolErr( "MSET: data recved is not OK" );
+		throw ExceptProtocol( "MSET: data recved is not OK" );
 }
 
 
@@ -230,7 +230,7 @@ void CRedisClient::set(const std::string &key,const std::string &value)
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
-        throw ReplyErr( result.getErrorString() );
+        throw ExceptReply( result.getErrorString() );
     }else if ( result.getType() == REDIS_REPLY_STATUS )
     {
         if ( result.getStatus() == "OK" )
@@ -238,11 +238,11 @@ void CRedisClient::set(const std::string &key,const std::string &value)
             return;
         }else
         {
-            throw ProtocolErr( "SET: data recved is not OK" );
+            throw ExceptProtocol( "SET: data recved is not OK" );
         }
     }else
     {
-        throw ProtocolErr( "SET: data recved is not status" );
+        throw ExceptProtocol( "SET: data recved is not status" );
     }
 }
 
@@ -269,7 +269,7 @@ bool CRedisClient::setEX(const std::string &key, const std::string &value, long 
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
-        throw ReplyErr( result.getErrorString() );
+        throw ExceptReply( result.getErrorString() );
     }
     else if ( result.getType() == REDIS_REPLY_STATUS )
     {
@@ -279,7 +279,7 @@ bool CRedisClient::setEX(const std::string &key, const std::string &value, long 
         return false;
     }else
     {
-        throw ProtocolErr( "SET: data recved is not status" );
+        throw ExceptProtocol( "SET: data recved is not status" );
     }
 }
 
@@ -306,7 +306,7 @@ bool CRedisClient::setPX(const std::string &key, const std::string &value, long 
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
-        throw ReplyErr( result.getErrorString() );
+        throw ExceptReply( result.getErrorString() );
     }
     else if ( result.getType() == REDIS_REPLY_STATUS )
     {
@@ -316,7 +316,7 @@ bool CRedisClient::setPX(const std::string &key, const std::string &value, long 
         return false;
     }else
     {
-        throw ProtocolErr( "SET: data recved is not status" );
+        throw ExceptProtocol( "SET: data recved is not status" );
     }
 }
 
@@ -327,7 +327,7 @@ bool CRedisClient::setNX(const std::string &key, const std::string &value)
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
-       throw ReplyErr( result.getErrorString() );
+       throw ExceptReply( result.getErrorString() );
     } else if ( result.getType() == REDIS_REPLY_NIL )
     {
         return false;
@@ -336,7 +336,7 @@ bool CRedisClient::setNX(const std::string &key, const std::string &value)
         return true;
     }else
     {
-        throw ProtocolErr( "SET: data recved is not status" );
+        throw ExceptProtocol( "SET: data recved is not status" );
     }
 }
 
@@ -347,7 +347,7 @@ bool CRedisClient::setXX(const std::string &key, const std::string &value)
 
     if ( result.getType() == REDIS_REPLY_ERROR )
     {
-       throw ReplyErr( result.getErrorString() );
+       throw ExceptReply( result.getErrorString() );
     } else if ( result.getType() == REDIS_REPLY_NIL )
     {
         return false;
@@ -356,7 +356,7 @@ bool CRedisClient::setXX(const std::string &key, const std::string &value)
         return true;
     }else
     {
-        throw ProtocolErr( "SET: data recved is not status" );
+        throw ExceptProtocol( "SET: data recved is not status" );
     }
 }
 

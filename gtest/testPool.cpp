@@ -57,7 +57,7 @@ void TestPoolMain( )
 		}
 		redisPool.closeConnPool();
 		return;
-	} catch( RdException& e )
+	} catch( ExceptRedis& e )
 	{
 		redisPool.closeConnPool();
 		std::cout << "Redis exception:" << e.what() << std::endl;

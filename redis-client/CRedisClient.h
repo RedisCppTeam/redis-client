@@ -296,7 +296,7 @@ public:
 	 * @param  key [in] old key name
 	 * @param  newKey [in] new key name
      * @return None
-	 * @warning throwing exception of 'ReplyErr' if no such key
+	 * @warning throwing exception of 'ExceptReply' if no such key
 	 */
     void rename( const string& key , const string& newKey );
 
@@ -305,7 +305,7 @@ public:
 	 * @param  key [in] old key name
 	 * @param  newKey [in] new key name
 	 * @return true for success,false for  newkey exists already or rename failed;
-	 * @warning throwing exception of 'ReplyErr' if no such key
+	 * @warning throwing exception of 'ExceptReply' if no such key
 	 */
 	bool renameNx( const string& key , const string& newKey );
 
@@ -327,7 +327,7 @@ public:
 	 * 	hash (哈希表)
 	 *
      * @return None
-	 * @warning throwing exception of 'ReplyErr',
+	 * @warning throwing exception of 'ExceptReply',
 	 */
     REDIS_DATA_TYPE type( const string& key );
 
@@ -340,7 +340,7 @@ public:
 	 * @param  timeout [in] timeout
      * @param  mode[in] COPY / REPLACE
      * @return None
-	 * @warning throwing exception of 'ReplyErr',
+	 * @warning throwing exception of 'ExceptReply',
 	 */
     void migrate(const string& key , const string& host , uint16_t port = 6379 ,
             uint16_t db = 0 , uint16_t timeout = 3 , const std::string &mode = "COPY");
@@ -374,7 +374,7 @@ public:
 	 * @param buf [in] return server response data
 	 * @param ttl [in] time to alive for this key
 	 * @return true for success,false for failed(no such key)
-	 * @warning Throw ReplyErr exception when the key already exists
+	 * @warning Throw ExceptReply exception when the key already exists
 	 */
     bool restore( const string& key , const string& buf , const int ttl = 0 );
 
@@ -387,7 +387,7 @@ public:
 	 * @param keysVec [in] 表示在脚本中所用到的那些 Redis 键(key)，这些键名参数可以在 Lua 中通过全局变量 KEYS 数组，用 1 为基址的形式访问( KEYS[1] ， KEYS[2] ，以此类推)。
 	 * @param argsVec [in] 附加参数 arg [arg ...] ，可以在 Lua 中通过全局变量 ARGV 数组访问，访问的形式和 KEYS 变量类似( ARGV[1] 、 ARGV[2] ，诸如此类)。
      * @return None
-	 * @warning Throw ReplyErr exception
+	 * @warning Throw ExceptReply exception
 	 */
      void eval( const string& script , const VecString& keysVec, const VecString& argsVec, CResult& result );
      void eval( const string& script, CResult& result );
@@ -399,7 +399,7 @@ public:
 	 * @param keysVec [in] 表示在脚本中所用到的那些 Redis 键(key)，这些键名参数可以在 Lua 中通过全局变量 KEYS 数组，用 1 为基址的形式访问( KEYS[1] ， KEYS[2] ，以此类推)。
 	 * @param argsVec [in] 附加参数 arg [arg ...] ，可以在 Lua 中通过全局变量 ARGV 数组访问，访问的形式和 KEYS 变量类似( ARGV[1] 、 ARGV[2] ，诸如此类)。
 	 * @return true for success,false for failed
-	 * @warning Throw ReplyErr exception
+	 * @warning Throw ExceptReply exception
 	 */
     void evalSha( const string& script , const VecString& keysVec, const VecString& argsVec,CResult& result );
 
@@ -412,7 +412,7 @@ public:
 	 * @param script [in] 一段 Lua 5.1 脚本程序，它会被运行在 Redis 服务器上下文中，这段脚本不必(也不应该)定义为一个 Lua 函数
 	 * @param values [out] 返回脚本的序列号(校验和)
      * @return None
-     * @warning Throw ReplyErr exception
+     * @warning Throw ExceptReply exception
 	 */
     void scriptLoad( const string& script, string& values );
 
@@ -421,21 +421,21 @@ public:
 	 * @param script [in] 脚本的序列号(校验和)
      * @param result [out]
      * @return None
-	 * @warning Throw ReplyErr exception
+	 * @warning Throw ExceptReply exception
 	 */
     void scriptExists(const VecString &script , VecBool &result);
 
 	/**
 	 * @brief 清除所有 Lua 脚本缓存。
 	 * @return true for success,false for failed
-	 * @warning Throw ReplyErr exception
+	 * @warning Throw ExceptReply exception
 	 */
     void scriptFlush( void );
 
 	/**
 	 * @brief kill  scripts currently executing
 	 * @return true for success,false for failed(command failed)
-	 * @warning Throw ReplyErr exception when No scripts in executing or the script is writing database.
+	 * @warning Throw ExceptReply exception when No scripts in executing or the script is writing database.
 	 */
     void scriptKill( void );
 
@@ -481,7 +481,7 @@ public:
 	 * @brief set set a string type key = value
 	 * @param key
 	 * @param value
-	 * @warning  could throw Poco::Exception and ProtocolErr exception
+	 * @warning  could throw Poco::Exception and ExceptProtocol exception
 	 */
 	void set( const string& key , const string& value );
 
@@ -1185,7 +1185,7 @@ protected:
 		istr >> value;
 		if ( istr.fail() )
 		{
-			throw ConvertErr("convert from string to other type value falied");
+			throw ExceptConvert("convert from string to other type value falied");
 		}
 
 		return value;

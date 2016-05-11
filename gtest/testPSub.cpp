@@ -138,7 +138,7 @@ void TestPSubMain( void )
         TestUNSUBSCRIBE( redis );
 
 
-    }catch( RdException& e )
+    }catch( ExceptRedis& e )
     {
         std::cout << "Redis exception:" << e.what() << std::endl;
     }catch( Poco::Exception& e )
