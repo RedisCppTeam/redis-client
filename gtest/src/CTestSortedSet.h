@@ -10,7 +10,7 @@ public:
     ~CTestSortedSet() = default;
     static void SetUpTestCase( void );
     static void TearDownTestCase( void );
-    static void SetVecTuple(CRedisClient::VecTuple& map,const string& mapName,uint64_t start,uint64_t end);
+    static void SetVecTuple(CRedisClient::VecTuple& vecTup, const string& keyPre, uint64_t start, uint64_t end);
     static CRedisClient  redis;
 
 
