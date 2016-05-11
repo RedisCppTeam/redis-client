@@ -213,7 +213,7 @@ void testType( void )
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
 
-    REDIS_DATA_TYPE type = redis.type("testHash");
+    CRedisClient::REDIS_DATA_TYPE type = redis.type("testHash");
 
     cout << "redis.type ok:" << type << endl;
 

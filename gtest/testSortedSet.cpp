@@ -242,7 +242,7 @@ void TestZunionstore (){
     redis.zadd(unionKey2,map);
     vec.push_back(unionKey1);
     vec.push_back(unionKey2);
-    TSortesSetPrint("redis.zinterstore(unionKey,2,vec,2)",redis.zunionstore(unionKey,vec,MAX));
+    TSortesSetPrint("redis.zinterstore(unionKey,2,vec,2)",redis.zunionstore(unionKey,vec,CRedisClient::MAX));
 }
 
 void TestZinterstore (){
@@ -261,7 +261,7 @@ void TestZinterstore (){
     redis.zadd(unionKey2,map);
     vec.push_back(unionKey1);
     vec.push_back(unionKey2);
-    TSortesSetPrint("redis.zinterstore(unionKey,2,vec,2)",redis.zinterstore(unionKey,vec,MAX));
+    TSortesSetPrint("redis.zinterstore(unionKey,2,vec,2)",redis.zinterstore(unionKey,vec,CRedisClient::MAX));
 }
 void TestZscan(){
     CRedisClient redis;

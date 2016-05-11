@@ -242,7 +242,7 @@ uint64_t CRedisClient::sort(const string& key , const string& storeKey, int64_t 
     return num;
 }
 
-REDIS_DATA_TYPE CRedisClient::type( const string& key )
+CRedisClient::REDIS_DATA_TYPE CRedisClient::type( const string& key )
 {
 	Command cmd("TYPE");
 	cmd << key;

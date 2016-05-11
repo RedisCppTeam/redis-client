@@ -28,37 +28,7 @@ namespace Redis {
 
 
 
-typedef enum
-{
-	DEFAULT,	///< -- A default option.
-	NX,				///< -- Only set the key if it does not already exist.
-	XX				///< -- Only set the key if it already exist.
-} SET_OPTION;
 
-typedef enum
-{
-    SUM=0,
-    MIN,
-    MAX
-
-} SORTEDSET_OPTION;
-
-typedef enum
-{
-    NONE = 0,
-    STRING,
-    LIST,
-    SET,
-    ZSET,
-    HASH
-} REDIS_DATA_TYPE;
-
-
-typedef enum
-{
-    BEFORE= 0,
-    AFTER
-} WHERE;
 
 /**
  *@brief CRedisClient redis client
@@ -67,6 +37,38 @@ class CRedisClient
 {
 public:
 
+
+    typedef enum
+    {
+        DEFAULT,	///< -- A default option.
+        NX,				///< -- Only set the key if it does not already exist.
+        XX				///< -- Only set the key if it already exist.
+    } SET_OPTION;
+
+    typedef enum
+    {
+        SUM=0,
+        MIN,
+        MAX
+
+    } SORTEDSET_OPTION;
+
+    typedef enum
+    {
+        NONE = 0,
+        STRING,
+        LIST,
+        SET,
+        ZSET,
+        HASH
+    } REDIS_DATA_TYPE;
+
+
+    typedef enum
+    {
+        BEFORE= 0,
+        AFTER
+    } WHERE;
 
 	typedef std::vector<std::string> VecString;
     typedef std::vector<std::tuple<string,string>> TupleString;

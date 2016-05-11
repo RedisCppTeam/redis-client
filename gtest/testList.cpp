@@ -216,7 +216,7 @@ void TestLinsert( void )
 		redis.connect("127.0.0.1", 6379);
         string mykey = "testList";
 
-        int64_t count = redis.linsert(mykey, BEFORE, "zhongwei", "hello");
+        int64_t count = redis.linsert(mykey, CRedisClient::BEFORE, "zhongwei", "hello");
 		std::cout << count << std::endl;
 	} catch( ExceptRedis& e )
 	{
