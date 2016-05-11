@@ -26,7 +26,7 @@ const char CRedisClient:: PREFIX_MULTI_BULK_REPLY = '*';
 //==============================based method====================================
 CRedisClient::CRedisClient()
 {
-    Timespan timeout( 5 ,0 );
+    Poco::Timespan timeout( 5 ,0 );
     _timeout = timeout;
 }
 
@@ -35,9 +35,9 @@ CRedisClient::~CRedisClient()
 
 }
 
-void CRedisClient::setAddress(const string &ip, UInt16 port)
+void CRedisClient::setAddress(const string &ip, uint16_t port)
 {
-    Net::SocketAddress addr( ip, port );
+    Poco::Net::SocketAddress addr( ip, port );
     _addr =  addr;
     return;
 }
@@ -56,12 +56,12 @@ string CRedisClient::getAddr()
 
 void CRedisClient::setTimeout(long seconds, long microseconds)
 {
-    Timespan timeout( seconds, microseconds );
+    Poco::Timespan timeout( seconds, microseconds );
     _timeout =  timeout;
 }
 
 
-void CRedisClient::connect( const string &ip, UInt16 port )
+void CRedisClient::connect(const string &ip, uint16_t port )
 {
     setAddress( ip, port );
     _socket.connect( _addr, _timeout );

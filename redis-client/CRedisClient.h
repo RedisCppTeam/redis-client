@@ -20,7 +20,7 @@
 
 #include "CResult.h"
 
-using namespace Poco;
+//using namespace Poco;
 
 namespace Taiji {
 namespace Redis {
@@ -80,7 +80,7 @@ public:
 	 * @param ip	redis-server ip.
 	 * @param port redis-server port.
 	 */
-	void setAddress( const string& ip , UInt16 port );
+    void setAddress( const string& ip , uint16_t port );
 
 	/**
 	 * @brief getAddrip
@@ -92,7 +92,7 @@ public:
 	 * @brief getAddrPort
 	 * @return get redis-server port
 	 */
-	UInt16 getAddrPort( void );
+    uint16_t getAddrPort( void );
 
 	/**
 	 * @brief getAddr
@@ -113,7 +113,7 @@ public:
 	 * @param port [in] host port
 	 * @warning Will throw an exception when the connection fails.
 	 */
-	void connect( const string& ip , UInt16 port = 6379 );
+    void connect( const string& ip , uint16_t port = 6379 );
 
 	/**
 	 * @brief connect to redis-server.
@@ -1044,7 +1044,7 @@ public:
      * @param port[in]
      * @return:  if the connection exists and has been closed   return true.else return false.
      */
-    void clientKill(const string& ip,const UInt16 port);
+    void clientKill(const string& ip,const uint16_t port);
     /**
      * @brief clientList Get the list of client connections.
      * @param[in] reply[out] list of client connections.
@@ -1150,7 +1150,7 @@ public:
      * @param host[in]
      * @param port[in]
      */
-    void slaveof(const string& host,const UInt16 port);
+    void slaveof(const string& host,const uint16_t port);
     /**
      * @brief slowlog Manages the Redis slow queries log.
      * @param subcommand[in]
@@ -1239,8 +1239,8 @@ private:
 	DISALLOW_COPY_AND_ASSIGN( CRedisClient );
 
 	CRedisSocket _socket;			///< redis net work class.
-	Net::SocketAddress _addr;		///< redis server ip address.
-	Timespan _timeout;					///< time out.
+    Poco::Net::SocketAddress _addr;		///< redis server ip address.
+    Poco::Timespan _timeout;					///< time out.
 
 	enum
 	{

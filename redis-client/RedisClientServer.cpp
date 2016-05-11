@@ -47,7 +47,7 @@ bool  CRedisClient::clientGetname(string& clientName)
 
 }
 
-void CRedisClient::clientKill(const string& ip,const UInt16 port)
+void CRedisClient::clientKill(const string& ip, const uint16_t port)
 {
     Command cmd( "CLIENT" );
     cmd<<"KILL";
@@ -252,7 +252,7 @@ bool CRedisClient::shutdown( string& status )
     }
 }
 
-void CRedisClient::slaveof(const string& host,const UInt16 port)
+void CRedisClient::slaveof(const string& host, const uint16_t port)
 {
     Command cmd( "SLAVEOF" );
     cmd<<host<<port;

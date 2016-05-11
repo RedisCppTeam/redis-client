@@ -16,8 +16,6 @@
 #include <Poco/Types.h>
 #include "redisCommon.h"
 
-//using std::stringstream;
-//using std::vector;
 namespace Taiji {
 namespace Redis {
 
