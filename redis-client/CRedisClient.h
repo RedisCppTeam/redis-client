@@ -20,7 +20,7 @@
 
 #include "CResult.h"
 
-//using namespace Poco;
+
 
 namespace Taiji {
 namespace Redis {
