@@ -12,7 +12,7 @@ void CTestSortedSet::TearDownTestCase()
 
 }
 
-void CTestSortedSet::SetVecTuple(CRedisClient::VecTuple &vecTup, const std::string &keyPre, uint64_t start, uint64_t end)
+void CTestSortedSet::GetVecTuple(CRedisClient::VecTuple &vecTup, const std::string &keyPre, uint64_t start, uint64_t end)
 {
     vecTup.clear();
     string member,score;
@@ -34,7 +34,7 @@ TEST_F(CTestSortedSet, zadd)
 {
     redis.flushall();
     CRedisClient::VecTuple vecTup;
-    SetVecTuple(vecTup, "member_", 1, 10);
+    GetVecTuple(vecTup, "member_", 1, 10);
     EXPECT_EQ(10, redis.zadd("sortedSet", vecTup));
 }
 
@@ -42,7 +42,7 @@ TEST_F(CTestSortedSet, zcard)
 {
     redis.flushall();
     CRedisClient::VecTuple vecTup;
-    SetVecTuple(vecTup, "member_", 1, 10);
+    GetVecTuple(vecTup, "member_", 1, 10);
     redis.zadd("sortedSet", vecTup);
     EXPECT_EQ(10, redis.zcard("sortedSet"));
 }
@@ -51,7 +51,7 @@ TEST_F(CTestSortedSet, zcount)
 {
     redis.flushall();
     CRedisClient::VecTuple vecTup;
-    SetVecTuple(vecTup, "member_", 1, 10);
+    GetVecTuple(vecTup, "member_", 1, 10);
     redis.zadd("sortedSet", vecTup);
     EXPECT_EQ(6 - 3 + 1, redis.zcount("sortedSet","3","6"));
 }
@@ -67,7 +67,7 @@ TEST_F(CTestSortedSet, zrange)
 {
     redis.flushall();
     CRedisClient::VecTuple vecTup;
-    SetVecTuple(vecTup, "member_", 1, 10);
+    GetVecTuple(vecTup, "member_", 1, 10);
     redis.zadd("sortedSet", vecTup);
     CRedisClient::VecString vec;
     redis.zrange("sortedSet", 2, 5, vec);
@@ -78,7 +78,7 @@ TEST_F(CTestSortedSet, zrangeWithscore)
 {
     redis.flushall();
     CRedisClient::VecTuple vecTup;
-    SetVecTuple(vecTup, "member_", 1, 10);
+    GetVecTuple(vecTup, "member_", 1, 10);
     redis.zadd("sortedSet", vecTup);
     CRedisClient::VecTuple vec;
     redis.zrangeWithscore("sortedSet", 2, 5, vec);
@@ -89,7 +89,7 @@ TEST_F(CTestSortedSet, zrangebyscore)
 {
     redis.flushall();
     CRedisClient::VecTuple vecTup;
-    SetVecTuple(vecTup, "member_", 1, 10);
+    GetVecTuple(vecTup, "member_", 1, 10);
     redis.zadd("sortedSet", vecTup);
     CRedisClient::VecString vec;
     redis.zrangebyscore("sortedSet", "2", "5", vec);
@@ -100,7 +100,7 @@ TEST_F(CTestSortedSet, zrangebyscoreWithscore)
 {
     redis.flushall();
     CRedisClient::VecTuple vecTup;
-    SetVecTuple(vecTup, "member_", 1, 10);
+    GetVecTuple(vecTup, "member_", 1, 10);
     redis.zadd("sortedSet", vecTup);
     CRedisClient::VecTuple vec;
     redis.zrangebyscoreWithscore("sortedSet", "2", "5", vec);

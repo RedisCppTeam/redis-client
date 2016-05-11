@@ -1,13 +1,13 @@
-#ifndef CTESTSORTEDSET_H
-#define CTESTSORTEDSET_H
+#ifndef CTESTHASH_H
+#define CTESTHASH_H
 #include <gtest/gtest.h>
 #include "CRedisClient.h"
 using namespace Taiji::Redis;
-class CTestSortedSet : public testing::Test
+class CTestHash : public testing::Test
 {
 public:
-    CTestSortedSet() = default;
-    ~CTestSortedSet() = default;
+    CTestHash() = default;
+    ~CTestHash() = default;
     static void SetUpTestCase( void );
     static void TearDownTestCase( void );
     static void GetVecTuple(CRedisClient::VecTuple& vecTup, const string& keyPre, uint64_t start, uint64_t end);
@@ -16,4 +16,5 @@ public:
 
 };
 
-#endif // CTESTSORTEDSET_H
+
+#endif // CTESTHASH_H
