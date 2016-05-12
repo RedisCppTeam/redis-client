@@ -19,46 +19,46 @@ namespace Redis {
 
 uint64_t CRedisClient::append( const string& key, const string& value )
 {
-	Command cmd( "APPEND" );
-	cmd << key << value;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "APPEND" );
+    cmd << key << value;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
 uint64_t CRedisClient::bitcount( const string& key, int64_t start, int64_t end )
 {
-	Command cmd( "BITCOUNT" );
-	cmd << key << start << end;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "BITCOUNT" );
+    cmd << key << start << end;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
 uint64_t CRedisClient::bitop( const string& operation, const string& destkey, VecString& keys )
 {
-	Command cmd( "BITOP" );
-	cmd << operation << destkey;
-	VecString::const_iterator it = keys.begin();
-	for ( ; it != keys.end(); ++it )
-	{
-		cmd << *it;
-	}
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "BITOP" );
+    cmd << operation << destkey;
+    VecString::const_iterator it = keys.begin();
+    for ( ; it != keys.end(); ++it )
+    {
+        cmd << *it;
+    }
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
 int64_t CRedisClient::decr( const string& key )
 {
-	Command cmd( "DECR" );
-	cmd << key;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "DECR" );
+    cmd << key;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
@@ -66,11 +66,11 @@ int64_t CRedisClient::decr( const string& key )
 
 int64_t CRedisClient::decrby( const string& key, int64_t decrement )
 {
-	Command cmd( "DECRBY" );
-	cmd << key << decrement;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "DECRBY" );
+    cmd << key << decrement;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
@@ -84,114 +84,114 @@ bool CRedisClient::get( const std::string &key, std::string &value )
 
 uint8_t CRedisClient::getbit( const string& key, uint32_t offset )
 {
-	Command cmd( "GETBIT" );
-	cmd << key << offset;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "GETBIT" );
+    cmd << key << offset;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
 
 bool CRedisClient::getrange( const string& key, int64_t start, int64_t end, string &value )
 {
-	value.clear();
-	Command cmd( "GETRANGE" );
-	cmd << key << start << end;
+    value.clear();
+    Command cmd( "GETRANGE" );
+    cmd << key << start << end;
 
-	return _getString( cmd, value );
+    return _getString( cmd, value );
 }
 
 
 bool CRedisClient::getset(const string& key, const string &value, string &oldvalue )
 {
-	oldvalue.clear();
-	Command cmd( "GETSET" );
-	cmd << key << value;
-	return _getString( cmd, oldvalue );
+    oldvalue.clear();
+    Command cmd( "GETSET" );
+    cmd << key << value;
+    return _getString( cmd, oldvalue );
 }
 
 
 int64_t CRedisClient::incr( const string& key )
 {
-	Command cmd( "INCR" );
-	cmd << key;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "INCR" );
+    cmd << key;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
 int64_t CRedisClient::incrby( const string& key, int64_t increment )
 {
-	Command cmd( "INCRBY" );
-	cmd << key << increment;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "INCRBY" );
+    cmd << key << increment;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
 bool CRedisClient::incrbyfloat( const string& key, float increment, float& value )
 {
-	Command cmd( "INCRBYFLOAT" );
-	cmd << key << increment;
+    Command cmd( "INCRBYFLOAT" );
+    cmd << key << increment;
 
-	string strVal;
-	bool ret = _getString( cmd, strVal );
-	value = _valueFromString<float>( strVal );
+    string strVal;
+    bool ret = _getString( cmd, strVal );
+    value = _valueFromString<float>( strVal );
 
-	return ret;
+    return ret;
 }
 
 
 void CRedisClient::mget(VecString& keys, CResult& result )
 {
-	Command cmd( "MGET" );
-	VecString::const_iterator it = keys.begin();
-	for ( ; it != keys.end(); ++it )
-	{
-		cmd << *it;
-	}
+    Command cmd( "MGET" );
+    VecString::const_iterator it = keys.begin();
+    for ( ; it != keys.end(); ++it )
+    {
+        cmd << *it;
+    }
 
-	_getArry( cmd, result );
+    _getArry( cmd, result );
 }
 
 
 
 
-void CRedisClient::mset( CRedisClient::VecTuple &value )
+void CRedisClient::mset( VecTupleString &value )
 {
-	Command cmd( "MSET" );
-    CRedisClient::VecTuple::const_iterator it = value.begin();
-	for ( ; it != value.end(); ++it )
-	{
+    Command cmd( "MSET" );
+    VecTupleString::const_iterator it = value.begin();
+    for ( ; it != value.end(); ++it )
+    {
         cmd << std::get<0>(*it);
         cmd << std::get<1>(*it);
-	}
+    }
 
-	string status;
-	_getStatus( cmd, status );
-	if ( status != "OK" )
-		throw ExceptProtocol( "MSET: data recved is not OK" );
+    string status;
+    _getStatus( cmd, status );
+    if ( status != "OK" )
+        throw ExceptProtocol( "MSET: data recved is not OK" );
 }
 
 
 
 
-uint8_t CRedisClient::msetnx( CRedisClient::VecTuple &value )
+uint8_t CRedisClient::msetnx( VecTupleString &value )
 {
-	Command cmd( "MSETNX" );
-    CRedisClient::VecTuple::const_iterator it = value.begin();
-	for ( ; it != value.end(); ++it )
-	{
+    Command cmd( "MSETNX" );
+    VecTupleString::const_iterator it = value.begin();
+    for ( ; it != value.end(); ++it )
+    {
         cmd << std::get<0>(*it);
         cmd << std::get<1>(*it);
-	}
+    }
 
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
@@ -277,7 +277,7 @@ bool CRedisClient::setEX(const std::string &key, const std::string &value, long 
     }
     else if ( result.getType() == CResult::REDIS_REPLY_STATUS )
     {
-       return true;
+        return true;
     }else if ( result.getType() == CResult::REDIS_REPLY_NIL )
     {
         return false;
@@ -315,7 +315,7 @@ bool CRedisClient::setPX(const std::string &key, const std::string &value, long 
     }
     else if ( result.getType() == CResult::REDIS_REPLY_STATUS )
     {
-       return true;
+        return true;
     }else if ( result.getType() == CResult::REDIS_REPLY_NIL )
     {
         return false;
@@ -332,7 +332,7 @@ bool CRedisClient::setNX(const std::string &key, const std::string &value)
 
     if ( result.getType() == CResult::REDIS_REPLY_ERROR )
     {
-       throw ExceptReply( result.getErrorString() );
+        throw ExceptReply( result.getErrorString() );
     } else if ( result.getType() == CResult::REDIS_REPLY_NIL )
     {
         return false;
@@ -352,7 +352,7 @@ bool CRedisClient::setXX(const std::string &key, const std::string &value)
 
     if ( result.getType() == CResult::REDIS_REPLY_ERROR )
     {
-       throw ExceptReply( result.getErrorString() );
+        throw ExceptReply( result.getErrorString() );
     } else if ( result.getType() == CResult::REDIS_REPLY_NIL )
     {
         return false;
@@ -368,31 +368,31 @@ bool CRedisClient::setXX(const std::string &key, const std::string &value)
 
 uint8_t CRedisClient::setbit_( const string& key, uint32_t offset, const string& value )
 {
-	Command cmd( "SETBIT" );
-	cmd << key << offset << value;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "SETBIT" );
+    cmd << key << offset << value;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
 uint64_t CRedisClient::setrange( const string& key, uint32_t offset, const string& value )
 {
-	Command cmd( "SETRANGE" );
-	cmd << key << offset << value;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "SETRANGE" );
+    cmd << key << offset << value;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 
 uint64_t CRedisClient::strlen( const string& key )
 {
-	Command cmd( "STRLEN" );
-	cmd << key;
-	int64_t num = 0;
-	_getInt( cmd, num );
-	return num;
+    Command cmd( "STRLEN" );
+    cmd << key;
+    int64_t num = 0;
+    _getInt( cmd, num );
+    return num;
 }
 
 

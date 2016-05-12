@@ -38,7 +38,7 @@ bool CRedisClient::hget( const std::string &key, const std::string &field, strin
 }
 
 
-uint64_t CRedisClient::hdel( const string &key, const CRedisClient::VecString &fields )
+uint64_t CRedisClient::hdel( const string &key, const VecString &fields )
 {
     Command cmd( "HDEL" );
     cmd << key;
@@ -66,7 +66,7 @@ bool CRedisClient::hexists(const string &key, const string &field)
 }
 
 
-uint64_t CRedisClient::hgetall(const string &key, CRedisClient::VecTuple &pairs)
+uint64_t CRedisClient::hgetall(const string &key, VecTupleString &pairs)
 {
     Command cmd( "HGETALL" );
     cmd << key;
@@ -99,7 +99,7 @@ double CRedisClient::hincrbyfloat(const string &key, const string &field, float 
 
 
 
-uint64_t CRedisClient::hkeys(const string &key, CRedisClient::VecString &values)
+uint64_t CRedisClient::hkeys(const string &key, VecString &values)
 {
     Command cmd( "HKEYS" );
     cmd << key;
@@ -119,7 +119,7 @@ uint64_t CRedisClient::hlen(const string &key)
   return num;
 }
 
-void CRedisClient::hmget(const string &key, const CRedisClient::VecString &fields, CResult &result)
+void CRedisClient::hmget(const string &key, const VecString &fields, CResult &result)
 {
     Command cmd( "HMGET" );
     cmd << key;
@@ -134,12 +134,12 @@ void CRedisClient::hmget(const string &key, const CRedisClient::VecString &field
     _getArry( cmd , result );
 }
 
-void CRedisClient::hmset(const string &key, const CRedisClient::VecTuple &pairs)
+void CRedisClient::hmset(const string &key, const VecTupleString &pairs)
 {
     Command cmd( "HMSET" );
     cmd << key;
-    VecTuple::const_iterator it = pairs.begin();
-    VecTuple::const_iterator end = pairs.end();
+    VecTupleString::const_iterator it = pairs.begin();
+    VecTupleString::const_iterator end = pairs.end();
 
     for ( ; it !=end ; ++it )
     {
@@ -161,7 +161,7 @@ bool CRedisClient::hsetnx(const string &key, const string &field, const string &
 }
 
 
-uint64_t CRedisClient::hvals(const string &key, CRedisClient::VecString &values)
+uint64_t CRedisClient::hvals(const string &key, VecString &values)
 {
     Command cmd( "HVALS" );
     cmd << key;
@@ -172,7 +172,7 @@ uint64_t CRedisClient::hvals(const string &key, CRedisClient::VecString &values)
 }
 
 
-bool CRedisClient::hscan(const string &key, int64_t &cursor, VecTuple &values, const string &match, uint64_t count )
+bool CRedisClient::hscan(const string &key, int64_t &cursor, VecTupleString &values, const string &match, uint64_t count )
 {
     CResult result;
     Command cmd( "HSCAN" );

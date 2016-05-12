@@ -29,7 +29,8 @@ HEADERS += \
     src/CTestSet.h \
     src/CTestKey.h \
     src/CTestString.h \
-    src/CTestConnect.h
+    src/CTestConnect.h \
+    src/CTestPool.h
 
 SOURCES += \
     src/CTestSortedSet.cpp \
@@ -68,6 +69,7 @@ SOURCES += \
     src/CTestSet.cpp \
     src/CTestKey.cpp \
     src/CTestString.cpp \
-    src/CTestConnect.cpp
+    src/CTestConnect.cpp \
+    src/CTestPool.cpp
 
 

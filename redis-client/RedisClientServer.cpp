@@ -7,7 +7,7 @@ namespace Redis {
 
 
 
-uint64_t CRedisClient::stringToVecString(string& str, CRedisClient::VecString& vec)
+uint64_t CRedisClient::stringToVecString(string& str, VecString& vec)
 {
     uint64_t i=0;
     uint64_t len=str.length();
@@ -71,7 +71,7 @@ void CRedisClient::clientList(CResult& result)
 }
 */
 
-uint64_t CRedisClient::clientList(CRedisClient::VecString & reply)
+uint64_t CRedisClient::clientList(VecString & reply)
 {
     Command cmd( "CLIENT" );
     cmd<<"LIST";
@@ -93,7 +93,7 @@ void CRedisClient::clientSetname(const string& connectionName)
         throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
-uint64_t CRedisClient::configGet(const string& parameter,CRedisClient::VecString& reply)
+uint64_t CRedisClient::configGet(const string& parameter, VecString& reply)
 {
     Command cmd( "CONFIG" );
     cmd<<"GET";
@@ -180,7 +180,7 @@ void CRedisClient::flushdb()
         throw ExceptProtocol( "FLUSHDB: data recved is not OK" );
 }
 
-void CRedisClient::info(CRedisClient::VecString& reply,const string& section)
+void CRedisClient::info(VecString& reply,const string& section)
 {
     Command cmd( "INFO" );
     string str;
@@ -263,7 +263,7 @@ void CRedisClient::slaveof(const string& host, const uint16_t port)
         throw ExceptProtocol( "CONFIG RESETSTAT: data recved is not OK" );
 }
 
-void CRedisClient::slowlog(const CRedisClient::VecString &subcommand, CResult &reply)
+void CRedisClient::slowlog(const VecString &subcommand, CResult &reply)
 {
     Command cmd( "SLOWLOG" );
     _socket.clearBuffer();

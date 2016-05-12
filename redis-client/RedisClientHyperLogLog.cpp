@@ -19,12 +19,12 @@ namespace Redis {
 
 
 
-uint64_t CRedisClient::pfadd( const string &key , const CRedisClient::VecString &element )
+uint64_t CRedisClient::pfadd( const string &key , const VecString &element )
 {
 	Command cmd("PFADD");
 	cmd << key;
-	CRedisClient::VecString::const_iterator it = element.begin();
-	CRedisClient::VecString::const_iterator end = element.end();
+    VecString::const_iterator it = element.begin();
+    VecString::const_iterator end = element.end();
 	while ( it != end )
 	{
 		cmd << *it;
@@ -36,11 +36,11 @@ uint64_t CRedisClient::pfadd( const string &key , const CRedisClient::VecString 
 	return num;
 }
 
-uint64_t CRedisClient::pfcount( const CRedisClient::VecString &key )
+uint64_t CRedisClient::pfcount( const VecString &key )
 {
 	Command cmd("PFCOUNT");
-	CRedisClient::VecString::const_iterator it = key.begin();
-	CRedisClient::VecString::const_iterator end = key.end();
+    VecString::const_iterator it = key.begin();
+    VecString::const_iterator end = key.end();
 	while ( it != end )
 	{
 		cmd << *it;
@@ -52,12 +52,12 @@ uint64_t CRedisClient::pfcount( const CRedisClient::VecString &key )
 	return num;
 }
 
-bool CRedisClient::pfmerge( const string &destKey , const CRedisClient::VecString &srcKey )
+bool CRedisClient::pfmerge( const string &destKey , const VecString &srcKey )
 {
 	Command cmd("PFMERGE");
 	cmd << destKey;
-	CRedisClient::VecString::const_iterator it = srcKey.begin();
-	CRedisClient::VecString::const_iterator end = srcKey.end();
+    VecString::const_iterator it = srcKey.begin();
+    VecString::const_iterator end = srcKey.end();
 	while ( it != end )
 	{
 		cmd << *it;

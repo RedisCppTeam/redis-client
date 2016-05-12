@@ -15,11 +15,11 @@ void CTestSet::TearDownTestCase()
 TEST_F(CTestSet, sadd)
 {
     redis.flushall();
-    CRedisClient::VecString vec;
+    VecString vec;
     vec.push_back("A");
     vec.push_back("B");
     vec.push_back("A");
     EXPECT_EQ(2, redis.sadd("set", vec));
-    EXPECT_EQ(1, redis.sadd("set", CRedisClient::VecString{"C"}));
-    EXPECT_EQ(0, redis.sadd("set", CRedisClient::VecString{"A"}));
+    EXPECT_EQ(1, redis.sadd("set", VecString{"C"}));
+    EXPECT_EQ(0, redis.sadd("set", VecString{"A"}));
 }

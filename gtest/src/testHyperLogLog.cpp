@@ -25,7 +25,7 @@ void TestPfadd( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-		CRedisClient::VecString element;
+        VecString element;
 		element.push_back("a");
 		element.push_back("b");
 		element.push_back("c");
@@ -48,20 +48,20 @@ void TestPfcount( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-		CRedisClient::VecString element;
+        VecString element;
 		element.push_back("a");
 		element.push_back("b");
 		element.push_back("c");
 		string key1("key1");
 		redis.pfadd(key1, element);
 
-		CRedisClient::VecString element2;
+        VecString element2;
 		element2.push_back("a");
 		element2.push_back("d");
 		string key2("key2");
 		redis.pfadd(key2, element2);
 
-		CRedisClient::VecString keys;
+        VecString keys;
 		keys.push_back(key1);
 		keys.push_back(key2);
 		uint64_t num = redis.pfcount(keys);
@@ -82,20 +82,20 @@ void TestPfmerge( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-		CRedisClient::VecString element;
+        VecString element;
 		element.push_back("a");
 		element.push_back("b");
 		element.push_back("c");
 		string key1("key1");
 		redis.pfadd(key1, element);
 
-		CRedisClient::VecString element2;
+        VecString element2;
 		element2.push_back("a");
 		element2.push_back("d");
 		string key2("key2");
 		redis.pfadd(key2, element2);
 
-		CRedisClient::VecString keys;
+        VecString keys;
 		keys.push_back(key1);
 		keys.push_back(key2);
 		bool flag = redis.pfmerge("test", keys);

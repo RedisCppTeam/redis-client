@@ -8,7 +8,7 @@
 
 using namespace std;
 using namespace Taiji::Redis;
-typedef CRedisClient::VecString VEC;
+typedef VecString VEC;
 
 void *MonitorStop( void *a )
 {

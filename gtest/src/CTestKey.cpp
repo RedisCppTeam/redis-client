@@ -16,7 +16,7 @@ TEST_F(CTestKey, del)
 {
     redis.flushall();
     redis.set("key", "value");
-    EXPECT_EQ(1, redis.del(CRedisClient::VecString{"key"}));
-    EXPECT_EQ(0, redis.del(CRedisClient::VecString{"key"}));
+    EXPECT_EQ(1, redis.del(VecString{"key"}));
+    EXPECT_EQ(0, redis.del(VecString{"key"}));
 }
 

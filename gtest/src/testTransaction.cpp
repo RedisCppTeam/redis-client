@@ -30,7 +30,7 @@ void TranSactionMain( void )
         //------------------------test multi, transactionCmd, exec---------------------
         REDIS_DEBUGOUT("test multi, transactionCmd, and exec","");
         redis.multi();
-        CRedisClient::VecString params;
+        VecString params;
         params.push_back( "*" );
         redis.transactionCmd( "keys", params );
 
@@ -44,7 +44,7 @@ void TranSactionMain( void )
         //---------------------------Watch---------------------------------------
         result.clear();
         params.clear();
-        CRedisClient::VecString keys;
+        VecString keys;
         keys.push_back( "yuhaiyang" );
         keys.push_back("yuhaiyang2");
         redis.watch( keys );
@@ -67,7 +67,7 @@ void TranSactionMain( void )
 
         result.clear();
         params.clear();
-        CRedisClient::VecString ukeys;
+        VecString ukeys;
         ukeys.push_back( "yuhaiyang" );
         ukeys.push_back("yuhaiyang2");
         redis.watch( ukeys );

@@ -167,7 +167,7 @@ bool CRedisClient::rpoplpush( const string &source , const string &dest , string
 }
 
 uint64_t CRedisClient::lrange( const string &key , int64_t start , int64_t stop ,
-		CRedisClient::VecString &value )
+        VecString &value )
 {
 	Command cmd("LRANGE");
 	cmd << key << start << stop;
@@ -177,12 +177,11 @@ uint64_t CRedisClient::lrange( const string &key , int64_t start , int64_t stop 
     return num;
 }
 
-bool CRedisClient::blpop( const CRedisClient::VecString &key , uint64_t &timeout ,
-        CRedisClient::VecTuple &value )
+bool CRedisClient::blpop( const VecString &key , uint64_t &timeout , VecTupleString &value )
 {
 	Command cmd("BLPOP");
-	CRedisClient::VecString::const_iterator it = key.begin();
-	CRedisClient::VecString::const_iterator end = key.end();
+    VecString::const_iterator it = key.begin();
+    VecString::const_iterator end = key.end();
 	for ( ; it != end ; it++ )
 	{
 		cmd << *it;
@@ -193,12 +192,11 @@ bool CRedisClient::blpop( const CRedisClient::VecString &key , uint64_t &timeout
     return ( _getArry(cmd, value,num) );
 }
 
-bool CRedisClient::brpop( const CRedisClient::VecString &key , uint64_t &timeout ,
-        CRedisClient::VecTuple &value )
+bool CRedisClient::brpop( const VecString &key , uint64_t &timeout , VecTupleString &value )
 {
 	Command cmd("BRPOP");
-	CRedisClient::VecString::const_iterator it = key.begin();
-	CRedisClient::VecString::const_iterator end = key.end();
+    VecString::const_iterator it = key.begin();
+    VecString::const_iterator end = key.end();
 	for ( ; it != end ; it++ )
 	{
 		cmd << *it;

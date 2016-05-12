@@ -43,7 +43,7 @@ void TestDel( void )
 	try
 	{
 		CRedisClient redis;
-		CRedisClient::VecString keys;
+        VecString keys;
 		redis.connect("127.0.0.1", 6379);
         //-----------del--------
 		keys.clear();
@@ -64,7 +64,7 @@ void TestKeys( void )
 	try
 	{
 		CRedisClient redis;
-		CRedisClient::VecString keys;
+        VecString keys;
 		redis.connect("127.0.0.1", 6379);
 		string val = "{\"a\":\"ok\"\r\n}";
 		string mykey = "special";
@@ -197,7 +197,7 @@ void testSort( void )
 	redis.connect("127.0.0.1", 6379);
     CResult values;
 
-    CRedisClient::VecString get;
+    VecString get;
     get.push_back( "#" );
     get.push_back("user_info_*->name");
 
@@ -227,7 +227,7 @@ void testScan( void )
 
 	CRedisClient redis;
 	redis.connect("127.0.0.1", 6379);
-	CRedisClient::VecString values;
+    VecString values;
 
     redis.scan( 0, values, "key_??" );
     while( redis.scan( -1, values,"key_??" ) );

@@ -67,7 +67,7 @@ namespace Redis {
     return num;
  }
 
- uint64_t CRedisClient::psubnumsub(CRedisClient::VecTuple& value ,  const VecString& channel )
+ uint64_t CRedisClient::psubnumsub(VecTupleString& value ,  const VecString& channel )
  {
 	Command cmd( "PUBSUB" );
 	cmd << "NUMSUB";

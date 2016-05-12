@@ -214,7 +214,7 @@ uint64_t CRedisClient::_replyMultiBulk(CResult& result, const std::string &line 
    return result.getArry().size();
 }
 
-void CRedisClient::_getStringVecFromArry(const CResult::ListCResult &arry, CRedisClient::VecString &values )
+void CRedisClient::_getStringVecFromArry(const CResult::ListCResult &arry, VecString &values )
 {
     CResult::ListCResult::const_iterator it = arry.begin();
     CResult::ListCResult::const_iterator end = arry.end();
@@ -239,7 +239,7 @@ void CRedisClient::_getStringVecFromArry(const CResult::ListCResult &arry, CRedi
 //}
 
 
-void CRedisClient::_getStringTupleFromArry(const CResult::ListCResult &arry, CRedisClient::VecTuple &pairs)
+void CRedisClient::_getStringTupleFromArry(const CResult::ListCResult &arry, VecTupleString &pairs)
 {
     CResult::ListCResult::const_iterator it = arry.begin();
     CResult::ListCResult::const_iterator it2 = it;
@@ -389,7 +389,7 @@ bool CRedisClient::_getArry(Command &cmd, VecString &values , uint64_t &num)
     return true;
 }
 
-bool CRedisClient::_getArry(Command &cmd, CRedisClient::VecTuple &pairs , uint64_t &num)
+bool CRedisClient::_getArry(Command &cmd, VecTupleString &pairs , uint64_t &num)
 {
     num = 0;
     _socket.clearBuffer();

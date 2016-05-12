@@ -22,7 +22,7 @@ using namespace Taiji::Redis;
 void TestPSUBSCRIBE( CRedisClient& redis )
 {
 	std::cout << "------testPSUBSCRIBE------" << std::endl;
-	CRedisClient::VecString pattern;
+    VecString pattern;
 	pattern.push_back("news.*");
 	pattern.push_back("tweet.*");
 	CResult result;
@@ -41,11 +41,11 @@ void TestPUBLISH( CRedisClient& redis )
 void TestPUBSUBCHANNELS( CRedisClient& redis )
 {
 	std::cout << "------testPUBSUB CHANNELS------" << std::endl;
-	CRedisClient::VecString value;
+    VecString value;
 	uint64_t iRet = redis.psubchannels(value);
 	std::cout << "iRet: " << iRet << std::endl;
-	CRedisClient::VecString::const_iterator it = value.begin();
-	CRedisClient::VecString::const_iterator end = value.end();
+    VecString::const_iterator it = value.begin();
+    VecString::const_iterator end = value.end();
 	for ( ; it != end; ++it )
 	{
 		std::cout << "value: " << static_cast<string>(*it) << std::endl;
@@ -56,16 +56,16 @@ void TestPUBSUBCHANNELS( CRedisClient& redis )
 void TestPUBSUBNUMSUB( CRedisClient& redis )
 {
 	std::cout << "------testPUBSUB NUMSUB------" << std::endl;
-	CRedisClient::VecString channel;
+    VecString channel;
 	channel.push_back("news.it");
 	channel.push_back("news.internet");
 	channel.push_back("news.sport");
 	channel.push_back("news.music");
-	CRedisClient::VecTuple value;
+    VecTupleString value;
 	uint64_t iRet = redis.psubnumsub(value, channel);
 	std::cout << "iRet: " << iRet << std::endl;
-	CRedisClient::VecTuple::const_iterator it = value.begin();
-	CRedisClient::VecTuple::const_iterator end = value.end();
+    VecTupleString::const_iterator it = value.begin();
+    VecTupleString::const_iterator end = value.end();
 	for ( ; it != end; ++it )
 	{
         std::cout << "value first: " << static_cast<string>(std::get<0>(*it)) << std::endl;
@@ -95,7 +95,7 @@ void TestPUNSUBSCRIBE( CRedisClient& redis )
 void TestSUBSCRIBE( CRedisClient& redis )
 {
 	std::cout << "------testSUBSCRIBE------" << std::endl;
-	CRedisClient::VecString channel;
+    VecString channel;
 	channel.push_back("msg");
 	channel.push_back("chat_room");
 	CResult result;

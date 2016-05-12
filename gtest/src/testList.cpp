@@ -27,7 +27,7 @@ void TestLpush( void )
 		redis.connect("127.0.0.1", 6379);
         string mykey = "key2";
 
-		CRedisClient::VecString value;
+        VecString value;
 		value.push_back("a");
 		value.push_back("f");
 		value.push_back("c");
@@ -51,7 +51,7 @@ void TestRpush( void )
 		redis.connect("127.0.0.1", 6379);
 		string mykey = "key";
 
-		CRedisClient::VecString value;
+        VecString value;
     //	value.push_back("e");
     //	value.push_back("g");
     //	value.push_back("j");
@@ -288,11 +288,11 @@ void TestLrange( void )
 		CRedisClient redis;
 		redis.connect("127.0.0.1", 6379);
 
-        CRedisClient::VecString value;
+        VecString value;
         uint64_t count = redis.lrange("testList", 1, -2, value);
 		std::cout << count << std::endl;
-		CRedisClient::VecString::const_iterator it = value.begin();
-		CRedisClient::VecString::const_iterator end = value.end();
+        VecString::const_iterator it = value.begin();
+        VecString::const_iterator end = value.end();
 		while ( it != end )
 		{
 			cout << *it << endl;
@@ -336,11 +336,11 @@ void TestBlpop( void )
 
 		string key = "key";
 		string key2 = "key2";
-		CRedisClient::VecString keyValue;
+        VecString keyValue;
 		keyValue.push_back("a");
 		keyValue.push_back("b");
 		keyValue.push_back("c");
-		CRedisClient::VecString key2Value;
+        VecString key2Value;
 		key2Value.push_back("1");
 		key2Value.push_back("2");
 		key2Value.push_back("3");
@@ -348,11 +348,11 @@ void TestBlpop( void )
     //	redis.rpush(key, keyValue);
     //	redis.rpush(key2, key2Value);
 
-		CRedisClient::VecString keys;
+        VecString keys;
 		keys.push_back("key");
 		keys.push_back("key2");
 
-		CRedisClient::VecTuple value;
+        VecTupleString value;
         uint64_t timeout = 2;
 
         if ( !redis.blpop(keys, timeout, value) )
@@ -360,8 +360,8 @@ void TestBlpop( void )
             std::cout << "blpop failed" << std::endl;
         }else
         {
-            CRedisClient::VecTuple::const_iterator it = value.begin();
-            CRedisClient::VecTuple::const_iterator end = value.end();
+            VecTupleString::const_iterator it = value.begin();
+            VecTupleString::const_iterator end = value.end();
             while ( it != end )
             {
                 std::cout << std::get<0>(*it) << ":" <<std::get<1>(*it) << std::endl;
@@ -387,11 +387,11 @@ void TestBrpop( void )
 
 		string key = "key";
 		string key2 = "key2";
-		CRedisClient::VecString keyValue;
+        VecString keyValue;
 		keyValue.push_back("a");
 		keyValue.push_back("b");
 		keyValue.push_back("c");
-		CRedisClient::VecString key2Value;
+        VecString key2Value;
 		key2Value.push_back("1");
 		key2Value.push_back("2");
 		key2Value.push_back("3");
@@ -399,11 +399,11 @@ void TestBrpop( void )
         redis.rpush(key, keyValue);
         redis.rpush(key2, key2Value);
 
-		CRedisClient::VecString keys;
+        VecString keys;
 		keys.push_back("key");
 		keys.push_back("key2");
 
-		CRedisClient::VecTuple value;
+        VecTupleString value;
 		uint64_t timeout = 3;
         if ( !redis.brpop(keys, timeout, value) )
         {
@@ -411,8 +411,8 @@ void TestBrpop( void )
             return;
         }
 
-		CRedisClient::VecTuple::const_iterator it = value.begin();
-		CRedisClient::VecTuple::const_iterator end = value.end();
+        VecTupleString::const_iterator it = value.begin();
+        VecTupleString::const_iterator end = value.end();
 		while ( it != end )
 		{
             std::cout << std::get<0>(*it) << ":" <<std::get<1>(*it) << std::endl;

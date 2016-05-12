@@ -12,7 +12,7 @@ void CTestHash::TearDownTestCase()
 
 }
 
-void CTestHash::GetVecTuple(CRedisClient::VecTuple &vecTup, const std::string &keyPre, uint64_t start, uint64_t end)
+void CTestHash::GetVecTuple(VecTupleString &vecTup, const std::string &keyPre, uint64_t start, uint64_t end)
 {
     vecTup.clear();
     string member,score;
@@ -25,7 +25,7 @@ void CTestHash::GetVecTuple(CRedisClient::VecTuple &vecTup, const std::string &k
         ss << i;
         score= ss.str();
         member += ss.str();
-        vecTup.push_back( CRedisClient::VecTuple::value_type(score,member) );
+        vecTup.push_back( VecTupleString::value_type(score,member) );
     }
 }
 

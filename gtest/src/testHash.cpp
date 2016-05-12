@@ -35,7 +35,7 @@ void TestHash( void )
         std::cout << "value:" << value << std::endl;
 
          //------------------------test hdel------------------------------------------
-         CRedisClient::VecString fields;
+         VecString fields;
          fields.push_back( "name4" );
          fields.push_back( "name5" );
 
@@ -49,10 +49,10 @@ void TestHash( void )
          else
              std::cout << "testHash key not exists field:" << field << std::endl;
         //-----------------------test hgetall-------------------------------------------
-            CRedisClient::VecTuple allValue;
+            VecTupleString allValue;
             uint64_t allNum = redis.hgetall( "testHash", allValue );
             std::cout << "allNum: " << allNum <<std::endl;
-            CRedisClient::VecTuple::const_iterator it = allValue.begin();
+            VecTupleString::const_iterator it = allValue.begin();
 
             for ( ; it != allValue.end(); it++ )
             {
@@ -66,11 +66,11 @@ void TestHash( void )
               float floatNum = redis.hincrbyfloat( "testHash", "float", 10.1e2 );
               std::cout << "floatNum: " << floatNum << std::endl;
         //------------------------test hkeys-------------------------------------------
-            CRedisClient::VecString hkeysValue;
+            VecString hkeysValue;
             uint64_t hkeysNum = redis.hkeys( "testHash", hkeysValue );
             std::cout << "hkeysNum: " << hkeysNum << std::endl;
 
-            CRedisClient::VecString::const_iterator hkeysit = hkeysValue.begin();
+            VecString::const_iterator hkeysit = hkeysValue.begin();
             for ( ; hkeysit != hkeysValue.end(); hkeysit++ )
             {
                 std::cout << *hkeysit << std::endl;
@@ -139,12 +139,12 @@ void TestHash2()
         //-------------------------------test hscan-----------------------------
 
         std::cout << "====================hscan value===================" << std::endl;
-        CRedisClient::VecTuple hscanPairs;
+        VecTupleString hscanPairs;
         int64_t cursor = 0;
         while ( redis.hscan( "testHash", cursor, hscanPairs ,"pair_1??") );
 
-        CRedisClient::VecTuple::const_iterator hscanIt = hscanPairs.begin();
-        CRedisClient::VecTuple::const_iterator hscanEnd = hscanPairs.end();
+        VecTupleString::const_iterator hscanIt = hscanPairs.begin();
+        VecTupleString::const_iterator hscanEnd = hscanPairs.end();
 
         for ( ; hscanIt != hscanEnd ; ++hscanIt )
         {

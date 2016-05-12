@@ -7,12 +7,12 @@ namespace Redis {
 
 
 
-uint64_t CRedisClient::zadd(const string &key, const CRedisClient::VecTuple &map)
+uint64_t CRedisClient::zadd(const string &key, const VecTupleString &map)
 {
     Command cmd( "ZADD" );
     cmd << key;
-    VecTuple::const_iterator it = map.begin();
-    VecTuple::const_iterator end = map.end();
+    VecTupleString::const_iterator it = map.begin();
+    VecTupleString::const_iterator end = map.end();
 
     for ( ; it !=end ; ++it )
     {
@@ -60,7 +60,7 @@ double CRedisClient::zincrby(const string& key,double increment,const string& me
 
 
 
-uint64_t CRedisClient::zrange(const string &key, const int64_t start, const int64_t stop, CRedisClient::VecString& reply)
+uint64_t CRedisClient::zrange(const string &key, const int64_t start, const int64_t stop, VecString& reply)
 {
     Command cmd( "ZRANGE" );
     cmd << key << start<< stop;
@@ -69,7 +69,7 @@ uint64_t CRedisClient::zrange(const string &key, const int64_t start, const int6
     _getArry(cmd,reply,num);
     return num;
 }
-uint64_t CRedisClient::zrangeWithscore(const string &key, const int64_t start, const int64_t stop, CRedisClient::VecTuple &reply)
+uint64_t CRedisClient::zrangeWithscore(const string &key, const int64_t start, const int64_t stop, VecTupleString &reply)
 {
     Command cmd( "ZRANGE" );
     cmd << key << start<< stop;
@@ -81,7 +81,7 @@ uint64_t CRedisClient::zrangeWithscore(const string &key, const int64_t start, c
 }
 
 
-uint64_t CRedisClient::zrangebyscore(const string &key, const string &min, const string &max, CRedisClient::VecString &reply,int64_t offset,int64_t count)
+uint64_t CRedisClient::zrangebyscore(const string &key, const string &min, const string &max, VecString &reply,int64_t offset,int64_t count)
 {
     Command cmd( "ZRANGEBYSCORE" );
     cmd << key << min<< max;
@@ -94,7 +94,7 @@ uint64_t CRedisClient::zrangebyscore(const string &key, const string &min, const
     return num;
 }
 
-uint64_t CRedisClient::zrangebyscoreWithscore(const string &key, const string &min, const string &max, CRedisClient::VecTuple &reply,int64_t offset,int64_t count)
+uint64_t CRedisClient::zrangebyscoreWithscore(const string &key, const string &min, const string &max, VecTupleString &reply,int64_t offset,int64_t count)
 {
     _socket.clearBuffer();
     Command cmd( "ZRANGEBYSCORE" );
@@ -157,7 +157,7 @@ uint64_t CRedisClient::zremrangebyscore(const string& key,const string& min,cons
     return num;
 }
 
-uint64_t CRedisClient::zrevrange(const string &key, const int64_t start, const int64_t stop, CRedisClient::VecString &reply)
+uint64_t CRedisClient::zrevrange(const string &key, const int64_t start, const int64_t stop, VecString &reply)
 {
     Command cmd( "ZREVRANGE" );
     cmd << key << start<< stop;
@@ -167,7 +167,7 @@ uint64_t CRedisClient::zrevrange(const string &key, const int64_t start, const i
     return num;
 }
 
-uint64_t CRedisClient::zrevrangeWithscore(const string &key, const int64_t start, const int64_t stop, CRedisClient::VecTuple &reply)
+uint64_t CRedisClient::zrevrangeWithscore(const string &key, const int64_t start, const int64_t stop, VecTupleString &reply)
 {
     Command cmd( "ZREVRANGE" );
     cmd << key << start<< stop;
@@ -182,7 +182,7 @@ uint64_t CRedisClient::zrevrangeWithscore(const string &key, const int64_t start
 
 
 
-uint64_t CRedisClient::zrevrangebyscore(const string &key, const string &max, const string &min, CRedisClient::VecString &reply, int64_t offset,int64_t count)
+uint64_t CRedisClient::zrevrangebyscore(const string &key, const string &max, const string &min, VecString &reply, int64_t offset,int64_t count)
 {
     Command cmd( "ZREVRANGEBYSCORE");
     cmd << key << max<< min;
@@ -195,7 +195,7 @@ uint64_t CRedisClient::zrevrangebyscore(const string &key, const string &max, co
     return num;
 }
 
-uint64_t CRedisClient::zrevrangebyscoreWithscore(const string &key, const string &max, const string &min, CRedisClient::VecTuple &reply, int64_t offset,int64_t count)
+uint64_t CRedisClient::zrevrangebyscoreWithscore(const string &key, const string &max, const string &min, VecTupleString &reply, int64_t offset,int64_t count)
 {
     Command cmd( "ZREVRANGEBYSCORE");
     cmd << key << max<< min;
@@ -344,7 +344,7 @@ uint64_t CRedisClient::zinterstore (const string& destination,const VecString& k
 
 
 }
-bool CRedisClient::zscan(const string &key, int64_t &cursor, VecTuple &reply, const string &match, uint64_t count )
+bool CRedisClient::zscan(const string &key, int64_t &cursor, VecTupleString &reply, const string &match, uint64_t count )
 {
     CResult result;
     Command cmd( "ZSCAN" );
@@ -367,7 +367,7 @@ bool CRedisClient::zscan(const string &key, int64_t &cursor, VecTuple &reply, co
     return ( cursor == 0 ? false : true );
 }
 
-uint64_t CRedisClient::zrangebylex(const string &key, const string &min, const string &max, CRedisClient::VecString &reply, int64_t offset,int64_t count)
+uint64_t CRedisClient::zrangebylex(const string &key, const string &min, const string &max, VecString &reply, int64_t offset,int64_t count)
 {
     Command cmd( "ZRANGEBYLEX" );
     cmd << key << min<< max;

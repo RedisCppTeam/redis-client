@@ -19,10 +19,10 @@
 using namespace std;
 using namespace Taiji::Redis;
 
-void PrintVector( const string& key,CRedisClient::VecString& values )
+void PrintVector( const string& key,VecString& values )
 {
-    CRedisClient::VecString::const_iterator it = values.begin();
-    CRedisClient::VecString::const_iterator end = values.end();
+    VecString::const_iterator it = values.begin();
+    VecString::const_iterator end = values.end();
     for ( ; it != end; ++it )
     {
         std::cout << key << ": " << *it << std::endl;
@@ -38,7 +38,7 @@ void TestSet( void )
         redis.connect( "127.0.0.1", 6379 );
 
         //--------------------------test sadd-------------------------------
-        CRedisClient::VecString members;
+        VecString members;
         members.push_back( "yuhaiyang" );
         members.push_back( "zhouli" );
         members.push_back( "严兴俊" );
@@ -49,36 +49,36 @@ void TestSet( void )
         std::cout << "scardNum:" << scardNum << std::endl;
         //-------------------------test sdiff----------------------------------
         std::cout << "=====================================sdiffData==========================" << std::endl;
-        CRedisClient::VecString keys;
+        VecString keys;
         keys.push_back("testSet");
         keys.push_back("testSet2");
-        CRedisClient::VecString sdiffValues;
+        VecString sdiffValues;
         uint64_t sdiffNum = redis.sdiff( keys, sdiffValues );
         std::cout << "sdiffNum: " << sdiffNum << std::endl;
 
         //-------------------------test sdiffstore----------------------------
-        CRedisClient::VecString sdiffstorekeys;
+        VecString sdiffstorekeys;
         sdiffstorekeys.push_back("testSet");
         sdiffstorekeys.push_back("testSet2");
         uint64_t sdiffstoreNum = redis.sdiffstore( "diffSetKey",sdiffstorekeys );
         std::cout << "===========================sdiffNum=================================" << std::endl;
         std::cout << "sdiffstoreNum: " << sdiffstoreNum << std::endl;
         //---------------------------test sinter--------------------------------
-        CRedisClient::VecString sinterValues;
-        CRedisClient::VecString sinterKeys;
+        VecString sinterValues;
+        VecString sinterKeys;
         sinterKeys.push_back( "testSet" );
         sinterKeys.push_back( "testSet2" );
         uint64_t sinterNum = redis.sinter( sinterKeys, sinterValues );
         std::cout << "===========================sinterNum================================" << std::endl;
         std::cout << "sinterNum: " << sinterNum << std::endl;
-        CRedisClient::VecString::const_iterator sinterIt = sinterValues.begin();
-        CRedisClient::VecString::const_iterator sinterEnd = sinterValues.end();
+        VecString::const_iterator sinterIt = sinterValues.begin();
+        VecString::const_iterator sinterEnd = sinterValues.end();
         for ( ; sinterIt != sinterEnd; ++sinterIt )
         {
             std::cout << "sinterIt: " << *sinterIt << std::endl;
         }
         //-----------------------------test sinterstore---------------------------
-        CRedisClient::VecString sinterstoreKeys;
+        VecString sinterstoreKeys;
         sinterstoreKeys.push_back( "testSet" );
         sinterstoreKeys.push_back( "testSet2" );
         uint64_t sinterstoreNum = redis.sinterstore( "interSetKey", sinterstoreKeys );
@@ -93,7 +93,7 @@ void TestSet( void )
             std::cout << "不存在" << std::endl;
         }
 
-        CRedisClient::VecString membersMembers;
+        VecString membersMembers;
         uint64_t smembersNum = redis.smembers( "testSet", membersMembers );
         std::cout << "smembersNum" << smembersNum << std::endl;
         PrintVector( "members", membersMembers );
@@ -131,20 +131,20 @@ void TestSet( void )
         {
             std::cout << "srandmember failed" << std::endl;
         }
-        CRedisClient::VecString srandMember;
+        VecString srandMember;
         redis.srandmember( "testSet2", 20, srandMember );
         PrintVector( "srandmember", srandMember );
 
         //-----------------------------test srem---------------------------------------------
-        CRedisClient::VecString sremMembers;
+        VecString sremMembers;
         sremMembers.push_back( "nihao" );
         sremMembers.push_back( "yuhaiyang" );
         sremMembers.push_back( "zhouli" );
         uint64_t sremNum = redis.srem( "testSet", sremMembers );
         std::cout << "sremNum:" << sremNum << std::endl;
         //-----------------------------test sunion--------------------------------------------
-        CRedisClient::VecString sunionMembers;
-        CRedisClient::VecString sunionKeys;
+        VecString sunionMembers;
+        VecString sunionKeys;
         sunionKeys.push_back("testSet");
         sunionKeys.push_back("testSet2");
         redis.sunion( sunionKeys, sunionMembers );
@@ -157,7 +157,7 @@ void TestSet( void )
         std::cout << "====================sscan value===================" << std::endl;
         string value = "value_";
         stringstream ss;
-        CRedisClient::VecString sscanMembers1;
+        VecString sscanMembers1;
         for ( int i = 0; i < 100; ++i )
         {
             value = "value_";
@@ -169,7 +169,7 @@ void TestSet( void )
         }
         redis.sadd( "testSet4", sscanMembers1 );
 
-        CRedisClient::VecString sscanMembers;
+        VecString sscanMembers;
         int64_t cur = 0;
      //   redis.sscan( "testSet4", 0, sscanMembers,"value_?" );
         while ( redis.sscan( "testSet4", cur, sscanMembers ,"value_?") );

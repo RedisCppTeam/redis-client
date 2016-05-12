@@ -50,7 +50,7 @@ void CRedisClient::eval(const std::string &script, CResult &result)
     eval( script,keysVec,argsVec,result );
 }
 
-void CRedisClient::eval(const std::string &script, const CRedisClient::VecString &keysVec, CResult &result)
+void CRedisClient::eval(const std::string &script, const VecString &keysVec, CResult &result)
 {
     VecString argsVec;
     eval( script,keysVec,argsVec,result );

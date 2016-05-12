@@ -8,7 +8,7 @@ namespace Redis {
 
 
 
-uint64_t CRedisClient::sadd(const string &key, const CRedisClient::VecString &members)
+uint64_t CRedisClient::sadd(const string &key, const VecString &members)
 {
     Command cmd( "SADD" );
     cmd << key;
@@ -37,7 +37,7 @@ uint64_t CRedisClient::scard(const string &key)
 
 
 
-uint64_t CRedisClient::sdiff(const CRedisClient::VecString &keys, CRedisClient::VecString &values)
+uint64_t CRedisClient::sdiff(const VecString &keys, VecString &values)
 {
     Command cmd( "SDIFF" );
     VecString::const_iterator it = keys.begin();
@@ -53,7 +53,7 @@ uint64_t CRedisClient::sdiff(const CRedisClient::VecString &keys, CRedisClient::
 }
 
 
-uint64_t CRedisClient::sdiffstore(const string &destKey, const CRedisClient::VecString &keys )
+uint64_t CRedisClient::sdiffstore(const string &destKey, const VecString &keys )
 {
     Command cmd( "SDIFFSTORE" );
      cmd << destKey;
@@ -69,7 +69,7 @@ uint64_t CRedisClient::sdiffstore(const string &destKey, const CRedisClient::Vec
      return num;
 }
 
-uint64_t CRedisClient::sinter(const CRedisClient::VecString &keys, VecString &values)
+uint64_t CRedisClient::sinter(const VecString &keys, VecString &values)
 {
     Command cmd( "SINTER" );
     VecString::const_iterator it = keys.begin();
@@ -84,7 +84,7 @@ uint64_t CRedisClient::sinter(const CRedisClient::VecString &keys, VecString &va
     return num;
 }
 
-uint64_t CRedisClient::sinterstore( const string& destKey ,const CRedisClient::VecString &keys )
+uint64_t CRedisClient::sinterstore( const string& destKey ,const VecString &keys )
 {
     Command cmd( "SINTERSTORE" );
     cmd << destKey;
@@ -110,7 +110,7 @@ bool CRedisClient::sismember(const string &key, const string &member)
     return ( num == 1 ? true: false );
 }
 
-uint64_t CRedisClient::smembers( const string &key, CRedisClient::VecString &members )
+uint64_t CRedisClient::smembers( const string &key, VecString &members )
 {
     Command cmd( "SMEMBERS" );
     cmd << key;
@@ -145,7 +145,7 @@ bool CRedisClient::srandmember(const string &key, string &member)
     return ( _getString( cmd, member) );
 }
 
-uint64_t CRedisClient::srandmember(const string &key, int count, CRedisClient::VecString &members)
+uint64_t CRedisClient::srandmember(const string &key, int count, VecString &members)
 {
     Command cmd( "SRANDMEMBER" );
     cmd << key << count ;
@@ -155,7 +155,7 @@ uint64_t CRedisClient::srandmember(const string &key, int count, CRedisClient::V
     return num;
 }
 
-uint64_t CRedisClient::srem(const string &key,const CRedisClient::VecString &members)
+uint64_t CRedisClient::srem(const string &key,const VecString &members)
 {
     Command cmd ( "SREM" );
     cmd << key;
@@ -171,7 +171,7 @@ uint64_t CRedisClient::srem(const string &key,const CRedisClient::VecString &mem
     return num;
 }
 
-uint64_t CRedisClient::sunion(const CRedisClient::VecString &keys , VecString &members)
+uint64_t CRedisClient::sunion(const VecString &keys , VecString &members)
 {
     Command cmd( "SUNION" );
 
@@ -187,7 +187,7 @@ uint64_t CRedisClient::sunion(const CRedisClient::VecString &keys , VecString &m
     return num;
 }
 
-uint64_t CRedisClient::sunionstroe(const string &dest, const CRedisClient::VecString &keys)
+uint64_t CRedisClient::sunionstroe(const string &dest, const VecString &keys)
 {
     Command cmd( "SUNIONSTORE" );
     cmd << dest;

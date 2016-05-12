@@ -15,7 +15,7 @@ void CTestList::TearDownTestCase()
 TEST_F(CTestList, lpush)
 {
     redis.flushall();
-    CRedisClient::VecString vec;
+    VecString vec;
     vec.push_back("A");
     vec.push_back("B");
     EXPECT_EQ(2, redis.lpush("list", vec));

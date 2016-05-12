@@ -52,7 +52,7 @@ void TestBITOP( CRedisClient& redis )
 	redis.setbit_("bits-2", 1, "1");
 	redis.setbit_("bits-2", 3, "1");
 
-	CRedisClient::VecString keys;
+    VecString keys;
 	keys.push_back("bits-1");
 	keys.push_back("bits-2");
 	uint64_t iRet = redis.bitop("AND", "and-result", keys);
@@ -172,7 +172,7 @@ void TestMGET( CRedisClient& redis )
 	std::cout << "------testMGET------" << std::endl;
 	redis.set("redis", "redis.com");
 	redis.set("mongodb", "mongodb.org");
-	CRedisClient::VecString keys;
+    VecString keys;
 	keys.push_back("redis");
 	keys.push_back("mongodb");
 	CResult result;
@@ -191,7 +191,7 @@ void TestMSET( CRedisClient& redis )
 {
 	std::cout << "------testMSET------" << std::endl;
     //CRedisClient::TupleString value;
-     CRedisClient::VecTuple value{std::tuple<string,string>("date","2012.3.30"),
+     VecTupleString value{std::tuple<string,string>("date","2012.3.30"),
                  std::tuple<string,string>("time","11:00 a.m.")};
 //	value["date"] = "2012.3.30";
 //	value["time"] = "11:00 a.m.";
@@ -199,7 +199,7 @@ void TestMSET( CRedisClient& redis )
 	redis.mset(value);
 
 	CResult result;
-	CRedisClient::VecString keys;
+    VecString keys;
 	keys.push_back("date");
 	keys.push_back("time");
 	keys.push_back("weather");
@@ -220,13 +220,13 @@ void TestMSETNX( CRedisClient& redis )
 //	value["rmdbs"] = "MySQL";
 //	value["nosql"] = "MongoDB";
 //	value["key-value-store"] = "redis";
-    CRedisClient::VecTuple value{std::tuple<string,string>("rmdbs","MySQL"),
+    VecTupleString value{std::tuple<string,string>("rmdbs","MySQL"),
                 std::tuple<string,string>("nosql","MongoDB")};
 	int iRet = redis.msetnx(value);
 	std::cout << "iRet: " << iRet << std::endl;
 
 	CResult result;
-	CRedisClient::VecString keys;
+    VecString keys;
 	keys.push_back("rmdbs");
 	keys.push_back("nosql");
 	keys.push_back("key-value-store");

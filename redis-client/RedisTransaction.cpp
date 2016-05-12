@@ -6,7 +6,7 @@ namespace Redis {
 
 
 
-void CRedisClient::watch(const CRedisClient::VecString &keys)
+void CRedisClient::watch(const VecString &keys)
 {
     Command cmd( "WATCH" );
 

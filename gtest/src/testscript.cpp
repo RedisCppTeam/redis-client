@@ -29,14 +29,14 @@ void testScriptExists( )
     cout << "redis.scriptLoad ok:" << retString1 << endl;
     cout << "redis.scriptLoad ok:" << retString2 << endl;
 
-    CRedisClient::VecString vecString;
+    VecString vecString;
     vecString.push_back( retString1 );
     vecString.push_back( retString2 );
 
-    CRedisClient::VecBool result;
+    VecBool result;
     redis.scriptExists(vecString,result);
-    CRedisClient::VecBool::const_iterator it = result.begin();
-    CRedisClient::VecBool::const_iterator end = result.end();
+    VecBool::const_iterator it = result.begin();
+    VecBool::const_iterator end = result.end();
 
     for( ; it != end; ++it )
     {
@@ -73,7 +73,7 @@ void testEval( void )
     redis.connect("127.0.0.1", 6379);
     CResult result;
     string script = "return redis.call('set',KEYS[1],ARGV[1])";
-    CRedisClient::VecString keys,argv;
+    VecString keys,argv;
     keys.push_back( "foo" );
     argv.push_back("yuhaiyang");
 
