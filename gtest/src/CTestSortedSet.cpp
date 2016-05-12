@@ -25,7 +25,7 @@ void CTestSortedSet::GetVecTuple(VecTupleString &vecTup, const std::string &keyP
         ss << i;
         score= ss.str();
         member += ss.str();
-        vecTup.push_back( VecTupleString::value_type(score,member) );
+        vecTup.push_back(VecTupleString::value_type(score, member));
     }
 }
 
@@ -53,13 +53,13 @@ TEST_F(CTestSortedSet, zcount)
     VecTupleString vecTup;
     GetVecTuple(vecTup, "member_", 1, 10);
     redis.zadd("sortedSet", vecTup);
-    EXPECT_EQ(6 - 3 + 1, redis.zcount("sortedSet","3","6"));
+    EXPECT_EQ(6 - 3 + 1, redis.zcount("sortedSet", "3", "6"));
 }
 
 TEST_F(CTestSortedSet, zincrby)
 {
     redis.flushall();
-    redis.zadd("sortedSet", VecTupleString{TupleString("10","a")});
+    redis.zadd("sortedSet", VecTupleString{TupleString("10", "a")});
     ASSERT_DOUBLE_EQ(11.1, redis.zincrby("sortedSet", 1.1, "a"));
 }
 

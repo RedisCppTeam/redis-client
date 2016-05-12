@@ -15,7 +15,14 @@ INCLUDEPATH += \
     src
 
 HEADERS += \
+    src/CTestConnect.h \
+    src/CTestHash.h \
+    src/CTestKey.h \
+    src/CTestList.h \
+    src/CTestPool.h \
+    src/CTestSet.h \
     src/CTestSortedSet.h \
+    src/CTestString.h \
     ../redis-client/Exception/Exception.h \
     ../redis-client/Command.h \
     ../redis-client/CRedisClient.h \
@@ -23,26 +30,24 @@ HEADERS += \
     ../redis-client/CRedisSocket.h \
     ../redis-client/CResult.h \
     ../redis-client/ExceptRedis.h \
-    ../redis-client/redisCommon.h \
-    src/CTestHash.h \
-    src/CTestList.h \
-    src/CTestSet.h \
-    src/CTestKey.h \
-    src/CTestString.h \
-    src/CTestConnect.h \
-    src/CTestPool.h
+    ../redis-client/redisCommon.h
 
 SOURCES += \
+    src/CTestConnect.cpp \
+    src/CTestHash.cpp \
+    src/CTestKey.cpp \
+    src/CTestList.cpp \
+    src/CTestPool.cpp \
+    src/CTestSet.cpp \
     src/CTestSortedSet.cpp \
+    src/CTestString.cpp \
     src/testHash.cpp \
     src/testHyperLogLog.cpp \
     src/testKey.cpp \
     src/testList.cpp \
-    src/testPool.cpp \
     src/testPSub.cpp \
     src/testscript.cpp \
     src/testServer.cpp \
-    src/testSet.cpp \
     src/testString.cpp \
     src/testTransaction.cpp \
     ../redis-client/Exception/Exception.cpp \
@@ -63,13 +68,5 @@ SOURCES += \
     ../redis-client/RedisClientSet.cpp \
     ../redis-client/RedisClientSortedSet.cpp \
     ../redis-client/RedisClientString.cpp \
-    ../redis-client/RedisTransaction.cpp \
-    src/CTestHash.cpp \
-    src/CTestList.cpp \
-    src/CTestSet.cpp \
-    src/CTestKey.cpp \
-    src/CTestString.cpp \
-    src/CTestConnect.cpp \
-    src/CTestPool.cpp
-
+    ../redis-client/RedisTransaction.cpp
 

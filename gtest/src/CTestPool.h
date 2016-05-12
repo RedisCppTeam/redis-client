@@ -1,11 +1,16 @@
 #ifndef CTESTPOOL_H
 #define CTESTPOOL_H
-
-
-class CTestPool
+#include <gtest/gtest.h>
+#include "CRedisPool.h"
+using namespace Taiji::Redis;
+class CTestPool : public testing::Test
 {
 public:
-    CTestPool();
+    CTestPool() = default;
+    ~CTestPool() = default;
+    static void SetUpTestCase( void );
+    static void TearDownTestCase( void );
 };
+
 
 #endif // CTESTPOOL_H
