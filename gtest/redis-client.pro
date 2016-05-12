@@ -28,11 +28,11 @@ HEADERS += \
     src/CTestList.h \
     src/CTestSet.h \
     src/CTestKey.h \
-    src/CTestString.h
+    src/CTestString.h \
+    src/CTestConnect.h
 
 SOURCES += \
     src/CTestSortedSet.cpp \
-    src/testConnection.cpp \
     src/testHash.cpp \
     src/testHyperLogLog.cpp \
     src/testKey.cpp \
@@ -67,6 +67,7 @@ SOURCES += \
     src/CTestList.cpp \
     src/CTestSet.cpp \
     src/CTestKey.cpp \
-    src/CTestString.cpp
+    src/CTestString.cpp \
+    src/CTestConnect.cpp
 
 
