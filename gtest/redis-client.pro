@@ -23,7 +23,7 @@ HEADERS += \
     src/CTestSet.h \
     src/CTestSortedSet.h \
     src/CTestString.h \
-    ../redis-client/Exception/Exception.h \
+    ../redis-client/Exception/Except.h \
     ../redis-client/Command.h \
     ../redis-client/CRedisClient.h \
     ../redis-client/CRedisPool.h \
@@ -50,13 +50,12 @@ SOURCES += \
     src/testServer.cpp \
     src/testString.cpp \
     src/testTransaction.cpp \
-    ../redis-client/Exception/Exception.cpp \
+    ../redis-client/Exception/Except.cpp \
     ../redis-client/Command.cpp \
     ../redis-client/CRedisClient.cpp \
     ../redis-client/CRedisPool.cpp \
     ../redis-client/CRedisSocket.cpp \
     ../redis-client/CResult.cpp \
-    ../redis-client/ExceptRedis.cpp \
     ../redis-client/RedisClientConnection.cpp \
     ../redis-client/RedisClientHash.cpp \
     ../redis-client/RedisClientHyperLogLog.cpp \
@@ -69,4 +68,6 @@ SOURCES += \
     ../redis-client/RedisClientSortedSet.cpp \
     ../redis-client/RedisClientString.cpp \
     ../redis-client/RedisTransaction.cpp
+
+
 
