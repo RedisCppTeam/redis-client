@@ -236,7 +236,6 @@ void CRedisPool::_keepAlive( void )
             {
                 pRedisConn->idle = true;
                 pRedisConn->connStatus = false;
-                std::cout << "xxxxxxxxxx" << std::endl;
                 REDIS_DEBUGOUT("CRedisPool::keepAlive:------reconnect--Error:---", e.message());
                 REDIS_DEBUGOUT("the connect number ", i);
             }
