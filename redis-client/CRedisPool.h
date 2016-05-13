@@ -17,7 +17,6 @@
 #include <Poco/Condition.h>
 #include <memory>
 
-#define DEFALUT_SIZE   10
 namespace Taiji {
 namespace Redis {
 
@@ -44,8 +43,11 @@ public:
 	* @return if success return true else return false
 	* @warning return value must be checked.pool can't be used when false is returned.
 	*/
-    bool init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout=0,
-             int32_t  poolSize=DEFALUT_SIZE, uint32_t nScanTime = 60);
+    bool init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout,
+             int32_t  poolSize, uint32_t nScanTime);
+
+    bool init(const std::string& host, uint16_t port, uint32_t timeout,
+             int32_t  poolSize, uint32_t nScanTime);
 
 	/**
 	* @brief get a single connection in the pool
@@ -102,6 +104,7 @@ private:
 
 	std::string _host;		///< host ip
 	uint16_t _port;			///< host port
+    bool _havePassword;
 	std::string _password;		///< host password
 	uint32_t _timeout;		///< timeout period, default 0
     int32_t _poolSize;		///< minimum value of connections, default 5

@@ -19,14 +19,14 @@ TEST_F(CTestPool, construction)
 TEST_F(CTestPool, init)
 {
     CRedisPool redispool;
-    redispool.init("127.0.0.1", 6379, "", 0, 10, 1);
+    redispool.init("127.0.0.1", 6379, 0, 10, 1);
     sleep(1);
 }
 
 TEST_F(CTestPool, closeConnPool)
 {
     CRedisPool redispool;
-    redispool.init("127.0.0.1", 6379, "", 0, 10, 1);
+    redispool.init("127.0.0.1", 6379, 0, 10, 1);
     sleep(1);
     redispool.closeConnPool();
 }
@@ -37,7 +37,7 @@ TEST_F(CTestPool, getRedis)
     redis.connect("127.0.0.1");
     redis.flushall();
     CRedisPool redispool;
-    redispool.init("127.0.0.1", 6379, "", 0, 3, 1);
+    redispool.init("127.0.0.1", 6379, 0, 3, 1);
     ASSERT_NO_THROW({
                         auto predis = redispool.getRedis(1000);
                         predis->set("key", "value");
