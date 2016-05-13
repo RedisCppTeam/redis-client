@@ -92,7 +92,7 @@ CRedisClient *CRedisPool::getConn(long millisecond)
 {
     if ( _status != REDIS_POOL_WORKING )
     {
-        return NULL;
+        throw ExceptHandle("lack handle");
     }
     Poco::Mutex::ScopedLock lock(_mutex);
 
@@ -107,13 +107,16 @@ CRedisClient *CRedisPool::getConn(long millisecond)
     {
         return &( _connList[connNum]->conn );
     }
+    throw ExceptHandle("lack handle");
     return NULL;
 }
 
 CRedisClient* CRedisPool::getConn( int32_t& connNum,long millisecond )
 {
     if ( _status != REDIS_POOL_WORKING )
-        return NULL;
+    {
+        throw ExceptHandle("lack handle");
+    }
     Poco::Mutex::ScopedLock lock(_mutex);
     connNum = _getConn();
     if ( connNum < 0 )
@@ -124,6 +127,7 @@ CRedisClient* CRedisPool::getConn( int32_t& connNum,long millisecond )
     }
     if ( connNum >= 0 )
         return &( _connList[connNum]->conn );
+    throw ExceptHandle("lack handle");
     return NULL;
 }
 
