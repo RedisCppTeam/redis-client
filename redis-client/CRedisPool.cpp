@@ -38,7 +38,7 @@ CRedisPool::~CRedisPool( )
     closeConnPool();
 }
 
-bool CRedisPool::init(const string &host, uint16_t port, const string &password, uint32_t timeout, int32_t poolSize, uint32_t nScanTime)
+void CRedisPool::init(const string &host, uint16_t port, const string &password, uint32_t timeout, int32_t poolSize, uint32_t nScanTime)
 {
     _scanTime = nScanTime;
     _host = host;
@@ -61,10 +61,9 @@ bool CRedisPool::init(const string &host, uint16_t port, const string &password,
     }
     _status = REDIS_POOL_WORKING;
     _scanThread.start(__onRunCallBack, this);
-    return true;
 }
 
-bool CRedisPool::init(const std::string& host , uint16_t port ,
+void CRedisPool::init(const std::string& host , uint16_t port ,
                       uint32_t timeout , int32_t poolSize , uint32_t nScanTime )
 {
     _scanTime = nScanTime;
@@ -85,7 +84,6 @@ bool CRedisPool::init(const std::string& host , uint16_t port ,
     }
     _status = REDIS_POOL_WORKING;
     _scanThread.start(__onRunCallBack, this);
-    return true;
 }
 
 CRedisClient *CRedisPool::getConn(long millisecond)

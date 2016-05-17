@@ -43,10 +43,10 @@ public:
 	* @return if success return true else return false
 	* @warning return value must be checked.pool can't be used when false is returned.
 	*/
-    bool init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout,
+    void init(const std::string& host, uint16_t port, const std::string& password, uint32_t timeout,
              int32_t  poolSize, uint32_t nScanTime);
 
-    bool init(const std::string& host, uint16_t port, uint32_t timeout,
+    void init(const std::string& host, uint16_t port, uint32_t timeout,
              int32_t  poolSize, uint32_t nScanTime);
 
 	/**
