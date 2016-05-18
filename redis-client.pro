@@ -16,13 +16,14 @@ CONFIG += c++11
 unix {
     target.path = /usr/local/lib/redis
     INSTALLS += target
-    head.files += redis-client/*.h
 
+    head.files += redis-client/*.h
     head.path = /usr/local/include/redis
     INSTALLS += head
+
     headexcept.files += redis-client/Exception/Except.h
-     headexcept.path = /usr/local/include/redis/Exception
-   INSTALLS += headexcept
+    headexcept.path = /usr/local/include/redis/Exception
+    INSTALLS += headexcept
 }
 
 HEADERS += \
