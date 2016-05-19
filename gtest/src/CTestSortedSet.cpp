@@ -1,6 +1,7 @@
 #include "CTestSortedSet.h"
 
 CRedisClient  CTestSortedSet::redis;
+using namespace std;
 
 void CTestSortedSet::SetUpTestCase()
 {
@@ -11,6 +12,7 @@ void CTestSortedSet::TearDownTestCase()
 {
 
 }
+
 
 void CTestSortedSet::GetVecTuple(VecTupleString &vecTup, const std::string &keyPre, uint64_t start, uint64_t end)
 {
@@ -107,35 +109,276 @@ TEST_F(CTestSortedSet, zrangebyscoreWithscore)
     EXPECT_EQ(5 - 2 + 1, vec.size());
 }
 
+TEST_F(CTestSortedSet, zrank)
+{
+    redis.flushall();
+    string key("sortedSet");
+    string member("member_2");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 3);
+    redis.zadd(key, vecTup);
+
+    int64_t reply;
+    redis.zrank(key,member,reply);
+    EXPECT_EQ(1, reply);
+}
+
+TEST_F(CTestSortedSet, zrem)
+{
+    redis.flushall();
+    string key("sortedSet");
+    string member("member_5");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 10);
+    redis.zadd(key, vecTup);
+
+    uint64_t ret =redis.zrem(key,VecString{member});
+    EXPECT_EQ(1, ret);
+}
+
+TEST_F(CTestSortedSet, zremrangebyrank)
+{
+    redis.flushall();
+    string key("sortedSet");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 5);
+    redis.zadd(key, vecTup);
+
+    uint64_t ret =redis.zremrangebyrank(key,2,3);
+    uint64_t cnt =redis.zcount(key,"0","100");
+    EXPECT_EQ(2, ret);
+    EXPECT_EQ(3, cnt);
+}
+
+TEST_F(CTestSortedSet, zremrangebyscore)
+{
+    redis.flushall();
+    string key("sortedSet");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 5);
+    redis.zadd(key, vecTup);
+
+    uint64_t ret =redis.zremrangebyscore(key,"2","3");
+    uint64_t cnt =redis.zcount(key,"0","100");
+    EXPECT_EQ(2, ret);
+    EXPECT_EQ(3, cnt);
+}
+
+TEST_F(CTestSortedSet, zrevrange)
+{
+    redis.flushall();
+    string key("sortedSet");
+
+    VecTupleString vecTup;
+    string profix("member_");
+    GetVecTuple(vecTup, profix, 1, 5);
+    redis.zadd(key, vecTup);
+
+    VecString reply;
+    uint64_t ret =redis.zrevrange(key,0,100,reply);
+    for(uint i=0;i<reply.size();i++)
+    {
+        stringstream ss;
+        ss<<profix<<ret--;
+        EXPECT_EQ(ss.str(), reply[i]);
+    }
+}
+
+TEST_F(CTestSortedSet, zrevrangeWithscore)
+{
+    redis.flushall();
+    string key("sortedSet");
+
+    VecTupleString vecTup;
+    string profix("member_");
+    GetVecTuple(vecTup, profix, 1, 5);
+    redis.zadd(key, vecTup);
+
+    VecTupleString reply;
+    uint64_t ret =redis.zrevrangeWithscore(key,0,100,reply);
+    EXPECT_EQ(5*2, ret);
+}
+
+TEST_F(CTestSortedSet, zrevrangebyscore)
+{
+    redis.flushall();
+    string key("sortedSet");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 5);
+    redis.zadd(key, vecTup);
+
+    VecString reply;
+    uint64_t ret =redis.zrevrangebyscore(key,"3","0",reply);
+    EXPECT_EQ(3, ret);
+}
+
+TEST_F(CTestSortedSet, zrevrangebyscoreWithscore)
+{
+    redis.flushall();
+    string key("sortedSet");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 5);
+    redis.zadd(key, vecTup);
+
+    VecTupleString reply;
+    uint64_t ret =redis.zrevrangebyscoreWithscore(key,"3","0",reply);
+    EXPECT_EQ(3*2, ret);
+}
+
+TEST_F(CTestSortedSet, zrevrank)
+{
+    redis.flushall();
+    string key("sortedSet");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 5);
+    redis.zadd(key, vecTup);
+
+    int64_t reply;
+    redis.zrevrank(key,"member_2",reply);
+    EXPECT_EQ(3, reply);
+}
+
+TEST_F(CTestSortedSet, zscore)
+{
+    redis.flushall();
+    string key("sortedSet");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 5);
+    redis.zadd(key, vecTup);
+
+    string reply;
+    redis.zscore(key,"member_2",reply);
+    EXPECT_EQ("2", reply);
+}
+
+TEST_F(CTestSortedSet, zunionstore)
+{
+    redis.flushall();
+    string key1("manager");
+    string key2("programa");
+    string keystore("salary");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 5);
+    redis.zadd(key1, vecTup);
+    GetVecTuple(vecTup, "program_", 1, 5);
+    redis.zadd(key2, vecTup);
+
+    VecString keys{key1,key2};
+    uint64_t ret = redis.zunionstore(keystore,keys);
+    EXPECT_EQ(10, ret);
+}
+
+TEST_F(CTestSortedSet, zinterstore)
+{
+    redis.flushall();
+    string key1("manager");
+    string key2("programa");
+    string keystore("salary");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "member_", 1, 5);
+    redis.zadd(key1, vecTup);
+    GetVecTuple(vecTup, "member_", 3, 8);
+    redis.zadd(key2, vecTup);
+
+    VecString keys{key1,key2};
+    uint64_t ret = redis.zinterstore(keystore,keys);
+    EXPECT_EQ(3, ret);
+}
+
+//* eg: get all key between pair_100 and pair_199
+
+
+TEST_F(CTestSortedSet, zscan)
+{
+    redis.flushall();
+    string key("manager");
+
+    VecTupleString vecTup;
+    GetVecTuple(vecTup, "pair_", 1, 15);
+    redis.zadd(key, vecTup);
+
+    vecTup.clear();
+    int64_t cursor;
+    bool retb=redis.zscan( key, cursor, vecTup,"pair_??" );
+    while (retb && redis.zscan( key, cursor, vecTup ,"pair_??") );
+
+    uint64_t ret = vecTup.size();
+    EXPECT_EQ(6, ret);
+}
+
+TEST_F(CTestSortedSet, zrangebylex)
+{
+    redis.flushall();
+    string key("key");
+
+    std::tuple<string,string> t1{"2","a"};
+    std::tuple<string,string> t2{"2","b"};
+    std::tuple<string,string> t3{"2","c"};
+    std::tuple<string,string> t4{"2","d"};
+    std::tuple<string,string> t5{"2","e"};
+    VecTupleString vals{t1,t2,t3,t4,t5};
+    redis.zadd(key,vals);
+
+    VecString reply;
+    uint64_t ret =redis.zrangebylex(key,"-","+", reply);
+    EXPECT_EQ(5, ret);
+
+    ret =redis.zrangebylex(key,"[b","(e", reply);
+    EXPECT_EQ(3, ret);
+}
+TEST_F(CTestSortedSet, zlexcount)
+{
+    redis.flushall();
+    string key("key");
+
+    std::tuple<string,string> t1{"2","a"};
+    std::tuple<string,string> t2{"2","b"};
+    std::tuple<string,string> t3{"2","c"};
+    std::tuple<string,string> t4{"2","d"};
+    std::tuple<string,string> t5{"2","e"};
+    VecTupleString vals{t1,t2,t3,t4,t5};
+    redis.zadd(key,vals);
+
+    VecString reply;
+    uint64_t ret =redis.zlexcount(key,"[b","(e");
+    EXPECT_EQ(3, ret);
+
+
+}
+
+TEST_F(CTestSortedSet, zremrangebylex)
+{
+    redis.flushall();
+    string key("key");
+
+    std::tuple<string,string> t1{"2","a"};
+    std::tuple<string,string> t2{"2","b"};
+    std::tuple<string,string> t3{"2","c"};
+    std::tuple<string,string> t4{"2","d"};
+    std::tuple<string,string> t5{"2","e"};
+    VecTupleString vals{t1,t2,t3,t4,t5};
+    redis.zadd(key,vals);
+
+    VecString reply;
+    uint64_t ret =redis.zremrangebylex(key,"[b","(e");
+    EXPECT_EQ(3, ret);
+
+    ret =redis.zrangebylex(key,"-","+", reply);
+    EXPECT_EQ(2, ret);
+}
+
 /*
 
-void TestZrank(){
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
-    cout<<"----------zrank----------"<<endl;
-    int64_t num;
-    TSortesSetPrint("redis.zrank(SortedSet,member_60,num)",redis.zrank("SortedSet","member_60",num));
-}
-void TestZrem(){
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
-    cout<<"----------zrem----------"<<endl;
-    VEC vec;
-    SetVec(vec,"member_",10,60);
-    TSortesSetPrint("redis.zrem(SortedSet,vec)",redis.zrem("SortedSet",vec));
-}
-void TestZremrangebyrank(){
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
-    cout<<"----------zremrangebyrank----------"<<endl;
-    TSortesSetPrint("redis.zremrangebyrank(SortedSet,1,5)",redis.zremrangebyrank("SortedSet",1,5));
-}
-void TestZremrangebyscore(){
-    CRedisClient redis;
-    redis.connect( "127.0.0.1", 6379 );
-    cout<<"----------zremrangebyscore----------"<<endl;
-    TSortesSetPrint("redis.zremrangebyscore(SortedSet,(40,90)",redis.zremrangebyscore("SortedSet","(40","90"));
-}
 
 void TestZrevrange(){
     CRedisClient redis;

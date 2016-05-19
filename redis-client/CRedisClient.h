@@ -26,6 +26,8 @@ namespace Taiji {
 namespace Redis {
 
 
+
+
 typedef std::vector<std::string> VecString;
 typedef std::tuple<string, string> TupleString;
 typedef std::vector<std::tuple<string,string>> VecTupleString;
@@ -196,14 +198,26 @@ public:
 
 	//-----------------------------------key---------------------------------------------
 	/**
-	 * @brief keys get all keys matching pattern.
+     * @brief Get all keys matching pattern.
 	 * @param pattern [in] The conditions of the matching.
 	 * @param keys [out] vector of keys maching pattern
 	 * @return The number of keys returned.
 	 */
 	int64_t keys( const string& pattern , VecString &values );
 
+    /**
+     * @brief del data keys .
+     * @param key(s) [in] name of the data key(s).
+     * @return The number of keys deleted.
+     */
+    int64_t del(const string &key );
     int64_t del(const VecString &keys );
+
+    /**
+     * @brief check if the key exists .
+     * @param key [in] name of the data key.
+     * @return true if the key exists.
+     */
 	bool exists( const string& key );
 
 	/**
@@ -291,7 +305,7 @@ public:
      * @return None
      * @warning Throw ArgmentErr exception when input argument error.
 	 */
-    void object( const EobjSubCommand& subcommand , const string& key,CResult& result );
+    void object( const EobjSubCommand subcommand , const string& key,CResult& result );
 
 	/**
 	 * @brief 从当前数据库中随机返回(不删除)一个 key 。
@@ -318,10 +332,22 @@ public:
 	 */
 	bool renameNx( const string& key , const string& newKey );
 
-
+    /**
+     * @brief 返回给定列表、集合、有序集合 key 中经过排序的元素
+     * @param  key [in]  key name
+     * @param  result [out] returned sorted values
+     * @information other arguments may left default
+     */
     void sort(const string& key , CResult &result , int64_t offset=-1, int64_t count=-1,
                             const string& by="", const VecString& get=VecString() , bool desc=false, bool alpha=false );
 
+    /**
+     * @brief 保存给定列表、集合、有序集合 key 中经过排序的元素
+     * @param  key [in]  key name
+     * @param  storeKey [in] all sorted return values will be store in this key
+     * @return number of matched data
+     * @information other arguments may left default
+     */
     uint64_t sort(const string& key , const string& storeKey, int64_t offset=-1, int64_t count=-1,
                             const string& by="", const VecString& get=VecString() , bool desc=false, bool alpha=false );
 	/**
@@ -355,15 +381,15 @@ public:
             uint16_t db = 0 , uint16_t timeout = 3 , const std::string &mode = "COPY");
 
     /**
-     * @brief scan
+     * @brief scan 迭代当前数据库中的数据库键
      * @param cursor [in] 0: get value from the first. >=1 : get value from the cursor. <0 get value from last time call hscan.
      * @param values [out] value returned.
      * @param match [in] It is possible to only iterate elements matching a given glob-style pattern
      * @param count	[in] Basically with COUNT the user specified the amount of work that should be done at every call in order to retrieve elements from the collection.
      * @return true:There are some value you don't scan.  false: you have scaned all value.
      *	eg:
-     * 			redis.scan( 0, values, "key_??" );
-                while( redis.scan( -1, values,"key_??" ) );
+     * 			bool ret = redis.scan( 0, values, "key_??" );
+                while(ret && redis.scan( -1, values,"key_??" ) );
 	 */
      bool scan(int64_t cursor, VecString &values, const std::string &match="",
             uint64_t count = 10 );
@@ -970,6 +996,7 @@ public:
      */
     uint64_t zrangebylex (const string& key,const string& min,const string& max,VecString& reply,int64_t offset=0,int64_t count=0);
     /**
+     * @brief 对于一个所有成员的分值都相同的有序集合键 key 来说， 这个命令会返回该集合中， 成员介于 min 和 max 范围内的元素数量
      * @brief zlexcount Count the number of members in a sorted set between a given lexicographical range.
      * @param key[in]
      * @param min[in]
@@ -978,6 +1005,7 @@ public:
      */
     uint64_t zlexcount (const string& key,const string& min,const string& max);
     /**
+     * @brief 对于一个所有成员的分值都相同的有序集合键 key 来说， 这个命令会移除该集合中， 成员介于 min 和 max 范围内的所有元素
      * @brief zremrangebylex Remove all members in a sorted set between the given lexicographical range
      * @param key[in]
      * @param min[in]
@@ -1008,7 +1036,7 @@ public:
 
 	//----------------------------pub/sub--------------------------------------------------
 
-	void psubscribe( VecString& pattern , CResult& result );
+    void psubscribe(const VecString& pattern , CResult& result );
 
 	uint64_t publish( const string& channel , const string& message );
 

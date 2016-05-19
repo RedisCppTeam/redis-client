@@ -16,7 +16,7 @@ namespace Redis {
 
 
 
- void CRedisClient::psubscribe( VecString& pattern, CResult& result)
+ void CRedisClient::psubscribe( const VecString& pattern, CResult& result)
  {
 	Command cmd( "PSUBSCRIBE" );
 	VecString::const_iterator it = pattern.begin();

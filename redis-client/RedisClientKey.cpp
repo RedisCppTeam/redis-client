@@ -16,6 +16,7 @@ namespace Redis {
 
 
 
+
 int64_t CRedisClient::keys( const std::string &pattern , VecString &values )
 {
 	Command cmd("KEYS");
@@ -26,21 +27,33 @@ int64_t CRedisClient::keys( const std::string &pattern , VecString &values )
     return num;
 }
 
-int64_t CRedisClient::del(const VecString &keys )
+
+int64_t CRedisClient::del(const string &key )
 {
 
 	Command cmd("DEL");
-
-	VecString::const_iterator it = keys.begin();
-	VecString::const_iterator end = keys.end();
-	for ( ; it != end ; ++it )
-	{
-		cmd << *it;
-	}
+    cmd << key;
 
 	int64_t num = 0;
 	_getInt(cmd, num);
 	return num;
+}
+
+int64_t CRedisClient::del(const VecString &keys )
+{
+
+    Command cmd("DEL");
+
+    VecString::const_iterator it = keys.begin();
+    VecString::const_iterator end = keys.end();
+    for ( ; it != end ; ++it )
+    {
+        cmd << *it;
+    }
+
+    int64_t num = 0;
+    _getInt(cmd, num);
+    return num;
 }
 
 bool CRedisClient::exists( const string& key )
@@ -125,7 +138,7 @@ bool CRedisClient::move( const string& key ,int dstDb )
     return num;
 }
 
-void CRedisClient::object(const EobjSubCommand& subcommand , const string& key , CResult &result)
+void CRedisClient::object(const EobjSubCommand subcommand , const string& key , CResult &result)
 {
     Command cmd("OBJECT");
 

@@ -30,7 +30,8 @@ HEADERS += \
     ../redis-client/CRedisSocket.h \
     ../redis-client/CResult.h \
     ../redis-client/ExceptRedis.h \
-    ../redis-client/redisCommon.h
+    ../redis-client/redisCommon.h \
+    src/CTestPub.h
 
 SOURCES += \
     src/CTestConnect.cpp \
@@ -67,7 +68,8 @@ SOURCES += \
     ../redis-client/RedisClientSet.cpp \
     ../redis-client/RedisClientSortedSet.cpp \
     ../redis-client/RedisClientString.cpp \
-    ../redis-client/RedisTransaction.cpp
+    ../redis-client/RedisTransaction.cpp \
+    src/CTestPub.cpp
 
 
 
