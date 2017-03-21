@@ -160,12 +160,12 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		../redis-client/RedisTransaction.cpp
 QMAKE_TARGET  = RedisClient
 DESTDIR       = #avoid trailing-slash linebreak
-TARGET        = libRedisClient.so.1.0.0
-TARGETA       = libRedisClient.a
-TARGET0       = libRedisClient.so
-TARGETD       = libRedisClient.so.1.0.0
-TARGET1       = libRedisClient.so.1
-TARGET2       = libRedisClient.so.1.0
+TARGET        = libredisclient.so.1.0.0
+TARGETA       = libredisclient.a
+TARGET0       = libredisclient.so
+TARGETD       = libredisclient.so.1.0.0
+TARGET1       = libredisclient.so.1
+TARGET2       = libredisclient.so.1.0
 
 
 first: all
